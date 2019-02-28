@@ -37,7 +37,7 @@ namespace ScriptNodeFlow
             shareDataTitle.fixedHeight = 25;
             shareDataTitle.fontSize = 20;
             shareDataTitle.alignment = TextAnchor.MiddleCenter;
-            shareDataTitle.normal.textColor = Color.green;
+            shareDataTitle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
             if (!string.IsNullOrEmpty(shareDataName))
             {

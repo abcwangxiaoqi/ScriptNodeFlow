@@ -17,8 +17,8 @@ namespace ScriptNodeFlow
             EditorGUI.EndDisabledGroup();
 
             GUILayout.Space(10);
-
-            GUI.color = Color.green;
+            
+            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying || EditorApplication.isCompiling);
 

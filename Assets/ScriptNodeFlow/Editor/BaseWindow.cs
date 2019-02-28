@@ -23,7 +23,7 @@ namespace ScriptNodeFlow
             BigLabelStyle.fixedHeight = 25;
             BigLabelStyle.fontSize = 20;
             BigLabelStyle.alignment = TextAnchor.MiddleCenter;
-            BigLabelStyle.normal.textColor = Color.green;
+            BigLabelStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
             NameTextStyle = new GUIStyle(UnityEditor.EditorStyles.textField);
             NameTextStyle.fixedHeight = 15;
@@ -108,7 +108,7 @@ namespace ScriptNodeFlow
             {
                 if (state == State.Running)
                 {
-                    BigLabelStyle.normal.textColor = Color.green;
+                    BigLabelStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                     Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
                     GUI.Label(rect, "Running...", BigLabelStyle);
                 }

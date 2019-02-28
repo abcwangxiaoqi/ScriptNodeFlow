@@ -29,14 +29,14 @@ namespace ScriptNodeFlow
             defaultLButton.fixedWidth = 17;
 
             defaultLabel.alignment = TextAnchor.MiddleRight;
-            defaultLabel.normal.textColor = Color.green;
+            defaultLabel.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             defaultLabel.fontStyle = FontStyle.Bold;
 
             linkStyle = new GUIStyle(UnityEditor.EditorStyles.boldLabel);
             linkStyle.fixedHeight = 10;
             linkStyle.fontSize = 8;
             linkStyle.alignment = TextAnchor.MiddleCenter;
-            linkStyle.normal.textColor = Color.green;
+            linkStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             linkStyle.fixedWidth = 10;
 
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
@@ -160,7 +160,7 @@ namespace ScriptNodeFlow
 
                 if (Application.isPlaying && passed && runtimePassedConditionIndex == i)
                 {
-                    color = Color.green;
+                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
                 DrawArrow(item.drawPos + position, item.entity.In, color);
@@ -183,7 +183,7 @@ namespace ScriptNodeFlow
 
             if (Application.isPlaying && passed && runtimePassedConditionIndex == -1)
             {
-                color = Color.green;
+                color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             }
 
             DrawArrow(defaultPos + position, defaultEntity.In, color);
@@ -199,7 +199,7 @@ namespace ScriptNodeFlow
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
-            GUI.color = Color.green;
+            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             if (GUILayout.Button("Add", buttonStyle))
             {
                 conditions.Add(new RouterWindowCondition());
@@ -247,7 +247,7 @@ namespace ScriptNodeFlow
                 GUI.color = Color.white;
 
                 //连接选择
-                GUI.color = Color.green;
+                GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 if (MyEditorLayout.Button("L", buttonStyle, out rect))
                 {
                     GenericMenu menu = new GenericMenu();
@@ -298,7 +298,7 @@ namespace ScriptNodeFlow
                 }
                 else
                 {
-                    linkStyle.normal.textColor = Color.green;
+                    linkStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
                 MyEditorLayout.Label("o", linkStyle, out rect);
@@ -321,7 +321,7 @@ namespace ScriptNodeFlow
             GUILayout.Label("default", defaultLabel);
 
             //连接选择
-            GUI.color = Color.green;
+            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             if (MyEditorLayout.Button("L", defaultLButton, out rect))
             {
                 GenericMenu menu = new GenericMenu();
@@ -367,7 +367,7 @@ namespace ScriptNodeFlow
             }
             else
             {
-                linkStyle.normal.textColor = Color.green;
+                linkStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             }
 
             MyEditorLayout.Label("o", linkStyle, out rect);

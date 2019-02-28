@@ -112,7 +112,7 @@ namespace ScriptNodeFlow
 
                 if (Application.isPlaying && passed)
                 {
-                    color = Color.green;
+                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
                 DrawArrow(Out, next.In, color);

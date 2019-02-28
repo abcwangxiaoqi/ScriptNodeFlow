@@ -25,7 +25,7 @@ namespace ScriptNodeFlow
 
             GUILayout.Space(10);
 
-            GUI.color = Color.green;
+            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
             //true : gameobject in Hierarchy
             //false : prefab
