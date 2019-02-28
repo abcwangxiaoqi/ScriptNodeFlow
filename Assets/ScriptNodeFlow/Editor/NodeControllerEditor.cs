@@ -27,6 +27,7 @@ namespace ScriptNodeFlow
 
             GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
+
             //true : gameobject in Hierarchy
             //false : prefab
             bool isGameObject = Target.gameObject.activeInHierarchy;
