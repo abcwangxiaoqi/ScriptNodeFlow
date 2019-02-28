@@ -6,3 +6,4 @@ Temp/
 *.sln
 .vs/
 UnityPackageManager/
+ProjectSettings/ProjectVersion.txt
