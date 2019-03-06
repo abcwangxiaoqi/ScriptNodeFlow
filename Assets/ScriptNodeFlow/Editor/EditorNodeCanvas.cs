@@ -152,17 +152,18 @@ namespace ScriptNodeFlow
                 {
                     curSelect.leftMouseDraw(curEvent);
                 }
-                //else
-                //{
-                //    if (this.position.Contains(curEvent.mousePosition))
-                //    {
-                //        //drag the panel
-                //        foreach (var item in windowList)
-                //        {
-                //            item.leftMouseDraw(curEvent);
-                //        }
-                //    }
-                //}
+                else
+                {
+                    if (new Rect(Vector2.zero,position.size).Contains(curEvent.mousePosition))
+                    {
+                        //drag the panel
+                        foreach (var item in windowList)
+                        {
+                            item.leftMouseDraw(curEvent);
+                        }
+                        this.Repaint();
+                    }                    
+                }
             }
 
             base.OnGUI();
