@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace ScriptNodeFlow
 {
-    public class NodeWindow : BaseWindow
+    public class CanvasWindow : BaseWindow
     {
         static List<string> allEntityClass = new List<string>();
 
@@ -15,7 +19,7 @@ namespace ScriptNodeFlow
         static GUIContent deleteContent = new GUIContent("Delte");
         static string separator = "Next/";
 
-        static NodeWindow()
+        static CanvasWindow()
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
             Type[] tys = _assembly.GetTypes();
@@ -29,7 +33,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        protected string ClassName { get; private set; }
+        protected NodeCanvasData canvas { get; private set; }
 
         //下一节点
         public BaseWindow next { get; protected set; }
@@ -48,22 +52,20 @@ namespace ScriptNodeFlow
         {
             get
             {
-                return NodeType.Node;
+                return NodeType.Canvas;
             }
         }
 
-        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList)
+        public CanvasWindow(Vector2 pos, List<BaseWindow> _windowList)
             : base(pos, _windowList)
         {
-            Name = "Node";
+            Name = "Canvas";
         }
 
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList)
+        public CanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList)
             : base(itemData, _windowList)
         {
-            ClassName = itemData.className;
-
-            classIndex = allEntityClass.IndexOf(ClassName);
+            canvas = itemData.canvasData;
         }
 
         public void SetNext(BaseWindow entity)
@@ -73,13 +75,13 @@ namespace ScriptNodeFlow
 
         public override WindowDataBase GetData()
         {
-            NodeWindowData dataEntity = new NodeWindowData();
+            CanvasWindowData dataEntity = new CanvasWindowData();
             dataEntity.position = position;
             dataEntity.name = Name;
             dataEntity.ID = Id;
 
-            dataEntity.className = ClassName;
-            
+            dataEntity.canvasData = canvas;
+
             if (next != null)
             {
                 dataEntity.nextWindowId = next.Id;
@@ -112,20 +114,15 @@ namespace ScriptNodeFlow
             }
         }
 
-        int classIndex = -1;
-
+        private Object obj;
+        
         protected override void gui(int id)
         {
             base.gui(id);
-
+            
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            classIndex = EditorGUILayout.Popup(classIndex, allEntityClass.ToArray(), popupStyle);
+           canvas = (NodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(NodeCanvasData),false);
             EditorGUI.EndDisabledGroup();
-
-            if (classIndex >= 0)
-            {
-                ClassName = allEntityClass[classIndex];
-            }
 
             GUI.DragWindow();
         }
@@ -160,10 +157,8 @@ namespace ScriptNodeFlow
             {
                 if (item.Id == Id)
                     continue;
-
-                if(item.windowType == NodeType.Start)
+                if (item.windowType == NodeType.Start)
                     continue;
-
                 selectionList.Add(item);
             }
 
@@ -187,11 +182,10 @@ namespace ScriptNodeFlow
             #endregion
 
 
-                menu.AddItem(deleteContent, false, () =>
-                {
-                    windowList.Remove(this);
-                });
-            
+            menu.AddItem(deleteContent, false, () =>
+            {
+                windowList.Remove(this);
+            });
 
             menu.ShowAsContext();
         }

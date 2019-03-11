@@ -33,17 +33,7 @@ namespace ScriptNodeFlow
         [MenuItem("Assets/Script Node Flow/Create", false, priority = 49)]
         static void New()
         {
-            EditorUtil.CreatAssetCurPath<NodeCanvasData>("New Node Canvas",
-                (NodeCanvasData data, Dictionary<string, object> dic) =>
-                {
-                    //create a default Node
-                    NodeData entity = new NodeData();
-                    entity.isEntrance = true;
-                    entity.id = 0;
-                    entity.position = new Vector2(300, 300);
-                    entity.name = "Entrance Node";
-                    data.nodelist.Add(entity);
-                });
+            EditorUtil.CreatAssetCurPath<NodeCanvasData>("New Node Canvas");
         }
 
         public static void Open(Object obj)
@@ -61,6 +51,7 @@ namespace ScriptNodeFlow
 
         static GUIContent addNode = new GUIContent("Add Node");
         static GUIContent addRouter = new GUIContent("Add Router");
+        static GUIContent addCanvas = new GUIContent("Add Canvas");
         static GUIContent comiling = new GUIContent("...Comiling...");
 
         NodeCanvasData wdata;
@@ -214,6 +205,11 @@ namespace ScriptNodeFlow
                     {
                         windowList.Add(new RouterWindow(mousePosition, windowList));
                     });
+
+                    menu.AddItem(addCanvas, false, () =>
+                    {
+                        windowList.Add(new CanvasWindow(mousePosition, windowList));
+                    });
                     menu.ShowAsContext();
                 }
             }
@@ -226,6 +222,7 @@ namespace ScriptNodeFlow
 
             wdata.nodelist.Clear();
             wdata.routerlist.Clear();
+            wdata.canvaslist.Clear();
 
 
             wdata.shareData = fixedWindow.shareData;
@@ -235,11 +232,19 @@ namespace ScriptNodeFlow
             {
                 if (windowList[i].windowType == NodeType.Node)
                 {
-                    wdata.nodelist.Add((NodeData)windowList[i].GetData());
+                    wdata.nodelist.Add((NodeWindowData)windowList[i].GetData());
                 }
-                else
+                else if(windowList[i].windowType == NodeType.Router)
                 {
-                    wdata.routerlist.Add((RouterData)windowList[i].GetData());
+                    wdata.routerlist.Add((RouterWindowData)windowList[i].GetData());
+                }
+                else if (windowList[i].windowType == NodeType.Canvas)
+                {
+                    wdata.canvaslist.Add((CanvasWindowData)windowList[i].GetData());
+                }
+                else if (windowList[i].windowType == NodeType.Start)
+                {
+                    wdata.start = (StartWindowData)windowList[i].GetData();
                 }
             }
 

@@ -85,7 +85,7 @@ namespace ScriptNodeFlow
 
         }
 
-        public RouterWindow(RouterData itemData, List<BaseWindow> _windowList)
+        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList)
             : base(itemData, _windowList)
         {
             addHeight = buttonStyle.lineHeight + 8;
@@ -102,22 +102,22 @@ namespace ScriptNodeFlow
             _size.y += addHeight * conditionEntities.Count;
         }
 
-        public override DataBase GetData()
+        public override WindowDataBase GetData()
         {
-            RouterData data = new RouterData();
-            data.id = Id;
+            RouterWindowData data = new RouterWindowData();
+            data.ID = Id;
             data.name = Name;
             data.position = position;
 
             foreach (var item in conditions)
             {
-                RouterConditionData cond = new RouterConditionData();
+                RouterWindowConditionData cond = new RouterWindowConditionData();
 
                 cond.className = item.className;
 
                 if (item.entity != null)
                 {
-                    cond.entity = item.entity.Id;
+                    cond.nextWindowId = item.entity.Id;
                 }
 
                 data.conditions.Add(cond);
@@ -125,7 +125,7 @@ namespace ScriptNodeFlow
 
             if (defaultEntity != null)
             {
-                data.defaultEntity = defaultEntity.Id;
+                data.nextWindowId = defaultEntity.Id;
             }
 
             return data;
@@ -336,9 +336,9 @@ namespace ScriptNodeFlow
                 List<BaseWindow> selectionList = new List<BaseWindow>();
                 foreach (var item in windowList)
                 {
-                    if (item is NodeWindow)
+                    if (item.windowType == NodeType.Node)
                     {
-                        selectionList.Add(item);
+                        selectionList.Add(item as NodeWindow);
                     }
                 }
 

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace ScriptNodeFlow
 {
-    public enum EntityState
+    public enum RuntimeState
     {
         Idle,//idle,can be called
         Wait,// was called but not finish completely 
@@ -44,7 +44,7 @@ namespace ScriptNodeFlow
         //id + className = key
         Dictionary<string, RouterCondition> conditionMap = new Dictionary<string, RouterCondition>();
 
-        NodeData current;
+        NodeWindowData current;
         SharedData shareData = null;
         // Use this for initialization
         void Awake()
@@ -58,6 +58,7 @@ namespace ScriptNodeFlow
             {
                 shareData = Activator.CreateInstance(Type.GetType(nodeFlowData.shareData)) as SharedData;
             }
+
             current = nodeFlowData.GetEntrance();
             moveNext = true;
         }
@@ -68,7 +69,7 @@ namespace ScriptNodeFlow
         bool moveNext = false;
         public bool finished { get; private set; }
 
-        RouterData tempRouter;
+        RouterWindowData tempRouter;
         // Update is called once per frame
         void Update()
         {
@@ -96,17 +97,17 @@ namespace ScriptNodeFlow
             }
 
             currentName = current.name;
-            currentID = current.id;
+            currentID = current.ID;
 
             try
             {
-                if (!entityMap.ContainsKey(current.id))
+                if (!entityMap.ContainsKey(current.ID))
                 {
                     type = Type.GetType(current.className);
                     currentEntity = Activator.CreateInstance(type, shareData) as Node;
-                    entityMap.Add(current.id, currentEntity);
+                    entityMap.Add(current.ID, currentEntity);
                 }
-                currentEntity = entityMap[current.id];
+                currentEntity = entityMap[current.ID];
 
                 currentEntity.run();
                 moveNext = false;
@@ -123,7 +124,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        DataBase tempDataBase;
+        WindowDataBase tempDataBase;
         RouterCondition tempCondition;
         private void LateUpdate()
         {
@@ -136,14 +137,14 @@ namespace ScriptNodeFlow
             if (currentEntity == null)
                 return;
 
-            if (currentEntity.State == EntityState.Finished)
+            if (currentEntity.State == RuntimeState.Finished)
             {
 
 #if UNITY_EDITOR
 
-                if (!nodePathMessage.Contains(current.id))
+                if (!nodePathMessage.Contains(current.ID))
                 {
-                    nodePathMessage.Add(current.id);
+                    nodePathMessage.Add(current.ID);
                 }
 
 #endif
@@ -151,24 +152,24 @@ namespace ScriptNodeFlow
                 currentEntity.reset();
                 moveNext = true;
 
-                tempDataBase = nodeFlowData.Get(current.next);
+                tempDataBase = nodeFlowData.Get(current.nextWindowId);
                 if (null == tempDataBase)
                 {
                     current = null;
                 }
                 else if (tempDataBase.type == NodeType.Router)
                 {
-                    tempRouter = tempDataBase as RouterData;
-                    currentID = tempRouter.id;
+                    tempRouter = tempDataBase as RouterWindowData;
+                    currentID = tempRouter.ID;
                     currentName = tempRouter.name;
 
                     try
                     {
                         for (int i = 0; i < tempRouter.conditions.Count; i++)
                         {
-                            RouterConditionData item = tempRouter.conditions[i];
+                            RouterWindowConditionData item = tempRouter.conditions[i];
 
-                            string key = string.Format("{0}+{1}", tempRouter.id, item.className);
+                            string key = string.Format("{0}+{1}", tempRouter.ID, item.className);
                             if (!conditionMap.ContainsKey(key))
                             {
                                 type = Type.GetType(item.className);
@@ -189,14 +190,14 @@ namespace ScriptNodeFlow
                             addRouterPathMessage(tempRouter, i);
 #endif
 
-                            tempDataBase = nodeFlowData.Get(item.entity);
+                            tempDataBase = nodeFlowData.Get(item.nextWindowId);
                             if (null == tempDataBase)
                             {
                                 current = null;
                             }
                             else
                             {
-                                current = tempDataBase as NodeData;
+                                current = tempDataBase as NodeWindowData;
                             }
                             return;
                         }
@@ -205,14 +206,14 @@ namespace ScriptNodeFlow
                         addRouterPathMessage(tempRouter, -1);
 #endif
 
-                        tempDataBase = nodeFlowData.Get(tempRouter.defaultEntity);
+                        tempDataBase = nodeFlowData.Get(tempRouter.nextWindowId);
                         if (null == tempDataBase)
                         {
                             current = null;
                         }
                         else
                         {
-                            current = tempDataBase as NodeData;
+                            current = tempDataBase as NodeWindowData;
                         }
                     }
                     catch (Exception e)
@@ -226,24 +227,52 @@ namespace ScriptNodeFlow
                         throw;
                     }
                 }
+                else if (tempDataBase.type == NodeType.Canvas)
+                {
+                    CanvasWindowData data = tempDataBase as CanvasWindowData;
+                    if (null == data.canvasData)
+                    {
+                        GameObject canvas= new GameObject(data.canvasData.name);
+                        canvas.transform.SetParent(transform);
+                        NodeController controller = canvas.AddComponent<NodeController>();
+                        controller.nodeFlowData = data.canvasData;
+                        controller.onFinish += (bool b) =>
+                        {
+                            Destroy(canvas);
+
+                            if (b == false)
+                            {
+                                current = null;
+                                if (onFinish != null)
+                                {
+                                    onFinish(false);
+                                }
+                            }
+                            else
+                            {
+                                //nodeFlowData.Get(data.nextWindowId)
+                            }
+                        };
+                    }
+                }
                 else //NodeType.Node
                 {
-                    current = tempDataBase as NodeData;
+                    current = tempDataBase as NodeWindowData;
                 }
             }
         }
 
 #if UNITY_EDITOR
-        void addRouterPathMessage(RouterData router, int coditionIndex)
+        void addRouterPathMessage(RouterWindowData router, int coditionIndex)
         {
             RouterPathMessage rpm = routerPathMessage.Find((RouterPathMessage m) =>
             {
-                return m.id == router.id;
+                return m.id == router.ID;
             });
 
             if (rpm == null)
             {
-                routerPathMessage.Add(new RouterPathMessage(router.id, coditionIndex));
+                routerPathMessage.Add(new RouterPathMessage(router.ID, coditionIndex));
             }
             else
             {

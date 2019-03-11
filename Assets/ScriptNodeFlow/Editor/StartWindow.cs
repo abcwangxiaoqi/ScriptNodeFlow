@@ -1,40 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using UnityEditor;
 using UnityEngine;
 
 namespace ScriptNodeFlow
 {
-    public class NodeWindow : BaseWindow
+    public class StartWindow : BaseWindow
     {
-        static List<string> allEntityClass = new List<string>();
-
         static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
         static GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
         static GUIContent deleteContent = new GUIContent("Delte");
         static string separator = "Next/";
-
-        static NodeWindow()
-        {
-            Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            Type[] tys = _assembly.GetTypes();
-
-            foreach (var item in tys)
-            {
-                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    allEntityClass.Add(item.FullName);
-                }
-            }
-        }
-
-        protected string ClassName { get; private set; }
-
+        
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 100);
+        Vector2 _size = new Vector2(150, 60);
         protected override Vector2 size
         {
             get
@@ -48,22 +32,13 @@ namespace ScriptNodeFlow
         {
             get
             {
-                return NodeType.Node;
+                return NodeType.Start;
             }
         }
-
-        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList)
-            : base(pos, _windowList)
-        {
-            Name = "Node";
-        }
-
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList)
+        
+        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList)
             : base(itemData, _windowList)
         {
-            ClassName = itemData.className;
-
-            classIndex = allEntityClass.IndexOf(ClassName);
         }
 
         public void SetNext(BaseWindow entity)
@@ -73,13 +48,9 @@ namespace ScriptNodeFlow
 
         public override WindowDataBase GetData()
         {
-            NodeWindowData dataEntity = new NodeWindowData();
+            StartWindowData dataEntity = new StartWindowData();
             dataEntity.position = position;
-            dataEntity.name = Name;
-            dataEntity.ID = Id;
 
-            dataEntity.className = ClassName;
-            
             if (next != null)
             {
                 dataEntity.nextWindowId = next.Id;
@@ -112,20 +83,9 @@ namespace ScriptNodeFlow
             }
         }
 
-        int classIndex = -1;
-
         protected override void gui(int id)
         {
-            base.gui(id);
-
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            classIndex = EditorGUILayout.Popup(classIndex, allEntityClass.ToArray(), popupStyle);
-            EditorGUI.EndDisabledGroup();
-
-            if (classIndex >= 0)
-            {
-                ClassName = allEntityClass[classIndex];
-            }
+            GUILayout.Label("Start", BigLabelStyle);
 
             GUI.DragWindow();
         }
@@ -136,17 +96,9 @@ namespace ScriptNodeFlow
         {
             GenericMenu menu = new GenericMenu();
 
-
             menu.AddItem(nextNewNodeContent, false, () =>
             {
                 var tempWindow = new NodeWindow(mouseposition, windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddItem(nextNewRouterContent, false, () =>
-            {
-                var tempWindow = new RouterWindow(mouseposition, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
@@ -160,8 +112,7 @@ namespace ScriptNodeFlow
             {
                 if (item.Id == Id)
                     continue;
-
-                if(item.windowType == NodeType.Start)
+                if(item.windowType == NodeType.Router)
                     continue;
 
                 selectionList.Add(item);
@@ -185,13 +136,6 @@ namespace ScriptNodeFlow
                              });
             }
             #endregion
-
-
-                menu.AddItem(deleteContent, false, () =>
-                {
-                    windowList.Remove(this);
-                });
-            
 
             menu.ShowAsContext();
         }

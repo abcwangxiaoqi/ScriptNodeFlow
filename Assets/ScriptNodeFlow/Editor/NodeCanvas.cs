@@ -98,6 +98,8 @@ namespace ScriptNodeFlow
         {
             windowList = new List<BaseWindow>();
             fixedWindow = new FixedWindow(windowData.shareData);
+            
+            windowList.Add(new StartWindow(windowData.start, windowList));
 
             foreach (var item in windowData.nodelist)
             {
@@ -109,31 +111,34 @@ namespace ScriptNodeFlow
                 windowList.Add(new RouterWindow(item, windowList));
             }
 
+            foreach (var item in windowData.canvaslist)
+            {
+                windowList.Add(new CanvasWindow(item, windowList));
+            }
+
             //set next Node
             foreach (var item in windowList)
             {
-                DataBase itemdata = windowData.Get(item.Id);
-
-                if (itemdata.type == NodeType.Node)
+                if (item.windowType == NodeType.Node)
                 {
-                    NodeData edata = itemdata as NodeData;
+                    NodeWindowData edata = windowData.nodelist.Find(data => { return data.ID == item.Id; });
 
-                    if (edata.next >= 0)
+                    if (edata.nextWindowId > 0)
                     {
-                        BaseWindow next = FindWindow(edata.next);
+                        BaseWindow next = FindWindow(edata.nextWindowId);
 
                         (item as NodeWindow).SetNext(next);
                     }
                 }
-                else
+                else if(item.windowType == NodeType.Router)
                 {
-                    RouterData edata = itemdata as RouterData;
+                    RouterWindowData edata = windowData.routerlist.Find(data => { return data.ID == item.Id; });
                     RouterWindow win = item as RouterWindow;
 
                     //set default
-                    if (edata.defaultEntity >= 0)
+                    if (edata.nextWindowId >= 0)
                     {
-                        NodeWindow def = FindWindow<NodeWindow>(edata.defaultEntity);
+                        NodeWindow def = FindWindow<NodeWindow>(edata.nextWindowId);
                         win.SetDefault(def);
                     }
 
@@ -143,10 +148,32 @@ namespace ScriptNodeFlow
                     {
                         RouterWindowCondition rcon = new RouterWindowCondition();
                         rcon.className = con.className;
-                        rcon.entity = FindWindow<NodeWindow>(con.entity);
+                        rcon.entity = FindWindow<NodeWindow>(con.nextWindowId);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
+                }
+                else if(item.windowType == NodeType.Canvas)
+                {
+                    CanvasWindowData edata = windowData.canvaslist.Find(data => { return data.ID == item.Id; });
+
+                    if (edata.nextWindowId > 0)
+                    {
+                        BaseWindow next = FindWindow(edata.nextWindowId);
+
+                        (item as CanvasWindow).SetNext(next);
+                    }
+                }
+                else if (item.windowType == NodeType.Start)
+                {
+                    StartWindowData edata = windowData.start;
+
+                    if (edata.nextWindowId > 0)
+                    {
+                        BaseWindow next = FindWindow(edata.nextWindowId);
+
+                        (item as StartWindow).SetNext(next);
+                    }
                 }
             }
         }

@@ -3,7 +3,7 @@ namespace ScriptNodeFlow
 {
     public abstract class Node
     {
-        public EntityState State { get; private set; }
+        public RuntimeState State { get; private set; }
 
         protected SharedData shareData;
         public Node(SharedData data)
@@ -13,7 +13,7 @@ namespace ScriptNodeFlow
 
         public void run()
         {
-            State = EntityState.Wait;
+            State = RuntimeState.Wait;
             execute();
         }
 
@@ -21,7 +21,7 @@ namespace ScriptNodeFlow
         //be called by NodeController when state turn finished
         public void reset()
         {
-            State = EntityState.Idle;
+            State = RuntimeState.Idle;
         }
 
         protected abstract void execute();
@@ -37,7 +37,7 @@ namespace ScriptNodeFlow
         //cause maybe your execute method includes some asyn operations
         protected void finish()
         {
-            State = EntityState.Finished;
+            State = RuntimeState.Finished;
         }
     }
 }

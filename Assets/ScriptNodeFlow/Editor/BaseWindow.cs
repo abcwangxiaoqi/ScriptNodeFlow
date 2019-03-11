@@ -74,28 +74,16 @@ namespace ScriptNodeFlow
             position = pos;
             windowList = _windowList;
 
-            #region calculate id
-
-            int td = 0;
-
-            while (windowList.FindIndex((BaseWindow w) =>
-            {
-                return w.Id == td;
-            }) >= 0)
-            {
-                td++;
-            }
-            #endregion      
-
-            Id = td;
+            System.Random r = new System.Random(int.Parse(System.DateTime.Now.ToString("HHmmssfff")));
+            Id = r.Next(1, int.MaxValue);
         }
 
-        public BaseWindow(DataBase data, List<BaseWindow> _windowList)
+        public BaseWindow(WindowDataBase data, List<BaseWindow> _windowList)
         {
             position = data.position;
             windowList = _windowList;
 
-            Id = data.id;
+            Id = data.ID;
             Name = data.name;
         }
 
@@ -148,7 +136,7 @@ namespace ScriptNodeFlow
             return windowRect.Contains(mouseposition);
         }
 
-        public abstract DataBase GetData();
+        public abstract WindowDataBase GetData();
 
         protected void DrawArrow2(Vector2 from, Vector2 to, Color color)
         {
