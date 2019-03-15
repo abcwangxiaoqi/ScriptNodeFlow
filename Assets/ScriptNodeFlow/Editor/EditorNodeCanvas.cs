@@ -1,8 +1,7 @@
-﻿
-using System.Collections.Generic;
-using EditorTools;
+﻿using EditorTools;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ScriptNodeFlow
 {
@@ -54,17 +53,20 @@ namespace ScriptNodeFlow
         static GUIContent addCanvas = new GUIContent("Add Canvas");
         static GUIContent comiling = new GUIContent("...Comiling...");
 
-        NodeCanvasData wdata;
-
-        
         protected override void Awake()
         {
+            base.Awake();
+
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
-           
-            wdata = scriptable.Load<NodeCanvasData>();
 
-            generateWindowData(wdata);
+            nodeCanvasData = scriptable.Load<NodeCanvasData>();
+
+            Orgin = scriptable.path;
+
+            generateLeftArea();
+
+            generateMainData();
         }
 
         //close window when playModeStateChanged
@@ -79,7 +81,6 @@ namespace ScriptNodeFlow
         BaseWindow curSelect = null;
         Event curEvent;
         Vector2 mousePosition;
-             
 
         // the key of the asset's path
         // need be saved when compiling
@@ -94,6 +95,7 @@ namespace ScriptNodeFlow
                 if(!EditorPrefs.HasKey(nodeAssetPath))
                 {
                     EditorPrefs.SetString(nodeAssetPath, scriptable.path);
+                    OnDestroy();
                 }
 
                 return;
@@ -112,71 +114,72 @@ namespace ScriptNodeFlow
                 Repaint();
             }
 
-            if (windowList == null)
-                return;
-
             curEvent = Event.current;
-            mousePosition = curEvent.mousePosition;
 
-            if (curEvent.button == 1) // mouse right key
+            if (rightArea.Contains(curEvent.mousePosition))
             {
-                ShowMenu();
-            }
+                //must minus rightArea.position
+                mousePosition = curEvent.mousePosition - rightArea.position - nodesArea.position;
 
-            // mouse left key
-            if (curEvent.button == 0 && curEvent.isMouse)
-            {
-                //a window is whether selected
-                if (curEvent.type == EventType.MouseDown)
+                if (curEvent.button == 1) // mouse right key
                 {
-                    curSelect = windowList.Find((BaseWindow w) =>
+                    ShowMenu();
+                }
+                else if(curEvent.button == 0 && curEvent.isMouse)
+                {
+                    //a window is whether selected
+                    if (curEvent.type == EventType.MouseDown)
                     {
-                        return w.isClick(mousePosition);
-                    });
-                }
-                else if (curEvent.type == EventType.MouseUp)
-                {
-                    curSelect = null;
-                }
-                
-                if (curSelect != null)
-                {
-                    curSelect.leftMouseDraw(curEvent);
-                }
-                else
-                {
-                    if (new Rect(Vector2.zero,position.size).Contains(curEvent.mousePosition))
-                    {
-                        //drag the panel
-                        foreach (var item in windowList)
+                        curSelect = windowList.Find((BaseWindow w) =>
                         {
-                            item.leftMouseDraw(curEvent);
+                            return w.isClick(mousePosition);
+                        });
+                        if (curSelect != null 
+                            && curEvent.clickCount == 2)
+                        {
+                            if (curSelect != null)
+                            {
+                                curSelect.leftMouseDoubleClick();
+                            }
                         }
-                        this.Repaint();
-                    }                    
+                    }
+                    else if (curEvent.type == EventType.MouseUp)
+                    {
+                        curSelect = null;
+                    }
+                    else if (curEvent.type == EventType.MouseDrag)
+                    {
+                        if (curSelect != null)
+                        {
+                            curSelect.leftMouseDrag(curEvent.delta);
+                        }
+                        else
+                        {
+                            if (nodesArea.Contains(curEvent.mousePosition))
+                            {
+                                //drag the panel
+                                foreach (var item in windowList)
+                                {
+                                    item.leftMouseDrag(curEvent.delta);
+                                }
+                            }
+                        }
+                    }
                 }
+                Repaint();
             }
 
             base.OnGUI();
-        }
-
-        protected override void OnLostFocus()
-        {
-            save(false);
-        }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-
-            save(true);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
 
-            save(true);
+            save();
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         private void ShowMenu()
@@ -191,67 +194,112 @@ namespace ScriptNodeFlow
 
                 if (curSelect != null)
                 {
-                    curSelect.rightMouseDraw(mousePosition);
+                    curSelect.rightMouseClick(mousePosition);
                 }
                 else
                 {
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(addNode, false, () =>
                     {
-                        windowList.Add(new NodeWindow(mousePosition, windowList));
+                        windowList.Add(new NodeWindow(Orgin,mousePosition, windowList));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow(mousePosition, windowList));
+                        windowList.Add(new RouterWindow(Orgin,mousePosition, windowList));
                     });
 
-                    menu.AddItem(addCanvas, false, () =>
+                    if (canvasType == CanvasType.Main)
                     {
-                        windowList.Add(new CanvasWindow(mousePosition, windowList));
-                    });
+                        menu.AddItem(addCanvas, false, () =>
+                        {
+                            windowList.Add(new SubCanvasWindow(Orgin, mousePosition, windowList));
+                        });
+                    }
+                    
                     menu.ShowAsContext();
                 }
             }
         }
 
-        void save(bool import)
+        protected override void OpenMainCanvas(object[] objs)
         {
-            if (windowList == null)
-                return;
+            save();
+            base.OpenMainCanvas(objs);
+        }
 
-            wdata.nodelist.Clear();
-            wdata.routerlist.Clear();
-            wdata.canvaslist.Clear();
+        protected override void OpenSubCanvas(object[] objs)
+        {
+            save();
 
+            base.OpenSubCanvas(objs);
+        }
 
-            wdata.shareData = fixedWindow.shareData;
+        private void save()
+        {
+            if (canvasType == CanvasType.Main)
+            {
+               saveMain();
+            }
+            else
+            {
+               saveSub();
+            }
+        }
 
+        void saveMain()
+        {
+            nodeCanvasData.nodelist.Clear();
+            nodeCanvasData.routerlist.Clear();
+            nodeCanvasData.subCanvaslist.Clear();
+
+            nodeCanvasData.shareData = shareDataWindow.shareData;
 
             for (int i = 0; i < windowList.Count; i++)
             {
                 if (windowList[i].windowType == NodeType.Node)
                 {
-                    wdata.nodelist.Add((NodeWindowData)windowList[i].GetData());
+                    nodeCanvasData.nodelist.Add((NodeWindowData)windowList[i].GetData());
                 }
-                else if(windowList[i].windowType == NodeType.Router)
+                else if (windowList[i].windowType == NodeType.Router)
                 {
-                    wdata.routerlist.Add((RouterWindowData)windowList[i].GetData());
+                    nodeCanvasData.routerlist.Add((RouterWindowData)windowList[i].GetData());
                 }
-                else if (windowList[i].windowType == NodeType.Canvas)
+                else if (windowList[i].windowType == NodeType.SubCanvas)
                 {
-                    wdata.canvaslist.Add((CanvasWindowData)windowList[i].GetData());
+                    nodeCanvasData.subCanvaslist.Add((CanvasWindowData)windowList[i].GetData());
                 }
                 else if (windowList[i].windowType == NodeType.Start)
                 {
-                    wdata.start = (StartWindowData)windowList[i].GetData();
+                    nodeCanvasData.start = (StartWindowData)windowList[i].GetData();
                 }
             }
 
-            if(import)
-            {
-                scriptable.SaveAsset(wdata);
-            }
+            EditorUtility.SetDirty(nodeCanvasData);
         }
-    }   
+
+        void saveSub()
+        {
+            subNodeCanvasData.nodelist.Clear();
+            subNodeCanvasData.routerlist.Clear();
+
+            for (int i = 0; i < windowList.Count; i++)
+            {
+                if (windowList[i].windowType == NodeType.Node)
+                {
+                    subNodeCanvasData.nodelist.Add((NodeWindowData)windowList[i].GetData());
+                }
+                else if (windowList[i].windowType == NodeType.Router)
+                {
+                    subNodeCanvasData.routerlist.Add((RouterWindowData)windowList[i].GetData());
+                }
+                else if (windowList[i].windowType == NodeType.Start)
+                {
+                    subNodeCanvasData.start = (StartWindowData)windowList[i].GetData();
+                }
+            }
+
+            EditorUtility.SetDirty(nodeCanvasData);
+        }
+    }
 }

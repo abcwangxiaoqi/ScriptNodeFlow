@@ -8,12 +8,13 @@ namespace ScriptNodeFlow
 {
     public class NodeWindow : BaseWindow
     {
-        static List<string> allEntityClass = new List<string>();
+        protected static List<string> allEntityClass = new List<string>();
 
-        static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
-        static GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
-        static GUIContent deleteContent = new GUIContent("Delte");
-        static string separator = "Next/";
+        protected GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
+        protected GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
+        protected static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
+        protected GUIContent deleteContent = new GUIContent("Delte");
+        protected string separator = "Next/";
 
         static NodeWindow()
         {
@@ -34,7 +35,7 @@ namespace ScriptNodeFlow
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 100);
+        Vector2 _size = new Vector2(150, 80);
         protected override Vector2 size
         {
             get
@@ -52,14 +53,14 @@ namespace ScriptNodeFlow
             }
         }
 
-        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList)
-            : base(pos, _windowList)
+        public NodeWindow(string orgin,Vector2 pos, List<BaseWindow> _windowList)
+            : base(orgin,pos, _windowList)
         {
             Name = "Node";
         }
 
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+        public NodeWindow(string orgin, NodeWindowData itemData, List<BaseWindow> _windowList)
+            : base(orgin,itemData, _windowList)
         {
             ClassName = itemData.className;
 
@@ -79,7 +80,7 @@ namespace ScriptNodeFlow
             dataEntity.ID = Id;
 
             dataEntity.className = ClassName;
-            
+
             if (next != null)
             {
                 dataEntity.nextWindowId = next.Id;
@@ -103,7 +104,7 @@ namespace ScriptNodeFlow
 
                 Color color = Color.white;
 
-                if (Application.isPlaying && passed)
+                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
@@ -132,21 +133,28 @@ namespace ScriptNodeFlow
 
         GenericMenu menu;
 
-        public override void rightMouseDraw(Vector2 mouseposition)
+        public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
 
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(mouseposition, windowList);
+                var tempWindow = new NodeWindow(Orgin, position, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewRouterContent, false, () =>
             {
-                var tempWindow = new RouterWindow(mouseposition, windowList);
+                var tempWindow = new RouterWindow(Orgin, position, windowList);
+                windowList.Add(tempWindow);
+                next = tempWindow;
+            });
+
+            menu.AddItem(nextNewSubCanvasContent, false, () =>
+            {
+                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
@@ -161,7 +169,7 @@ namespace ScriptNodeFlow
                 if (item.Id == Id)
                     continue;
 
-                if(item.windowType == NodeType.Start)
+                if (item.windowType == NodeType.Start)
                     continue;
 
                 selectionList.Add(item);
@@ -187,11 +195,11 @@ namespace ScriptNodeFlow
             #endregion
 
 
-                menu.AddItem(deleteContent, false, () =>
-                {
-                    windowList.Remove(this);
-                });
-            
+            menu.AddItem(deleteContent, false, () =>
+            {
+                windowList.Remove(this);
+            });
+
 
             menu.ShowAsContext();
         }

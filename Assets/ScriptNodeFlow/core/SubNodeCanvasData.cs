@@ -5,14 +5,11 @@ using UnityEngine;
 namespace ScriptNodeFlow
 {
     [Serializable]
-    public class NodeCanvasData : ScriptableObject
+    public class SubNodeCanvasData : ScriptableObject
     {
-        public string shareData;
-
         public StartWindowData start = new StartWindowData();
         public List<NodeWindowData> nodelist = new List<NodeWindowData>();
         public List<RouterWindowData> routerlist = new List<RouterWindowData>();
-        public List<CanvasWindowData> subCanvaslist = new List<CanvasWindowData>();
 
         public WindowDataBase Get(int id)
         {
@@ -25,8 +22,6 @@ namespace ScriptNodeFlow
             data = routerlist.Find(windowData => { return windowData.ID == id; });
             if (data != null)
                 return data;
-
-            data = subCanvaslist.Find(windowData => { return windowData.ID == id; });
 
             return data;
         }

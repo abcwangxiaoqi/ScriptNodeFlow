@@ -14,17 +14,10 @@ namespace ScriptNodeFlow
 
     public abstract class BaseWindow
     {
-        protected static GUIStyle BigLabelStyle;
         protected static GUIStyle NameTextStyle;        
 
         static BaseWindow()
         {
-            BigLabelStyle = new GUIStyle(UnityEditor.EditorStyles.boldLabel);
-            BigLabelStyle.fixedHeight = 25;
-            BigLabelStyle.fontSize = 20;
-            BigLabelStyle.alignment = TextAnchor.MiddleCenter;
-            BigLabelStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-
             NameTextStyle = new GUIStyle(UnityEditor.EditorStyles.textField);
             NameTextStyle.fixedHeight = 15;
             NameTextStyle.fontSize = 12;
@@ -33,17 +26,11 @@ namespace ScriptNodeFlow
             NameTextStyle.normal.textColor = Color.white;
             NameTextStyle.focused.textColor = Color.white;
         }
-
-        //record flag whether is finished completely
-        protected bool passed = false;
-
-        protected State state = State.Idle;
-
-        protected GUIStyle textStyle = EditorStyles.textField;
+        
         protected GUIStyle buttonStyle = EditorStyles.miniButton;
         protected GUIStyle popupStyle = EditorStyles.popup;
-
-        public Vector2 position { get; protected set; }
+        
+        public Vector2 position { get; set; }
         protected abstract Vector2 size { get; }
 
         protected Rect windowRect;
@@ -69,8 +56,9 @@ namespace ScriptNodeFlow
             }
         }
 
-        public BaseWindow(Vector2 pos, List<BaseWindow> _windowList)
+        public BaseWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
         {
+            Orgin = orgin;
             position = pos;
             windowList = _windowList;
 
@@ -78,13 +66,17 @@ namespace ScriptNodeFlow
             Id = r.Next(1, int.MaxValue);
         }
 
-        public BaseWindow(WindowDataBase data, List<BaseWindow> _windowList)
+        protected WindowDataBase windowData { get; private set; }
+        protected string Orgin;
+        public BaseWindow(string orgin,WindowDataBase _data, List<BaseWindow> _windowList)
         {
-            position = data.position;
+            Orgin = orgin;
+            windowData = _data;
+            position = _data.position;
             windowList = _windowList;
 
-            Id = data.ID;
-            Name = data.name;
+            Id = _data.ID;
+            Name = _data.name;
         }
 
         public virtual void draw()
@@ -94,21 +86,23 @@ namespace ScriptNodeFlow
 
             if (Application.isPlaying)
             {
-                if (state == State.Running)
+                if (windowData.runtimeState == RuntimeState.Running)
                 {
-                    BigLabelStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                     Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
-                    GUI.Label(rect, "Running...", BigLabelStyle);
+                    //GUI.Label(rect, "Running...", BigLabelStyle);
+                    GUI.Label(rect, "Running...");
                 }
-                else if (state == State.Error)
+                else if (windowData.runtimeState == RuntimeState.Error)
                 {
-                    BigLabelStyle.normal.textColor = Color.red;
                     Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
-                    GUI.Label(rect, "Error", BigLabelStyle);
+                    //GUI.Label(rect, "Error", BigLabelStyle);
+                    GUI.Label(rect, "Error");
                 }
             }
             
-            windowRect = GUI.Window(Id, windowRect, gui, string.Format("[{0}] {1}",Id,windowType));
+            //GUIContent c = new GUIContent("ddd","sdfasdfasdfasdf");
+            //windowRect = GUI.Window(Id, windowRect, gui, c);
+            windowRect = GUI.Window(Id, windowRect, gui, string.Format("[{0}] {1}", Id, windowType));
         }
 
         protected virtual void gui(int id)
@@ -118,17 +112,18 @@ namespace ScriptNodeFlow
             EditorGUI.EndDisabledGroup();
         }
 
-        public virtual void rightMouseDraw(Vector2 mouseposition)
+        public virtual void rightMouseClick(Vector2 mouseposition)
         {
         }
 
-        public virtual void leftMouseDraw(Event curEvent)
+        public virtual void leftMouseDrag(Vector2 delta)
         {
-            //update position of window acorrding the mouse
-            if (curEvent.type == EventType.MouseDrag)
-            {
-                position += curEvent.delta;
-            }
+             position += delta;
+        }
+
+        public virtual void leftMouseDoubleClick()
+        {
+
         }
 
         public bool isClick(Vector2 mouseposition)
@@ -158,17 +153,6 @@ namespace ScriptNodeFlow
             Vector3 startTan = startPos + Vector3.right * 50;
             Vector3 endTan = endPos + Vector3.left * 50;
             Handles.DrawBezier(startPos, endPos, startTan, endTan, color, null, 4);
-        }
-
-        public void SetState(State _state)
-        {
-            state = _state;
-        }
-
-        
-        public virtual void Pass(params object[] objs)
-        {
-            passed = true;
         }
     }
 }

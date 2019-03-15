@@ -4,23 +4,22 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ScriptNodeFlow
 {
-    public class FixedWindow
+    public class ShareDataWindow
     {
         public string shareData { get; private set; }
 
         int shareDataIndex = 0;
 
         List<string> ShareDataList = new List<string>();
+        
+        private Rect rect;
 
-        GUIStyle shareDataTitle;
-
-        public FixedWindow(string shareDataName)
+        public ShareDataWindow(string shareDataName)
         {
-            windowRect = new Rect(20, 50, 250, 100);
-
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
             Type[] tys = _assembly.GetTypes();
 
@@ -33,26 +32,26 @@ namespace ScriptNodeFlow
                 }
             }
 
-            shareDataTitle = new GUIStyle(UnityEditor.EditorStyles.boldLabel);
-            shareDataTitle.fixedHeight = 25;
-            shareDataTitle.fontSize = 20;
-            shareDataTitle.alignment = TextAnchor.MiddleCenter;
-            shareDataTitle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-
             if (!string.IsNullOrEmpty(shareDataName))
             {
                 shareDataIndex = ShareDataList.IndexOf(shareDataName);
             }
         }
-        Rect windowRect;
-        public void draw()
-        {
-            windowRect = GUI.Window(int.MaxValue, windowRect, gui, string.Empty);
-        }
 
-        void gui(int id)
+        private const float border = 5;
+        Vector2 position = new Vector2(border, 30);
+        private float height = 100;
+        
+
+        public void draw(Rect main)
         {
-            GUILayout.Label("ShareData", shareDataTitle);
+            rect.position = position;
+            rect.size = new Vector2(main.width - 2*border, height);
+
+            //GUILayout.BeginArea(rect,EditorStyles.textArea);
+            GUILayout.BeginArea(rect);
+
+            GUILayout.Label("ShareData", Styles.titleLabel);
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             shareDataIndex = EditorGUILayout.Popup(shareDataIndex, ShareDataList.ToArray());
@@ -67,7 +66,7 @@ namespace ScriptNodeFlow
                 shareData = null;
             }
 
+            GUILayout.EndArea();
         }
     }
-
 }

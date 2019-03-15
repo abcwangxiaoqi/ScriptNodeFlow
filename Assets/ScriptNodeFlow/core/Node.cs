@@ -1,43 +1,36 @@
 ﻿
+using System;
+
 namespace ScriptNodeFlow
 {
     public abstract class Node
     {
-        public RuntimeState State { get; private set; }
-
+        public event Action<bool, string> onFinishEvent;
         protected SharedData shareData;
         public Node(SharedData data)
         {
             shareData = data;
         }
 
-        public void run()
-        {
-            State = RuntimeState.Wait;
-            execute();
-        }
-
-        //reset state when finish
-        //be called by NodeController when state turn finished
-        public void reset()
-        {
-            State = RuntimeState.Idle;
-        }
-
-        protected abstract void execute();
+        public abstract void execute();
 
         //be called when flow is broken
         public virtual void stop()
-        { }
+        {
+
+        }
 
         //you must call this when you're sure the execute method is finished completely,
         //then the current node move to the next one
         //
         //why be designed like this? 
         //cause maybe your execute method includes some asyn operations
-        protected void finish()
+        protected void finish(bool success, string error = null)
         {
-            State = RuntimeState.Finished;
+            if (onFinishEvent != null)
+            {
+                onFinishEvent.Invoke(success, error);
+            }
         }
     }
 }

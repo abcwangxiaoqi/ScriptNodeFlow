@@ -29,7 +29,11 @@ namespace ScriptNodeFlow
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
 
-            generateWindowData(target.nodeFlowData);
+            nodeCanvasData = target.nodeFlowData;
+
+            generateLeftArea();
+
+            generateMainData();
         }
 
         // close the window when playModeStateChanged
@@ -41,6 +45,10 @@ namespace ScriptNodeFlow
             }
         }
 
+        Event curEvent;
+        Vector2 mousePosition;
+        BaseWindow curSelect = null;
+
         protected override void OnGUI()
         {
             if (EditorApplication.isCompiling)
@@ -48,51 +56,57 @@ namespace ScriptNodeFlow
                 Close();
             }
 
-            if (windowList == null)
-                return;
+            curEvent = Event.current;
 
-            foreach (var item in windowList)
+            if (rightArea.Contains(curEvent.mousePosition))
             {
-                if (target.finished)
+                //must minus rightArea.position
+                mousePosition = curEvent.mousePosition - rightArea.position - nodesArea.position;
+
+                // mouse left key
+                if (curEvent.button == 0 && curEvent.isMouse)
                 {
-                    if (!string.IsNullOrEmpty(target.error) && item.Id == target.currentID)
+                    //a window is whether selected
+                    if (curEvent.type == EventType.MouseDown)
                     {
-                        item.SetState(State.Error);
+                        curSelect = windowList.Find((BaseWindow w) =>
+                        {
+                            return w.isClick(mousePosition);
+                        });
+                        if (curSelect != null
+                            && curEvent.clickCount == 2)
+                        {
+                            if (curSelect != null)
+                            {
+                                curSelect.leftMouseDoubleClick();
+                            }
+                        }
                     }
-                    else
+                    else if (curEvent.type == EventType.MouseUp)
                     {
-                        item.SetState(State.Idle);
+                        curSelect = null;
+                    }
+                    else if(curEvent.type == EventType.MouseDrag)
+                    {
+                        if (curSelect != null)
+                        {
+                            curSelect.leftMouseDrag(curEvent.delta);
+                        }
+                        else
+                        {
+                            if (nodesArea.Contains(curEvent.mousePosition))
+                            {
+                                //drag the panel
+                                foreach (var item in windowList)
+                                {
+                                    item.leftMouseDrag(curEvent.delta);
+                                }
+                            }
+                        }
                     }
                 }
-                else
-                {
-                    if (item.Id == target.currentID)
-                    {
-                        item.SetState(State.Running);
-                    }
-                    else
-                    {
-                        item.SetState(State.Idle);
-                    }
-                }
+                this.Repaint();
             }
-
-            foreach (var entityId in target.nodePathMessage)
-            {
-                windowList.Find((BaseWindow w) =>
-                {
-                    return w.Id == entityId;
-                }).Pass();
-            }
-
-            foreach (var router in target.routerPathMessage)
-            {
-                windowList.Find((BaseWindow w) =>
-                {
-                    return w.Id == router.id;
-                }).Pass(router.conditionIndex);
-            }
-
 
             base.OnGUI();
         }

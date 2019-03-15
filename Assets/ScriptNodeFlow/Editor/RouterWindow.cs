@@ -10,20 +10,21 @@ namespace ScriptNodeFlow
     public class RouterWindowCondition
     {
         public string className;
-        public NodeWindow entity;
+        public BaseWindow nextWindow;
         public Vector2 drawPos;
     }
 
     public class RouterWindow : BaseWindow
     {
-        static List<string> allConditionClass = new List<string>();
-        static GUIStyle linkStyle;
+        protected static List<string> allConditionClass = new List<string>();
+        protected static GUIStyle linkStyle;
 
-        static GUIContent newNode = new GUIContent("New Node");
-        static GUIContent deleteNode = new GUIContent("Delte");
+        protected static GUIContent newNode = new GUIContent("New Node");
+        protected static GUIContent newSubCanvas = new GUIContent("New SubCanvas");
+        protected static GUIContent deleteNode = new GUIContent("Delte");
 
-        static GUIStyle defaultLButton = new GUIStyle(EditorStyles.miniButton);
-        static GUIStyle defaultLabel = new GUIStyle(EditorStyles.label);
+        protected static GUIStyle defaultLButton = new GUIStyle(EditorStyles.miniButton);
+        protected static GUIStyle defaultLabel = new GUIStyle(EditorStyles.label);
         static RouterWindow()
         {
             defaultLButton.fixedWidth = 17;
@@ -51,7 +52,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
+        protected List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
 
         public override NodeType windowType
         {
@@ -61,7 +62,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        Vector2 _size = new Vector2(150, 100);
+        protected Vector2 _size = new Vector2(150, 100);
         protected override Vector2 size
         {
             get
@@ -70,14 +71,12 @@ namespace ScriptNodeFlow
             }
         }
 
-        //runtime ,the index be justified
-        int runtimePassedConditionIndex = -1;
 
-        NodeWindow defaultEntity = null;
-        Vector2 defaultPos;
+        protected BaseWindow defaultNextWindow = null;
+        protected Vector2 defaultPos;
 
-        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList)
-            : base(pos, _windowList)
+        public RouterWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
+            : base(orgin,pos, _windowList)
         {
             Name = "Router";
 
@@ -85,15 +84,15 @@ namespace ScriptNodeFlow
 
         }
 
-        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+        public RouterWindow(string orgin, RouterWindowData itemData, List<BaseWindow> _windowList)
+            : base(orgin,itemData, _windowList)
         {
             addHeight = buttonStyle.lineHeight + 8;
         }
 
-        public void SetDefault(NodeWindow defEntity)
+        public void SetDefault(BaseWindow defEntity)
         {
-            defaultEntity = defEntity;
+            defaultNextWindow = defEntity;
         }
 
         public void SetConditions(List<RouterWindowCondition> conditionEntities)
@@ -115,23 +114,23 @@ namespace ScriptNodeFlow
 
                 cond.className = item.className;
 
-                if (item.entity != null)
+                if (item.nextWindow != null)
                 {
-                    cond.nextWindowId = item.entity.Id;
+                    cond.nextWindowId = item.nextWindow.Id;
                 }
 
                 data.conditions.Add(cond);
             }
 
-            if (defaultEntity != null)
+            if (defaultNextWindow != null)
             {
-                data.nextWindowId = defaultEntity.Id;
+                data.nextWindowId = defaultNextWindow.Id;
             }
 
             return data;
         }
 
-        Color color;
+        protected Color color;
 
         public override void draw()
         {
@@ -144,12 +143,12 @@ namespace ScriptNodeFlow
             {
                 RouterWindowCondition item = conditions[i];
 
-                if (item.entity == null)
+                if (item.nextWindow == null)
                     continue;
 
-                if (!windowList.Contains(item.entity))
+                if (!windowList.Contains(item.nextWindow))
                 {
-                    item.entity = null;
+                    item.nextWindow = null;
                     continue;
                 }
 
@@ -158,22 +157,24 @@ namespace ScriptNodeFlow
 
                 color = Color.white;
 
-                if (Application.isPlaying && passed && runtimePassedConditionIndex == i)
+                if (Application.isPlaying 
+                    && windowData.runtimeState == RuntimeState.Finished 
+                    && (windowData as RouterWindowData).runtimeNextId == item.nextWindow.Id)
                 {
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
-                DrawArrow(item.drawPos + position, item.entity.In, color);
+                DrawArrow(item.drawPos + position, item.nextWindow.In, color);
             }
             #endregion
 
             #region default
-            if (defaultEntity == null)
+            if (defaultNextWindow == null)
                 return;
 
-            if (!windowList.Contains(defaultEntity))
+            if (!windowList.Contains(defaultNextWindow))
             {
-                defaultEntity = null;
+                defaultNextWindow = null;
                 return;
             }
             if (defaultPos == Vector2.zero)
@@ -181,18 +182,20 @@ namespace ScriptNodeFlow
 
             color = Color.white;
 
-            if (Application.isPlaying && passed && runtimePassedConditionIndex == -1)
+            if (Application.isPlaying 
+                && windowData.runtimeState == RuntimeState.Finished 
+                && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
             {
                 color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
             }
 
-            DrawArrow(defaultPos + position, defaultEntity.In, color);
+            DrawArrow(defaultPos + position, defaultNextWindow.In, color);
             #endregion
         }
 
 
-        float addHeight;
-        Rect rect;
+        protected float addHeight;
+        protected Rect rect;
         protected override void gui(int id)
         {
             base.gui(id);
@@ -221,7 +224,7 @@ namespace ScriptNodeFlow
             GUI.DragWindow();
         }
 
-        void drawConditions()
+        protected virtual void drawConditions()
         {
             for (int i = 0; i < conditions.Count; i++)
             {
@@ -237,14 +240,12 @@ namespace ScriptNodeFlow
                 }
 
                 //删除
-                GUI.color = Color.red;
-                if (GUILayout.Button("-", buttonStyle))
+                if (GUILayout.Button("", Styles.miniDelButton))
                 {
                     conditions.RemoveAt(i);
                     i--;
                     _size.y -= addHeight;
                 }
-                GUI.color = Color.white;
 
                 //连接选择
                 GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
@@ -254,34 +255,41 @@ namespace ScriptNodeFlow
 
                     menu.AddItem(newNode, false, () =>
                     {
-                        var tempWindow = new NodeWindow(new Vector2(50, 50) + position, windowList);
+                        var tempWindow = new NodeWindow(Orgin,new Vector2(50, 50) + position, windowList);
                         windowList.Add(tempWindow);
-                        rc.entity = tempWindow;
+                        rc.nextWindow = tempWindow;
+                    });
+
+                    menu.AddItem(newSubCanvas, false, () =>
+                    {
+                        var tempWindow = new SubCanvasWindow(Orgin,new Vector2(50, 50) + position, windowList);
+                        windowList.Add(tempWindow);
+                        rc.nextWindow = tempWindow;
                     });
 
                     menu.AddSeparator("");
 
-                    List<NodeWindow> selectionList = new List<NodeWindow>();
+                    List<BaseWindow> selectionList = new List<BaseWindow>();
                     foreach (var item in windowList)
                     {
-                        if (item.windowType == NodeType.Node)
+                        if (item.windowType == NodeType.Node || item.windowType == NodeType.SubCanvas)
                         {
-                            selectionList.Add(item as NodeWindow);
+                            selectionList.Add(item);
                         }
                     }
 
                     foreach (var item in selectionList)
                     {
-                        bool select = (rc.entity != null) && rc.entity.Id == item.Id;
+                        bool select = (rc.nextWindow != null) && rc.nextWindow.Id == item.Id;
                         menu.AddItem(new GUIContent(string.Format("[{0}][{1}] {2}", item.Id, item.windowType, item.Name)), select, () =>
                         {
                             if (select)
                             {
-                                rc.entity = null;
+                                rc.nextWindow = null;
                             }
                             else
                             {
-                                rc.entity = item;
+                                rc.nextWindow = item;
                             }
                         });
                     }
@@ -292,7 +300,7 @@ namespace ScriptNodeFlow
 
                 GUI.color = Color.white;
 
-                if (rc.entity == null)
+                if (rc.nextWindow == null)
                 {
                     linkStyle.normal.textColor = Color.gray;
                 }
@@ -314,7 +322,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        void drawDefualt()
+        protected virtual void drawDefualt()
         {
             GUILayout.BeginHorizontal();
             
@@ -328,32 +336,39 @@ namespace ScriptNodeFlow
 
                 menu.AddItem(newNode, false, () =>
                 {
-                    var tempWindow = new NodeWindow(new Vector2(50, 50) + position, windowList);
+                    var tempWindow = new NodeWindow(Orgin, position, windowList);
                     windowList.Add(tempWindow);
-                    defaultEntity = tempWindow;
+                    defaultNextWindow = tempWindow;
+                });
+
+                menu.AddItem(newSubCanvas, false, () =>
+                {
+                    var tempWindow = new RouterWindow(Orgin, position, windowList);
+                    windowList.Add(tempWindow);
+                    defaultNextWindow = tempWindow;
                 });
 
                 List<BaseWindow> selectionList = new List<BaseWindow>();
                 foreach (var item in windowList)
                 {
-                    if (item.windowType == NodeType.Node)
+                    if (item.windowType == NodeType.Node || item.windowType == NodeType.SubCanvas)
                     {
-                        selectionList.Add(item as NodeWindow);
+                        selectionList.Add(item);
                     }
                 }
 
                 foreach (var item in selectionList)
                 {
-                    bool select = (defaultEntity != null) && defaultEntity.Id == item.Id;
+                    bool select = (defaultNextWindow != null) && defaultNextWindow.Id == item.Id;
                     menu.AddItem(new GUIContent(item.Id + " " + item.Name), select, () =>
                     {
                         if (select)
                         {
-                            defaultEntity = null;
+                            defaultNextWindow = null;
                         }
                         else
                         {
-                            defaultEntity = item as NodeWindow;
+                            defaultNextWindow = item;
                         }
                     });
                 }
@@ -361,7 +376,7 @@ namespace ScriptNodeFlow
                 menu.ShowAsContext();
             }
 
-            if (defaultEntity == null)
+            if (defaultNextWindow == null)
             {
                 linkStyle.normal.textColor = Color.gray;
             }
@@ -384,7 +399,7 @@ namespace ScriptNodeFlow
             GUILayout.EndHorizontal();
         }
 
-        public override void rightMouseDraw(Vector2 mouseposition)
+        public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
 
@@ -394,13 +409,6 @@ namespace ScriptNodeFlow
             });
 
             menu.ShowAsContext();
-        }
-
-        public override void Pass(params object[] objs)
-        {
-            base.Pass(objs);
-
-            runtimePassedConditionIndex = (int)objs[0];
         }
     }
 }

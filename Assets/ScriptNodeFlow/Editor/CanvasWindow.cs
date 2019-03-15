@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,16 +8,19 @@ using Object = UnityEngine.Object;
 
 namespace ScriptNodeFlow
 {
-    public class CanvasWindow : BaseWindow
+    public class SubCanvasWindow : BaseWindow
     {
         static List<string> allEntityClass = new List<string>();
 
+        static GUIContent doubleClickContent = new GUIContent("double click to open canvas");
+
         static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
         static GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
+        static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
         static GUIContent deleteContent = new GUIContent("Delte");
         static string separator = "Next/";
 
-        static CanvasWindow()
+        static SubCanvasWindow()
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
             Type[] tys = _assembly.GetTypes();
@@ -33,12 +34,12 @@ namespace ScriptNodeFlow
             }
         }
 
-        protected NodeCanvasData canvas { get; private set; }
+        protected SubNodeCanvasData canvas { get; private set; }
 
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 100);
+        Vector2 _size = new Vector2(150, 70);
         protected override Vector2 size
         {
             get
@@ -52,18 +53,18 @@ namespace ScriptNodeFlow
         {
             get
             {
-                return NodeType.Canvas;
+                return NodeType.SubCanvas;
             }
         }
-
-        public CanvasWindow(Vector2 pos, List<BaseWindow> _windowList)
-            : base(pos, _windowList)
+        
+        public SubCanvasWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
+            : base(orgin,pos, _windowList)
         {
             Name = "Canvas";
         }
 
-        public CanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+        public SubCanvasWindow(string orgin,CanvasWindowData itemData, List<BaseWindow> _windowList)
+            : base(orgin,itemData, _windowList)
         {
             canvas = itemData.canvasData;
         }
@@ -90,6 +91,7 @@ namespace ScriptNodeFlow
             return dataEntity;
         }
 
+        
         public override void draw()
         {
             base.draw();
@@ -105,7 +107,7 @@ namespace ScriptNodeFlow
 
                 Color color = Color.white;
 
-                if (Application.isPlaying && passed)
+                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
@@ -115,13 +117,31 @@ namespace ScriptNodeFlow
         }
 
         private Object obj;
-        
+        private SubNodeCanvasData tempCanvas;
+        private string title;
         protected override void gui(int id)
         {
-            base.gui(id);
-            
+            //base.gui(id);
+
+            title = canvas == null ? "" : canvas.name;
+            GUILayout.Label(title, Styles.winTitleLabel);
+
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-           canvas = (NodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(NodeCanvasData),false);
+            tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);
+
+            if (tempCanvas!=null && AssetDatabase.GetAssetPath(tempCanvas) == Orgin)
+            {
+                canvas = tempCanvas;
+            }
+            else if(tempCanvas == null)
+            {
+                canvas = null;
+            }
+            else
+            {
+                tempCanvas = canvas;
+            }
+
             EditorGUI.EndDisabledGroup();
 
             GUI.DragWindow();
@@ -129,21 +149,28 @@ namespace ScriptNodeFlow
 
         GenericMenu menu;
 
-        public override void rightMouseDraw(Vector2 mouseposition)
+        public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
 
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(mouseposition, windowList);
+                var tempWindow = new NodeWindow(Orgin, position, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewRouterContent, false, () =>
             {
-                var tempWindow = new RouterWindow(mouseposition, windowList);
+                var tempWindow = new RouterWindow(Orgin, position, windowList);
+                windowList.Add(tempWindow);
+                next = tempWindow;
+            });
+
+            menu.AddItem(nextNewSubCanvasContent, false, () =>
+            {
+                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
@@ -188,6 +215,15 @@ namespace ScriptNodeFlow
             });
 
             menu.ShowAsContext();
+        }
+
+        public override void leftMouseDoubleClick()
+        {
+            if(canvas==null)
+                return;
+
+            DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
+                canvas);
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,11 +7,10 @@ namespace ScriptNodeFlow
 {
     public class StartWindow : BaseWindow
     {
-        static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
-        static GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
-        static GUIContent deleteContent = new GUIContent("Delte");
-        static string separator = "Next/";
-        
+        protected static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
+        protected static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
+        protected static string separator = "Next/";
+
         //下一节点
         public BaseWindow next { get; protected set; }
 
@@ -35,9 +31,9 @@ namespace ScriptNodeFlow
                 return NodeType.Start;
             }
         }
-        
-        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+
+        public StartWindow(string orgin, StartWindowData itemData, List<BaseWindow> _windowList)
+            : base(orgin,itemData, _windowList)
         {
         }
 
@@ -74,7 +70,7 @@ namespace ScriptNodeFlow
 
                 Color color = Color.white;
 
-                if (Application.isPlaying && passed)
+                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
@@ -85,20 +81,25 @@ namespace ScriptNodeFlow
 
         protected override void gui(int id)
         {
-            GUILayout.Label("Start", BigLabelStyle);
+            GUILayout.Label("Start", Styles.titleLabel);
 
             GUI.DragWindow();
         }
-
-        GenericMenu menu;
-
-        public override void rightMouseDraw(Vector2 mouseposition)
+        
+        public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(mouseposition, windowList);
+                var tempWindow = new NodeWindow(Orgin, position, windowList);
+                windowList.Add(tempWindow);
+                next = tempWindow;
+            });
+
+            menu.AddItem(nextNewSubCanvasContent, false, () =>
+            {
+                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
@@ -112,7 +113,7 @@ namespace ScriptNodeFlow
             {
                 if (item.Id == Id)
                     continue;
-                if(item.windowType == NodeType.Router)
+                if (item.windowType == NodeType.Router)
                     continue;
 
                 selectionList.Add(item);
