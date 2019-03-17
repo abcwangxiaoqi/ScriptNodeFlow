@@ -5,6 +5,17 @@ using UnityEngine;
 
 namespace ScriptNodeFlow
 {
+    public class GUIContents
+    {
+        public static GUIContent add
+        {
+            get
+            {
+                return EditorGUIUtility.IconContent("SVN_AddedLocal");
+            }
+        }
+    }
+    
     public class Styles
     {
         public static GUISkin skin;
@@ -37,6 +48,36 @@ namespace ScriptNodeFlow
         public static GUIStyle canvasTitleLabel
         {
             get { return skin.GetStyle("canvasTitleLabel"); }
+        }
+
+        public static GUIStyle wrongLabel
+        {
+            get { return skin.GetStyle("wrongLabel"); }
+        }
+
+        public static GUIStyle rightLabel
+        {
+            get { return skin.GetStyle("rightLabel"); }
+        }
+
+        public static GUIStyle tipLabel
+        {
+            get { return skin.GetStyle("tipLabel"); }
+        }
+
+        public static GUIStyle tipErrorLabel
+        {
+            get { return skin.GetStyle("tipErrorLabel"); }
+        }
+
+        public static GUIStyle addButton
+        {
+            get { return skin.GetStyle("addButton"); }
+        }
+
+        public static GUIStyle winNameText
+        {
+            get { return skin.GetStyle("winNameText"); }
         }
     }
 }

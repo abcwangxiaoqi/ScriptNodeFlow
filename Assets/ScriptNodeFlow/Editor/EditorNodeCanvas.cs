@@ -87,7 +87,7 @@ namespace ScriptNodeFlow
         string nodeAssetPath = "NODEASSETPATH";
 
         protected override void OnGUI()
-        {           
+        {   
             if (EditorApplication.isCompiling)
             {
                 ShowNotification(comiling);

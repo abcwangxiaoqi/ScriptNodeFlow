@@ -119,6 +119,7 @@ namespace ScriptNodeFlow
         {
             base.gui(id);
 
+
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             classIndex = EditorGUILayout.Popup(classIndex, allEntityClass.ToArray(), popupStyle);
             EditorGUI.EndDisabledGroup();
@@ -127,6 +128,20 @@ namespace ScriptNodeFlow
             {
                 ClassName = allEntityClass[classIndex];
             }
+
+            GUILayout.BeginHorizontal();
+            if (classIndex < 0)
+            {
+                GUILayout.Label("", Styles.wrongLabel);
+                GUILayout.Label("Selection is null", Styles.tipErrorLabel);
+            }
+            else
+            {
+                GUILayout.Label("", Styles.rightLabel);
+                GUILayout.Label("Everything is right", Styles.tipLabel);
+            }
+
+            GUILayout.EndHorizontal();
 
             GUI.DragWindow();
         }
@@ -140,21 +155,21 @@ namespace ScriptNodeFlow
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(Orgin, position, windowList);
+                var tempWindow = new NodeWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewRouterContent, false, () =>
             {
-                var tempWindow = new RouterWindow(Orgin, position, windowList);
+                var tempWindow = new RouterWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewSubCanvasContent, false, () =>
             {
-                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
+                var tempWindow = new SubCanvasWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });

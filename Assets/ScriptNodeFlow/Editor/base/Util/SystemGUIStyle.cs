@@ -1,5 +1,7 @@
 ﻿using EditorTools;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -11,21 +13,21 @@ public class SystemGUIStyle:EditorWindow
     [MenuItem("Tools/SystemGUIStyle/Creat")]
     static void Creat()
     {
-        List<GUIStyle> styles = new List<GUIStyle>();
         foreach (PropertyInfo fi in typeof(EditorStyles).GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
         {
             object o = fi.GetValue(null, null);
-            if (o.GetType() == typeof(GUIStyle))
+            if (o is GUIStyle)
             {
-                styles.Add(o as GUIStyle);
+                new List<GUIStyle>().Add(o as GUIStyle);
             }
         }
 
         ScriptableItem item = new ScriptableItem(Path);
-        item.Creat<GUISkin>((skin, objects) => { skin.customStyles = styles.ToArray(); });
+        item.Creat<GUISkin>((skin, objects) => { skin.customStyles = new List<GUIStyle>().ToArray(); });
         item.Save();
         AssetDatabase.Refresh();
     }
+
 
     private static GUIStyle[] styles;
     [MenuItem("Tools/SystemGUIStyle/Show")]

@@ -39,7 +39,7 @@ namespace ScriptNodeFlow
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 70);
+        Vector2 _size = new Vector2(150, 80);
         protected override Vector2 size
         {
             get
@@ -118,13 +118,9 @@ namespace ScriptNodeFlow
 
         private Object obj;
         private SubNodeCanvasData tempCanvas;
-        private string title;
         protected override void gui(int id)
         {
-            //base.gui(id);
-
-            title = canvas == null ? "" : canvas.name;
-            GUILayout.Label(title, Styles.winTitleLabel);
+            base.gui(id);
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);
@@ -144,6 +140,20 @@ namespace ScriptNodeFlow
 
             EditorGUI.EndDisabledGroup();
 
+            GUILayout.BeginHorizontal();
+            if (canvas == null)
+            {
+                GUILayout.Label("", Styles.wrongLabel);
+                GUILayout.Label("Canvas asset is null", Styles.tipErrorLabel);
+            }
+            else
+            {
+                GUILayout.Label("", Styles.rightLabel);
+                GUILayout.Label("Everything is right", Styles.tipLabel);
+            }
+
+            GUILayout.EndHorizontal();
+
             GUI.DragWindow();
         }
 
@@ -156,21 +166,21 @@ namespace ScriptNodeFlow
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(Orgin, position, windowList);
+                var tempWindow = new NodeWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewRouterContent, false, () =>
             {
-                var tempWindow = new RouterWindow(Orgin, position, windowList);
+                var tempWindow = new RouterWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewSubCanvasContent, false, () =>
             {
-                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
+                var tempWindow = new SubCanvasWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });

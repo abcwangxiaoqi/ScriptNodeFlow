@@ -25,6 +25,8 @@ namespace ScriptNodeFlow
 
         protected static GUIStyle defaultLButton = new GUIStyle(EditorStyles.miniButton);
         protected static GUIStyle defaultLabel = new GUIStyle(EditorStyles.label);
+
+        protected static GUIContent newCondition = new GUIContent("New", "add a new condition");
         static RouterWindow()
         {
             defaultLButton.fixedWidth = 17;
@@ -62,7 +64,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        protected Vector2 _size = new Vector2(150, 100);
+        protected Vector2 _size = new Vector2(150, 115);
         protected override Vector2 size
         {
             get
@@ -203,7 +205,8 @@ namespace ScriptNodeFlow
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
             GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-            if (GUILayout.Button("Add", buttonStyle))
+
+            if (GUILayout.Button(newCondition, buttonStyle))
             {
                 conditions.Add(new RouterWindowCondition());
 
@@ -220,6 +223,31 @@ namespace ScriptNodeFlow
             drawDefualt();
 
             EditorGUI.EndDisabledGroup();
+
+            GUILayout.BeginHorizontal();
+
+            bool right = true;
+            foreach (var item in conditions)
+            {
+                if(string.IsNullOrEmpty(item.className))
+                {
+                    right = false;
+                }
+            }
+
+
+            if (!right)
+            {
+                GUILayout.Label("", Styles.wrongLabel);
+                GUILayout.Label("Selection is null", Styles.tipErrorLabel);
+            }
+            else
+            {
+                GUILayout.Label("", Styles.rightLabel);
+                GUILayout.Label("Everything is right", Styles.tipLabel);
+            }
+
+            GUILayout.EndHorizontal();
 
             GUI.DragWindow();
         }

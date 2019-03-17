@@ -115,7 +115,7 @@ namespace ScriptNodeFlow
 
             if (!Application.isPlaying)
             {
-                if (GUILayout.Button("Add", EditorStyles.miniButton))
+                if (GUILayout.Button("New", EditorStyles.miniButton))
                 {
                     if (!string.IsNullOrEmpty(addSubName))
                     {

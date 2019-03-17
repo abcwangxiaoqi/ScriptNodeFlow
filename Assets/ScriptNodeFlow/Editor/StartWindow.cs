@@ -92,14 +92,14 @@ namespace ScriptNodeFlow
 
             menu.AddItem(nextNewNodeContent, false, () =>
             {
-                var tempWindow = new NodeWindow(Orgin, position, windowList);
+                var tempWindow = new NodeWindow(Orgin, mouseposition+new Vector2(50,50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });
 
             menu.AddItem(nextNewSubCanvasContent, false, () =>
             {
-                var tempWindow = new SubCanvasWindow(Orgin, position, windowList);
+                var tempWindow = new SubCanvasWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
                 windowList.Add(tempWindow);
                 next = tempWindow;
             });

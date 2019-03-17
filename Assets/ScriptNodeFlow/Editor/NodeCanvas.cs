@@ -66,7 +66,7 @@ namespace ScriptNodeFlow
         protected Rect rightArea = new Rect(toolWidth + 3* border, border, 0, 0);
 
         private const float navigationAreaH = 20;
-        Rect navigationArea = new Rect(5,5,0,0);
+        Rect navigationArea = new Rect(0,0,0,0);
         protected Rect nodesArea = new Rect();
 
         protected virtual void OnGUI()
@@ -85,7 +85,7 @@ namespace ScriptNodeFlow
 
             #region navigation
 
-            navigationArea.size = new Vector2(rightArea.width - 2 * border, navigationAreaH);
+            navigationArea.size = new Vector2(rightArea.width, navigationAreaH);
             GUILayout.BeginArea(navigationArea);
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
@@ -112,8 +112,8 @@ namespace ScriptNodeFlow
 
             #region nodesArea
 
-            nodesArea = new Rect(5, navigationArea.height + border, rightArea.width - 2 * border,
-                rightArea.height - navigationArea.height - 2 * border);
+            nodesArea = new Rect(border, navigationArea.height + border, rightArea.width - 2 * border,
+                rightArea.height - navigationArea.height - 2*border);
             GUILayout.BeginArea(nodesArea);
 
             // Note：GUI.Window must is between BeginWindows() and EndWindows()
