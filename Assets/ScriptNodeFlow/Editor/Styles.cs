@@ -21,8 +21,14 @@ namespace ScriptNodeFlow
         public static GUISkin skin;
         static Styles()
         {
-            //skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/ScriptNodeFlow/Editor/GUISkin.guiskin");
-            skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkin.guiskin");
+            if (EditorGUIUtility.isProSkin)
+            {
+                skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPro.guiskin");
+            }
+            else
+            {
+                skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPersonal.guiskin");
+            }
         }
 
         public static GUIStyle delButton
