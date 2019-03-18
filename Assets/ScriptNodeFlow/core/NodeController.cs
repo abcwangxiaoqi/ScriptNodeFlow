@@ -39,6 +39,8 @@ namespace ScriptNodeFlow
             current = nodeFlowData.start;
             current.reset();
 
+            shareData.reset();
+
             finished = false;
         }
 
@@ -122,6 +124,7 @@ namespace ScriptNodeFlow
 
         private void OnDestroy()
         {
+            shareData.Dispose();
             shareData = null;
 
             if (finished)
