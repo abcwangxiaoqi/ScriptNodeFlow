@@ -46,6 +46,7 @@ namespace ScriptNodeFlow
             Focus();
             canvasType = CanvasType.Main;
             generateMainData();
+            Repaint();
         }
 
         protected virtual void OpenSubCanvas(object[] objs)
@@ -54,6 +55,7 @@ namespace ScriptNodeFlow
             subNodeCanvasData = objs[0] as SubNodeCanvasData;
             canvasType = CanvasType.Sub;
             generateSubData();
+            Repaint();
         }
 
         protected virtual void Update()
@@ -62,17 +64,17 @@ namespace ScriptNodeFlow
         private const float border = 5;
         private const float toolWidth = 200;
 
-        protected Rect leftArea=new Rect(border, border, 0,0);
-        protected Rect rightArea = new Rect(toolWidth + 3* border, border, 0, 0);
+        protected Rect leftArea = new Rect(border, border, 0, 0);
+        protected Rect rightArea = new Rect(toolWidth + 3 * border, border, 0, 0);
 
         private const float navigationAreaH = 20;
-        Rect navigationArea = new Rect(0,0,0,0);
+        Rect navigationArea = new Rect(0, 0, 0, 0);
         protected Rect nodesArea = new Rect();
 
         protected virtual void OnGUI()
         {
 
-            leftArea.size=new Vector2(toolWidth, position.height-2*border);
+            leftArea.size = new Vector2(toolWidth, position.height - 2 * border);
             rightArea.size = new Vector2(position.width - toolWidth - 4 * border, position.height - 2 * border);
 
             GUILayout.BeginArea(leftArea, EditorStyles.textArea);
@@ -81,7 +83,8 @@ namespace ScriptNodeFlow
             subCanvasListWindow.draw(leftArea);
             GUILayout.EndArea();
 
-            GUILayout.BeginArea(rightArea, EditorStyles.textArea);
+            //GUILayout.BeginArea(rightArea, EditorStyles.textArea);
+            GUILayout.BeginArea(rightArea, Styles.canvasArea);
 
             #region navigation
 
@@ -111,13 +114,13 @@ namespace ScriptNodeFlow
             #endregion
 
             #region nodesArea
+            
+            BeginWindows();
 
             nodesArea = new Rect(border, navigationArea.height + border, rightArea.width - 2 * border,
-                rightArea.height - navigationArea.height - 2*border);
+                rightArea.height - navigationArea.height - 2 * border);
             GUILayout.BeginArea(nodesArea);
 
-            // Note：GUI.Window must is between BeginWindows() and EndWindows()
-            BeginWindows();
 
             if (windowList != null)
             {
@@ -185,16 +188,16 @@ namespace ScriptNodeFlow
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new StartWindow(Orgin,nodeCanvasData.start, windowList));
+            windowList.Add(new StartWindow(Orgin, nodeCanvasData.start, windowList));
 
             foreach (var item in nodeCanvasData.nodelist)
             {
-                windowList.Add(new NodeWindow(Orgin,item, windowList));
+                windowList.Add(new NodeWindow(Orgin, item, windowList));
             }
 
             foreach (var item in nodeCanvasData.routerlist)
             {
-                windowList.Add(new RouterWindow(Orgin,item, windowList));
+                windowList.Add(new RouterWindow(Orgin, item, windowList));
             }
 
             foreach (var item in nodeCanvasData.subCanvaslist)
@@ -216,7 +219,7 @@ namespace ScriptNodeFlow
                         (item as NodeWindow).SetNext(next);
                     }
                 }
-                else if(item.windowType == NodeType.Router)
+                else if (item.windowType == NodeType.Router)
                 {
                     RouterWindowData edata = nodeCanvasData.routerlist.Find(data => { return data.ID == item.Id; });
                     RouterWindow win = item as RouterWindow;
@@ -239,7 +242,7 @@ namespace ScriptNodeFlow
                     }
                     win.SetConditions(conditions);
                 }
-                else if(item.windowType == NodeType.SubCanvas)
+                else if (item.windowType == NodeType.SubCanvas)
                 {
                     CanvasWindowData edata = nodeCanvasData.subCanvaslist.Find(data => { return data.ID == item.Id; });
 
@@ -268,16 +271,16 @@ namespace ScriptNodeFlow
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new SubStartWindow(Orgin,subNodeCanvasData.start, windowList));
+            windowList.Add(new SubStartWindow(Orgin, subNodeCanvasData.start, windowList));
 
             foreach (var item in subNodeCanvasData.nodelist)
             {
-                windowList.Add(new SubNodeWindow(Orgin,item, windowList));
+                windowList.Add(new SubNodeWindow(Orgin, item, windowList));
             }
 
             foreach (var item in subNodeCanvasData.routerlist)
             {
-                windowList.Add(new SubRouterWindow(Orgin,item, windowList));
+                windowList.Add(new SubRouterWindow(Orgin, item, windowList));
             }
 
             //set next Node
@@ -334,7 +337,7 @@ namespace ScriptNodeFlow
         void toolbarFocus()
         {
             BaseWindow start = windowList.Find(baseWindow => { return baseWindow.windowType == NodeType.Start; });
-            
+
             Vector2 center = Vector2.Scale(nodesArea.size, new Vector2(0.2f, 0.4f));
 
             Vector2 dis = center - start.position;
@@ -346,7 +349,3 @@ namespace ScriptNodeFlow
         }
     }
 }
-
-
-
-

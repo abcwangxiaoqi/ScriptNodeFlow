@@ -14,7 +14,9 @@ namespace ScriptNodeFlow
 
     public abstract class BaseWindow
     {
-        protected static GUIStyle NameTextStyle;        
+        protected static GUIStyle NameTextStyle;
+        protected static float connectPortSize = 12;
+        protected static float connectPortOffset = 3;
 
         static BaseWindow()
         {
@@ -41,18 +43,43 @@ namespace ScriptNodeFlow
         public int Id { get; private set; }
         public string Name { get; protected set; }
 
+        public BaseWindow parent { get; protected set; }
+
         public Vector2 In
         {
             get
             {
-                return position + new Vector2(0, size.y / 2);
+                return position + new Vector2(0, size.y / 2) + new Vector2(-connectPortSize+connectPortOffset, 0);
             }
         }
+
         public Vector2 Out
         {
             get
             {
                 return position + new Vector2(size.x, size.y / 2);
+            }
+        }
+
+        public Rect OutPortRect
+        {
+            get
+            {
+                Rect rect = new Rect();
+                rect.position = position + new Vector2(size.x- connectPortOffset, (size.y- connectPortSize) / 2);
+                rect.size = new Vector2(connectPortSize,connectPortSize);
+                return rect;
+            }
+        }
+
+        public Rect InPortRect
+        {
+            get
+            {
+                Rect rect = new Rect();
+                rect.position = position + new Vector2(-connectPortSize+ connectPortOffset, (size.y - connectPortSize) / 2);
+                rect.size = new Vector2(connectPortSize, connectPortSize);
+                return rect;
             }
         }
 
@@ -99,10 +126,12 @@ namespace ScriptNodeFlow
                     GUI.Label(rect, "Error");
                 }
             }
-            
-            //GUIContent c = new GUIContent("ddd","sdfasdfasdfasdf");
-            //windowRect = GUI.Window(Id, windowRect, gui, c);
-            windowRect = GUI.Window(Id, windowRect, gui, string.Format("[{0}] {1}", Id, windowType));
+
+            GUI.Window(Id, windowRect, gui, windowType.ToString());
+
+            //GUILayout.BeginArea(windowRect, windowType.ToString(), GUI.skin.window);
+            //gui(Id);
+            //GUILayout.EndArea();
         }
 
         protected virtual void gui(int id)
@@ -110,6 +139,11 @@ namespace ScriptNodeFlow
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             Name = GUILayout.TextField(Name, NameTextStyle);
             EditorGUI.EndDisabledGroup();
+        }
+
+        protected Vector2 GetOutPositionByPort(Rect rect)
+        {
+            return rect.position + new Vector2(connectPortSize, connectPortSize / 2);
         }
 
         public virtual void rightMouseClick(Vector2 mouseposition)
@@ -153,6 +187,11 @@ namespace ScriptNodeFlow
             Vector3 startTan = startPos + Vector3.right * 50;
             Vector3 endTan = endPos + Vector3.left * 50;
             Handles.DrawBezier(startPos, endPos, startTan, endTan, color, null, 4);
+        }
+
+        public void SetParent(BaseWindow entity)
+        {
+            parent = entity;
         }
     }
 }

@@ -125,7 +125,7 @@ namespace ScriptNodeFlow
                 {
                     ShowMenu();
                 }
-                else if(curEvent.button == 0 && curEvent.isMouse)
+                else if (curEvent.button == 0 && curEvent.isMouse)
                 {
                     //a window is whether selected
                     if (curEvent.type == EventType.MouseDown)
@@ -134,7 +134,7 @@ namespace ScriptNodeFlow
                         {
                             return w.isClick(mousePosition);
                         });
-                        if (curSelect != null 
+                        if (curSelect != null
                             && curEvent.clickCount == 2)
                         {
                             if (curSelect != null)

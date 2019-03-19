@@ -39,7 +39,17 @@ namespace ScriptNodeFlow
 
         public void SetNext(BaseWindow entity)
         {
+            if (entity == null && next != null)
+            {
+                next.SetParent(null);
+            }
+
             next = entity;
+
+            if (entity != null)
+            {
+                entity.SetParent(this);
+            }
         }
 
         public override WindowDataBase GetData()
@@ -54,6 +64,8 @@ namespace ScriptNodeFlow
 
             return dataEntity;
         }
+
+        private bool connectFlag = false;
 
         public override void draw()
         {
@@ -75,70 +87,53 @@ namespace ScriptNodeFlow
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
-                DrawArrow(Out, next.In, color);
+                DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
+
+            #region draw connect port
+
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+
+                SetNext(null);
+               
+                connectFlag = true;
+            }
+
+            if (connectFlag)
+            {
+                Event curEvent = Event.current;
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+
+
+                if (curEvent.button == 1) // mouse right key
+                {
+                    connectFlag = false;
+                }
+                else if (curEvent.button == 0 && curEvent.isMouse)
+                {
+                    if (curEvent.type == EventType.MouseUp)
+                    {
+                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
+
+                        if (win != null
+                            && win.Id != Id
+                            && win.windowType != NodeType.Start)
+                        {
+                            SetNext(win);
+                        }
+
+                        connectFlag = false;
+                    }
+                }
+            }
+
+            #endregion
         }
 
         protected override void gui(int id)
         {
             GUILayout.Label("Start", Styles.titleLabel);
-
-            GUI.DragWindow();
-        }
-        
-        public override void rightMouseClick(Vector2 mouseposition)
-        {
-            GenericMenu menu = new GenericMenu();
-
-            menu.AddItem(nextNewNodeContent, false, () =>
-            {
-                var tempWindow = new NodeWindow(Orgin, mouseposition+new Vector2(50,50), windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddItem(nextNewSubCanvasContent, false, () =>
-            {
-                var tempWindow = new SubCanvasWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddSeparator(separator);
-
-            #region select the next one
-            List<BaseWindow> selectionList = new List<BaseWindow>();
-
-            foreach (var item in windowList)
-            {
-                if (item.Id == Id)
-                    continue;
-                if (item.windowType == NodeType.Router)
-                    continue;
-
-                selectionList.Add(item);
-            }
-
-            foreach (var item in selectionList)
-            {
-                bool select = (next != null) && next.Id == item.Id;
-
-                menu.AddItem(new GUIContent(string.Format("Next/[{0}][{1}] {2}", item.Id, item.windowType, item.Name))
-                             , select, () =>
-                             {
-                                 if (select)
-                                 {
-                                     next = null;
-                                 }
-                                 else
-                                 {
-                                     next = item;
-                                 }
-                             });
-            }
-            #endregion
-
-            menu.ShowAsContext();
         }
     }
 }

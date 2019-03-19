@@ -85,5 +85,30 @@ namespace ScriptNodeFlow
         {
             get { return skin.GetStyle("winNameText"); }
         }
+
+        public static GUIStyle canvasArea
+        {
+            get { return skin.GetStyle("canvasArea"); }
+        }
+
+        public static GUIStyle connectBtn
+        {
+            get { return skin.GetStyle("connectBtn"); }
+        }
+
+        public static GUIStyle connectedBtn
+        {
+            get { return skin.GetStyle("connectedBtn"); }
+        }
+
+        public static GUIStyle nodeWindow
+        {
+            get { return skin.GetStyle("nodeWindow"); }
+        }
+
+        public static GUIStyle nodeWindowHeader
+        {
+            get { return skin.GetStyle("nodeWindowHeader"); }
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace ScriptNodeFlow
     {
         public string className;
         public BaseWindow nextWindow;
-        public Vector2 drawPos;
+        public Rect connectRect;
+        public bool connectFlag = false;
     }
 
     public class RouterWindow : BaseWindow
@@ -72,10 +73,10 @@ namespace ScriptNodeFlow
                 return _size;
             }
         }
-
-
+        
         protected BaseWindow defaultNextWindow = null;
-        protected Vector2 defaultPos;
+        protected Rect defaultConnectRect;
+        protected bool defaultConnectFlag = false;
 
         public RouterWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
             : base(orgin,pos, _windowList)
@@ -83,7 +84,6 @@ namespace ScriptNodeFlow
             Name = "Router";
 
             addHeight = buttonStyle.lineHeight + 8;
-
         }
 
         public RouterWindow(string orgin, RouterWindowData itemData, List<BaseWindow> _windowList)
@@ -95,12 +95,29 @@ namespace ScriptNodeFlow
         public void SetDefault(BaseWindow defEntity)
         {
             defaultNextWindow = defEntity;
+            
+            defEntity.SetParent(this);
         }
 
         public void SetConditions(List<RouterWindowCondition> conditionEntities)
         {
             conditions = conditionEntities;
             _size.y += addHeight * conditionEntities.Count;
+
+            foreach (var condition in conditions)
+            {
+                if (condition.nextWindow != null)
+                {
+                    if (condition.nextWindow is NodeWindow)
+                    {
+                        (condition.nextWindow as NodeWindow).SetParent(this);
+                    }
+                    else if (condition.nextWindow is SubCanvasWindow)
+                    {
+                        (condition.nextWindow as SubCanvasWindow).SetParent(this);
+                    }
+                }
+            }
         }
 
         public override WindowDataBase GetData()
@@ -138,66 +155,152 @@ namespace ScriptNodeFlow
         {
             base.draw();
 
-            //画线
+            #region draw line
 
             #region condition list
-            for (int i = 0; i < conditions.Count; i++)
+            foreach (var condition in conditions)
             {
-                RouterWindowCondition item = conditions[i];
-
-                if (item.nextWindow == null)
+                if (condition.nextWindow == null)
                     continue;
 
-                if (!windowList.Contains(item.nextWindow))
+                if (!windowList.Contains(condition.nextWindow))
                 {
-                    item.nextWindow = null;
+                    condition.nextWindow = null;
                     continue;
                 }
 
-                if (item.drawPos == Vector2.zero)
-                    continue;
-
                 color = Color.white;
 
-                if (Application.isPlaying 
-                    && windowData.runtimeState == RuntimeState.Finished 
-                    && (windowData as RouterWindowData).runtimeNextId == item.nextWindow.Id)
+                if (Application.isPlaying
+                    && windowData.runtimeState == RuntimeState.Finished
+                    && (windowData as RouterWindowData).runtimeNextId == condition.nextWindow.Id)
                 {
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
-                DrawArrow(item.drawPos + position, item.nextWindow.In, color);
+                DrawArrow(GetOutPositionByPort(condition.connectRect), condition.nextWindow.In, color);
             }
             #endregion
 
             #region default
-            if (defaultNextWindow == null)
-                return;
 
-            if (!windowList.Contains(defaultNextWindow))
+            if (defaultNextWindow != null)
             {
-                defaultNextWindow = null;
-                return;
+                if (!windowList.Contains(defaultNextWindow))
+                {
+                    defaultNextWindow = null;
+                    return;
+                }
+
+                color = Color.white;
+
+                if (Application.isPlaying
+                    && windowData.runtimeState == RuntimeState.Finished
+                    && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
+                {
+                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                }
+
+                DrawArrow(GetOutPositionByPort(defaultConnectRect), defaultNextWindow.In, color);
             }
-            if (defaultPos == Vector2.zero)
-                return;
+           
+            #endregion
 
-            color = Color.white;
+            #endregion
 
-            if (Application.isPlaying 
-                && windowData.runtimeState == RuntimeState.Finished 
-                && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
+            #region draw connect port
+
+            GUI.Button(InPortRect, "", parent == null ? Styles.connectBtn : Styles.connectedBtn);
+            
+            #region conditions
+
+            foreach (var condition in conditions)
             {
-                color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                if (GUI.Button(condition.connectRect, "", 
+                    (condition.nextWindow!=null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+                {
+                    condition.nextWindow = null;
+                    condition.connectFlag = true;
+                }
+
+                if (condition.connectFlag)
+                {
+                    Event curEvent = Event.current;
+                    
+                    DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, Color.white);
+
+
+                    if (curEvent.button == 1) // mouse right key
+                    {
+                        condition.connectFlag = false;
+                    }
+                    else if (curEvent.button == 0 && curEvent.isMouse)
+                    {
+                        if (curEvent.type == EventType.MouseUp)
+                        {
+                            BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
+
+                            if (win != null
+                                && win.Id != Id
+                                && win.windowType != NodeType.Start
+                                && win.windowType != NodeType.Router)
+                            {
+                                condition.nextWindow = win;
+                            }
+
+                            condition.connectFlag = false;
+                        }
+                    }
+                }
             }
 
-            DrawArrow(defaultPos + position, defaultNextWindow.In, color);
+            #endregion
+
+            drawDefaultConnect();
+
             #endregion
         }
 
+        void drawDefaultConnect()
+        {
+            if (GUI.Button(defaultConnectRect, "", 
+                (defaultNextWindow!=null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+                defaultNextWindow = null;
+                defaultConnectFlag = true;
+            }
 
+            if (defaultConnectFlag)
+            {
+                Event curEvent = Event.current;
+                DrawArrow(GetOutPositionByPort(defaultConnectRect), curEvent.mousePosition, Color.white);
+
+
+                if (curEvent.button == 1) // mouse right key
+                {
+                    defaultConnectFlag = false;
+                }
+                else if (curEvent.button == 0 && curEvent.isMouse)
+                {
+                    if (curEvent.type == EventType.MouseUp)
+                    {
+                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
+
+                        if (win != null
+                            && win.Id != Id
+                            && win.windowType != NodeType.Start
+                            && win.windowType != NodeType.Router)
+                        {
+                            defaultNextWindow = win;
+                        }
+
+                        defaultConnectFlag = false;
+                    }
+                }
+            }
+        }
+        
         protected float addHeight;
-        protected Rect rect;
         protected override void gui(int id)
         {
             base.gui(id);
@@ -224,6 +327,8 @@ namespace ScriptNodeFlow
 
             EditorGUI.EndDisabledGroup();
 
+            GUILayout.FlexibleSpace();
+
             GUILayout.BeginHorizontal();
 
             bool right = true;
@@ -248,8 +353,6 @@ namespace ScriptNodeFlow
             }
 
             GUILayout.EndHorizontal();
-
-            GUI.DragWindow();
         }
 
         protected virtual void drawConditions()
@@ -259,14 +362,6 @@ namespace ScriptNodeFlow
                 RouterWindowCondition rc = conditions[i];
                 GUILayout.BeginHorizontal();
 
-                string c = rc.className;
-                int selectindex = allConditionClass.IndexOf(c);
-                selectindex = EditorGUILayout.Popup(selectindex, allConditionClass.ToArray(), popupStyle);
-                if (selectindex >= 0)
-                {
-                    conditions[i].className = allConditionClass[selectindex];
-                }
-
                 //删除
                 if (GUILayout.Button("", Styles.miniDelButton))
                 {
@@ -275,75 +370,20 @@ namespace ScriptNodeFlow
                     _size.y -= addHeight;
                 }
 
-                //连接选择
-                GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-                if (MyEditorLayout.Button("L", buttonStyle, out rect))
+                string c = rc.className;
+                int selectindex = allConditionClass.IndexOf(c);
+                selectindex = EditorGUILayout.Popup(selectindex, allConditionClass.ToArray(), popupStyle);
+                if (selectindex >= 0)
                 {
-                    GenericMenu menu = new GenericMenu();
-
-                    menu.AddItem(newNode, false, () =>
-                    {
-                        var tempWindow = new NodeWindow(Orgin,new Vector2(50, 50) + position, windowList);
-                        windowList.Add(tempWindow);
-                        rc.nextWindow = tempWindow;
-                    });
-
-                    menu.AddItem(newSubCanvas, false, () =>
-                    {
-                        var tempWindow = new SubCanvasWindow(Orgin,new Vector2(50, 50) + position, windowList);
-                        windowList.Add(tempWindow);
-                        rc.nextWindow = tempWindow;
-                    });
-
-                    menu.AddSeparator("");
-
-                    List<BaseWindow> selectionList = new List<BaseWindow>();
-                    foreach (var item in windowList)
-                    {
-                        if (item.windowType == NodeType.Node || item.windowType == NodeType.SubCanvas)
-                        {
-                            selectionList.Add(item);
-                        }
-                    }
-
-                    foreach (var item in selectionList)
-                    {
-                        bool select = (rc.nextWindow != null) && rc.nextWindow.Id == item.Id;
-                        menu.AddItem(new GUIContent(string.Format("[{0}][{1}] {2}", item.Id, item.windowType, item.Name)), select, () =>
-                        {
-                            if (select)
-                            {
-                                rc.nextWindow = null;
-                            }
-                            else
-                            {
-                                rc.nextWindow = item;
-                            }
-                        });
-                    }
-
-                    menu.ShowAsContext();
+                    conditions[i].className = allConditionClass[selectindex];
                 }
 
-
-                GUI.color = Color.white;
-
-                if (rc.nextWindow == null)
-                {
-                    linkStyle.normal.textColor = Color.gray;
-                }
-                else
-                {
-                    linkStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-                }
-
-                MyEditorLayout.Label("o", linkStyle, out rect);
-
-                //有的时候 rect会为0，0，1，1
+                Rect rect = GUILayoutUtility.GetRect(0, 0);
                 if (rect.position != Vector2.zero)
                 {
-                    rc.drawPos.x = rect.position.x + rect.width;
-                    rc.drawPos.y = rect.position.y + rect.height / 2;
+                    rect.position += position + new Vector2(connectPortOffset, connectPortOffset);
+                    rect.size = new Vector2(connectPortSize, connectPortSize);
+                    rc.connectRect = rect;
                 }
 
                 GUILayout.EndHorizontal();
@@ -353,76 +393,19 @@ namespace ScriptNodeFlow
         protected virtual void drawDefualt()
         {
             GUILayout.BeginHorizontal();
-            
+
+            GUILayout.FlexibleSpace();
+
             GUILayout.Label("default", defaultLabel);
 
-            //连接选择
-            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-            if (MyEditorLayout.Button("L", defaultLButton, out rect))
-            {
-                GenericMenu menu = new GenericMenu();
-
-                menu.AddItem(newNode, false, () =>
-                {
-                    var tempWindow = new NodeWindow(Orgin, position, windowList);
-                    windowList.Add(tempWindow);
-                    defaultNextWindow = tempWindow;
-                });
-
-                menu.AddItem(newSubCanvas, false, () =>
-                {
-                    var tempWindow = new RouterWindow(Orgin, position, windowList);
-                    windowList.Add(tempWindow);
-                    defaultNextWindow = tempWindow;
-                });
-
-                List<BaseWindow> selectionList = new List<BaseWindow>();
-                foreach (var item in windowList)
-                {
-                    if (item.windowType == NodeType.Node || item.windowType == NodeType.SubCanvas)
-                    {
-                        selectionList.Add(item);
-                    }
-                }
-
-                foreach (var item in selectionList)
-                {
-                    bool select = (defaultNextWindow != null) && defaultNextWindow.Id == item.Id;
-                    menu.AddItem(new GUIContent(item.Id + " " + item.Name), select, () =>
-                    {
-                        if (select)
-                        {
-                            defaultNextWindow = null;
-                        }
-                        else
-                        {
-                            defaultNextWindow = item;
-                        }
-                    });
-                }
-
-                menu.ShowAsContext();
-            }
-
-            if (defaultNextWindow == null)
-            {
-                linkStyle.normal.textColor = Color.gray;
-            }
-            else
-            {
-                linkStyle.normal.textColor = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-            }
-
-            MyEditorLayout.Label("o", linkStyle, out rect);
-
-            //有的时候 rect会为0，0，1，1
+            Rect rect = GUILayoutUtility.GetRect(0, 0);
             if (rect.position != Vector2.zero)
             {
-                defaultPos.x = rect.position.x + rect.width;
-                defaultPos.y = rect.position.y + rect.height / 2;
-            }
+                rect.position += position + new Vector2(connectPortOffset, connectPortOffset);
+                rect.size = new Vector2(connectPortSize, connectPortSize);
 
-            GUI.color = Color.white;
+                defaultConnectRect = rect;
+            }
 
             GUILayout.EndHorizontal();
         }

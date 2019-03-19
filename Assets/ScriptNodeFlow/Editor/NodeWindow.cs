@@ -70,6 +70,8 @@ namespace ScriptNodeFlow
         public void SetNext(BaseWindow entity)
         {
             next = entity;
+
+            entity.SetParent(entity);
         }
 
         public override WindowDataBase GetData()
@@ -91,6 +93,7 @@ namespace ScriptNodeFlow
 
         public override void draw()
         {
+
             base.draw();
 
             //draw line
@@ -109,9 +112,51 @@ namespace ScriptNodeFlow
                     color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
                 }
 
-                DrawArrow(Out, next.In, color);
+                DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
+
+            #region draw connect port
+
+            GUI.Button(InPortRect, "", parent == null ? Styles.connectBtn : Styles.connectedBtn);
+
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+                next = null;
+                connectFlag = true;
+            }
+
+            if (connectFlag)
+            {
+                Event curEvent = Event.current;
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+
+
+                if (curEvent.button == 1) // mouse right key
+                {
+                    connectFlag = false;
+                }
+                else if (curEvent.button == 0 && curEvent.isMouse)
+                {
+                    if (curEvent.type == EventType.MouseUp)
+                    {
+                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
+
+                        if (win != null
+                            && win.Id != Id
+                            && win.windowType != NodeType.Start)
+                        {
+                            next = win;
+                        }
+
+                        connectFlag = false;
+                    }
+                }
+            }
+
+            #endregion
         }
+
+        private bool connectFlag = false;
 
         int classIndex = -1;
 
@@ -128,8 +173,11 @@ namespace ScriptNodeFlow
             {
                 ClassName = allEntityClass[classIndex];
             }
+            
+            GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
+
             if (classIndex < 0)
             {
                 GUILayout.Label("", Styles.wrongLabel);
@@ -142,8 +190,6 @@ namespace ScriptNodeFlow
             }
 
             GUILayout.EndHorizontal();
-
-            GUI.DragWindow();
         }
 
         GenericMenu menu;
@@ -151,64 +197,6 @@ namespace ScriptNodeFlow
         public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
-
-
-            menu.AddItem(nextNewNodeContent, false, () =>
-            {
-                var tempWindow = new NodeWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddItem(nextNewRouterContent, false, () =>
-            {
-                var tempWindow = new RouterWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddItem(nextNewSubCanvasContent, false, () =>
-            {
-                var tempWindow = new SubCanvasWindow(Orgin, mouseposition + new Vector2(50, 50), windowList);
-                windowList.Add(tempWindow);
-                next = tempWindow;
-            });
-
-            menu.AddSeparator(separator);
-
-            #region select the next one
-            List<BaseWindow> selectionList = new List<BaseWindow>();
-
-            foreach (var item in windowList)
-            {
-                if (item.Id == Id)
-                    continue;
-
-                if (item.windowType == NodeType.Start)
-                    continue;
-
-                selectionList.Add(item);
-            }
-
-            foreach (var item in selectionList)
-            {
-                bool select = (next != null) && next.Id == item.Id;
-
-                menu.AddItem(new GUIContent(string.Format("Next/[{0}][{1}] {2}", item.Id, item.windowType, item.Name))
-                             , select, () =>
-                             {
-                                 if (select)
-                                 {
-                                     next = null;
-                                 }
-                                 else
-                                 {
-                                     next = item;
-                                 }
-                             });
-            }
-            #endregion
-
 
             menu.AddItem(deleteContent, false, () =>
             {
