@@ -69,9 +69,17 @@ namespace ScriptNodeFlow
 
         public void SetNext(BaseWindow entity)
         {
-            next = entity;
+            if (next != null)
+            {
+                next.SetParent(null);
+            }
 
-            entity.SetParent(entity);
+            if (entity != null)
+            {
+                entity.SetParent(entity);
+            }
+
+            next = entity;
         }
 
         public override WindowDataBase GetData()
@@ -121,7 +129,7 @@ namespace ScriptNodeFlow
 
             if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
             {
-                next = null;
+                SetNext(null);
                 connectFlag = true;
             }
 
@@ -145,7 +153,7 @@ namespace ScriptNodeFlow
                             && win.Id != Id
                             && win.windowType != NodeType.Start)
                         {
-                            next = win;
+                            SetNext(win);
                         }
 
                         connectFlag = false;

@@ -127,11 +127,11 @@ namespace ScriptNodeFlow
                 }
             }
 
-            GUI.Window(Id, windowRect, gui, windowType.ToString());
+            // GUI.Window(Id, windowRect, gui, windowType.ToString());
 
-            //GUILayout.BeginArea(windowRect, windowType.ToString(), GUI.skin.window);
-            //gui(Id);
-            //GUILayout.EndArea();
+            GUILayout.BeginArea(windowRect, windowType.ToString(), GUI.skin.window);
+            gui(Id);
+            GUILayout.EndArea();
         }
 
         protected virtual void gui(int id)

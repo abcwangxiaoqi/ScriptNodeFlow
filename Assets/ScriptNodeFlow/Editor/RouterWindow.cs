@@ -94,9 +94,17 @@ namespace ScriptNodeFlow
 
         public void SetDefault(BaseWindow defEntity)
         {
+            if (defaultNextWindow != null)
+            {
+                defaultNextWindow.SetParent(null);
+            }
+
+            if (defEntity != null)
+            {
+                defEntity.SetParent(this);
+            }
+
             defaultNextWindow = defEntity;
-            
-            defEntity.SetParent(this);
         }
 
         public void SetConditions(List<RouterWindowCondition> conditionEntities)
@@ -211,13 +219,20 @@ namespace ScriptNodeFlow
             #region draw connect port
 
             GUI.Button(InPortRect, "", parent == null ? Styles.connectBtn : Styles.connectedBtn);
-            
-            #region conditions
 
+            drawConditionsConnect();
+
+            drawDefaultConnect();
+
+            #endregion
+        }
+
+        protected virtual void drawConditionsConnect()
+        {
             foreach (var condition in conditions)
             {
-                if (GUI.Button(condition.connectRect, "", 
-                    (condition.nextWindow!=null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+                if (GUI.Button(condition.connectRect, "",
+                    (condition.nextWindow != null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
                 {
                     condition.nextWindow = null;
                     condition.connectFlag = true;
@@ -226,7 +241,7 @@ namespace ScriptNodeFlow
                 if (condition.connectFlag)
                 {
                     Event curEvent = Event.current;
-                    
+
                     DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, Color.white);
 
 
@@ -253,20 +268,14 @@ namespace ScriptNodeFlow
                     }
                 }
             }
-
-            #endregion
-
-            drawDefaultConnect();
-
-            #endregion
         }
 
-        void drawDefaultConnect()
+        protected virtual void drawDefaultConnect()
         {
             if (GUI.Button(defaultConnectRect, "", 
                 (defaultNextWindow!=null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
             {
-                defaultNextWindow = null;
+                SetDefault(null);
                 defaultConnectFlag = true;
             }
 
@@ -291,7 +300,7 @@ namespace ScriptNodeFlow
                             && win.windowType != NodeType.Start
                             && win.windowType != NodeType.Router)
                         {
-                            defaultNextWindow = win;
+                            SetDefault(win);
                         }
 
                         defaultConnectFlag = false;
@@ -355,7 +364,7 @@ namespace ScriptNodeFlow
             GUILayout.EndHorizontal();
         }
 
-        protected virtual void drawConditions()
+        protected void drawConditions()
         {
             for (int i = 0; i < conditions.Count; i++)
             {
@@ -390,7 +399,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        protected virtual void drawDefualt()
+        protected void drawDefualt()
         {
             GUILayout.BeginHorizontal();
 

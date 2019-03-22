@@ -115,7 +115,7 @@ namespace ScriptNodeFlow
 
             #region nodesArea
             
-            BeginWindows();
+            //BeginWindows();
 
             nodesArea = new Rect(border, navigationArea.height + border, rightArea.width - 2 * border,
                 rightArea.height - navigationArea.height - 2 * border);
@@ -132,7 +132,7 @@ namespace ScriptNodeFlow
 
             Repaint();
 
-            EndWindows();
+           // EndWindows();
 
             GUILayout.Label(canvasType == CanvasType.Main ? nodeCanvasData.name : subNodeCanvasData.name,
                 Styles.canvasTitleLabel);

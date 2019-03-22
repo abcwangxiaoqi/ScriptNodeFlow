@@ -71,8 +71,17 @@ namespace ScriptNodeFlow
 
         public void SetNext(BaseWindow entity)
         {
+            if (next != null)
+            {
+                next.SetParent(null);
+            }
+
+            if (entity != null)
+            {
+                entity.SetParent(entity);
+            }
+
             next = entity;
-            entity.SetParent(this);
         }
 
         public override WindowDataBase GetData()
@@ -122,7 +131,7 @@ namespace ScriptNodeFlow
 
             if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
             {
-                next = null;
+                SetNext(null);
                 connectFlag = true;
             }
 
@@ -146,7 +155,7 @@ namespace ScriptNodeFlow
                             && win.Id != Id
                             && win.windowType != NodeType.Start)
                         {
-                            next = win;
+                            SetNext(win);
                         }
 
                         connectFlag = false;
@@ -179,6 +188,8 @@ namespace ScriptNodeFlow
             }
 
             EditorGUI.EndDisabledGroup();
+
+            GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
             if (canvas == null)
@@ -214,8 +225,10 @@ namespace ScriptNodeFlow
             if(canvas==null)
                 return;
 
+            
             DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
                 canvas);
+            GUIUtility.ExitGUI();
         }
     }
 }
