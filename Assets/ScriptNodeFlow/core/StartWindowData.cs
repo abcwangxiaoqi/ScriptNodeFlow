@@ -8,7 +8,6 @@ namespace ScriptNodeFlow
     {
         public StartWindowData()
         {
-            ID = 0;
             name = "Start";
             position = new Vector2(300, 300);
         }

@@ -8,13 +8,16 @@ namespace ScriptNodeFlow
     [CustomEditor(typeof(NodeCanvasData))]
     public class NodeCanvasDataEditor : Editor
     {
+        NodeCanvasData data;
+        private void Awake()
+        {
+            data = target as NodeCanvasData;
+        }
+
         public override void OnInspectorGUI()
         {
-            EditorGUI.BeginDisabledGroup(true);
-
-            base.OnInspectorGUI();
-
-            EditorGUI.EndDisabledGroup();
+            GUILayout.Label("Desc");
+            data.desc = GUILayout.TextArea(data.desc, GUILayout.Height(100));
 
             GUILayout.Space(10);
             

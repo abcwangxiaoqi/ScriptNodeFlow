@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace ScriptNodeFlow
     {
         protected static GUIStyle NameTextStyle;
         protected static float connectPortSize = 12;
-        protected static float connectPortOffset = 3;
+        protected static float connectPortOffset = 4;
 
         static BaseWindow()
         {
@@ -28,7 +29,7 @@ namespace ScriptNodeFlow
             NameTextStyle.normal.textColor = Color.white;
             NameTextStyle.focused.textColor = Color.white;
         }
-        
+
         protected GUIStyle buttonStyle = EditorStyles.miniButton;
         protected GUIStyle popupStyle = EditorStyles.popup;
         
@@ -40,10 +41,10 @@ namespace ScriptNodeFlow
         protected List<BaseWindow> windowList;
         public abstract NodeType windowType { get; }
 
-        public int Id { get; private set; }
+        public string Id { get; private set; }
         public string Name { get; protected set; }
 
-        public BaseWindow parent { get; protected set; }
+        public int parentRef { get; protected set; }
 
         public Vector2 In
         {
@@ -89,8 +90,7 @@ namespace ScriptNodeFlow
             position = pos;
             windowList = _windowList;
 
-            System.Random r = new System.Random(int.Parse(System.DateTime.Now.ToString("HHmmssfff")));
-            Id = r.Next(1, int.MaxValue);
+            Id = Guid.NewGuid().ToString();
         }
 
         protected WindowDataBase windowData { get; private set; }
@@ -127,14 +127,15 @@ namespace ScriptNodeFlow
                 }
             }
 
-            // GUI.Window(Id, windowRect, gui, windowType.ToString());
 
             GUILayout.BeginArea(windowRect, windowType.ToString(), GUI.skin.window);
-            gui(Id);
+
+            gui();
+
             GUILayout.EndArea();
         }
 
-        protected virtual void gui(int id)
+        protected virtual void gui()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             Name = GUILayout.TextField(Name, NameTextStyle);
@@ -165,6 +166,11 @@ namespace ScriptNodeFlow
             return windowRect.Contains(mouseposition);
         }
 
+        public bool isClickInPort(Vector2 mouseposition)
+        {
+            return InPortRect.Contains(mouseposition);
+        }
+
         public abstract WindowDataBase GetData();
 
         protected void DrawArrow2(Vector2 from, Vector2 to, Color color)
@@ -191,7 +197,18 @@ namespace ScriptNodeFlow
 
         public void SetParent(BaseWindow entity)
         {
-            parent = entity;
+            if(entity == null)
+            {
+                if(parentRef>0)
+                {
+                    parentRef--;
+                }
+            }
+            else
+            {
+                parentRef++;
+            }
+
         }
     }
 }

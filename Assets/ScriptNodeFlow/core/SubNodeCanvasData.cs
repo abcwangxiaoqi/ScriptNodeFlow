@@ -11,7 +11,9 @@ namespace ScriptNodeFlow
         public List<NodeWindowData> nodelist = new List<NodeWindowData>();
         public List<RouterWindowData> routerlist = new List<RouterWindowData>();
 
-        public WindowDataBase Get(int id)
+        public string desc;
+
+        public WindowDataBase Get(string id)
         {
             WindowDataBase data = null;
 

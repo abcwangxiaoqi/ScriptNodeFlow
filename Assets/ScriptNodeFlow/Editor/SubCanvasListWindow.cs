@@ -128,6 +128,8 @@ namespace ScriptNodeFlow
                         subCanvasList.Add(sub);
 
                         addSubName = "";
+
+                        GUI.FocusControl("");
                     }
                 }
             }

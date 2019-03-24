@@ -96,7 +96,7 @@ namespace ScriptNodeFlow
             {
 
                 SetNext(null);
-               
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
                 connectFlag = true;
             }
 
@@ -108,30 +108,33 @@ namespace ScriptNodeFlow
 
                 if (curEvent.button == 1) // mouse right key
                 {
+                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
                     connectFlag = false;
                 }
-                else if (curEvent.button == 0 && curEvent.isMouse)
-                {
-                    if (curEvent.type == EventType.MouseUp)
-                    {
-                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
 
-                        if (win != null
-                            && win.Id != Id
-                            && win.windowType != NodeType.Start)
-                        {
-                            SetNext(win);
-                        }
-
-                        connectFlag = false;
-                    }
-                }
             }
 
             #endregion
         }
 
-        protected override void gui(int id)
+        void connectAnotherPort(object[] objs)
+        {
+            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+
+            BaseWindow window = objs[0] as BaseWindow;
+
+            if (window != null
+                && window.Id != Id 
+                && window.windowType != NodeType.Router
+                && window.windowType != NodeType.Start)
+            {
+                SetNext(window);
+            }
+
+            connectFlag = false;
+        }
+
+        protected override void gui()
         {
             GUILayout.Label("Start", Styles.titleLabel);
         }

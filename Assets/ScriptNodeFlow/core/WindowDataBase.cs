@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace ScriptNodeFlow
 {
@@ -20,10 +21,12 @@ namespace ScriptNodeFlow
 
     public abstract class WindowDataBase
     {
-        public int ID;
+        public string ID = Guid.NewGuid().ToString();
         public string name;
         public Vector2 position;
-        public int nextWindowId = -1;
+        public string nextWindowId = null;
+
+        public string desc;
 
         public virtual NodeType type
         {

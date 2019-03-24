@@ -39,6 +39,7 @@ namespace ScriptNodeFlow
 
             DelegateManager.Instance.RemoveListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
             DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
+
         }
 
         protected virtual void OpenMainCanvas(object[] objs)
@@ -169,7 +170,7 @@ namespace ScriptNodeFlow
 
         }
 
-        BaseWindow FindWindow(int id)
+        BaseWindow FindWindow(string id)
         {
             BaseWindow res = windowList.Find((BaseWindow w) =>
             {
@@ -212,7 +213,7 @@ namespace ScriptNodeFlow
                 {
                     NodeWindowData edata = nodeCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
 
-                    if (edata.nextWindowId > 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow next = FindWindow(edata.nextWindowId);
 
@@ -225,7 +226,7 @@ namespace ScriptNodeFlow
                     RouterWindow win = item as RouterWindow;
 
                     //set default
-                    if (edata.nextWindowId >= 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow def = FindWindow(edata.nextWindowId);
                         win.SetDefault(def);
@@ -246,7 +247,7 @@ namespace ScriptNodeFlow
                 {
                     CanvasWindowData edata = nodeCanvasData.subCanvaslist.Find(data => { return data.ID == item.Id; });
 
-                    if (edata.nextWindowId > 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow next = FindWindow(edata.nextWindowId);
 
@@ -257,7 +258,7 @@ namespace ScriptNodeFlow
                 {
                     StartWindowData edata = nodeCanvasData.start;
 
-                    if (edata.nextWindowId > 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow next = FindWindow(edata.nextWindowId);
 
@@ -290,7 +291,7 @@ namespace ScriptNodeFlow
                 {
                     NodeWindowData edata = subNodeCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
 
-                    if (edata.nextWindowId > 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow next = FindWindow(edata.nextWindowId);
 
@@ -303,7 +304,7 @@ namespace ScriptNodeFlow
                     RouterWindow win = item as RouterWindow;
 
                     //set default
-                    if (edata.nextWindowId >= 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow def = FindWindow(edata.nextWindowId);
                         win.SetDefault(def);
@@ -324,7 +325,7 @@ namespace ScriptNodeFlow
                 {
                     StartWindowData edata = subNodeCanvasData.start;
 
-                    if (edata.nextWindowId > 0)
+                    if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
                         BaseWindow next = FindWindow(edata.nextWindowId);
 

@@ -86,6 +86,10 @@ namespace ScriptNodeFlow
         // need be saved when compiling
         string nodeAssetPath = "NODEASSETPATH";
 
+        BaseWindow connectWin = null;
+
+        bool clickArea = false;
+
         protected override void OnGUI()
         {   
             if (EditorApplication.isCompiling)
@@ -130,10 +134,13 @@ namespace ScriptNodeFlow
                     //a window is whether selected
                     if (curEvent.type == EventType.MouseDown)
                     {
+                        clickArea = true;
+
                         curSelect = windowList.Find((BaseWindow w) =>
                         {
                             return w.isClick(mousePosition);
                         });
+
                         if (curSelect != null
                             && curEvent.clickCount == 2)
                         {
@@ -142,9 +149,22 @@ namespace ScriptNodeFlow
                                 curSelect.leftMouseDoubleClick();
                             }
                         }
+
+                        if(curSelect == null)
+                        {
+                            GUI.FocusControl("");
+                        }
+
+                        connectWin = windowList.Find((BaseWindow w) =>
+                            {
+                                return w.isClickInPort(mousePosition);
+                            });
+
+                        DelegateManager.Instance.Dispatch(DelegateCommand.HANDLECONNECTPORT, connectWin);
                     }
                     else if (curEvent.type == EventType.MouseUp)
                     {
+                        clickArea = false;
                         curSelect = null;
                     }
                     else if (curEvent.type == EventType.MouseDrag)
@@ -153,7 +173,7 @@ namespace ScriptNodeFlow
                         {
                             curSelect.leftMouseDrag(curEvent.delta);
                         }
-                        else
+                        else if(clickArea)
                         {
                             if (nodesArea.Contains(curEvent.mousePosition))
                             {
@@ -184,6 +204,7 @@ namespace ScriptNodeFlow
 
         private void ShowMenu()
         {
+            GUI.FocusControl("");
             // add a new Node
             if (curEvent.type == EventType.MouseDown)
             {

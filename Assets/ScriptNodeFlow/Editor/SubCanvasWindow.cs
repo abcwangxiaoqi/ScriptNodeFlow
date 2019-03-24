@@ -127,11 +127,12 @@ namespace ScriptNodeFlow
 
             #region draw connect port
 
-            GUI.Button(InPortRect, "", parent == null ? Styles.connectBtn : Styles.connectedBtn);
+            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
 
             if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
             {
                 SetNext(null);
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
                 connectFlag = true;
             }
 
@@ -143,33 +144,32 @@ namespace ScriptNodeFlow
 
                 if (curEvent.button == 1) // mouse right key
                 {
+                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
                     connectFlag = false;
-                }
-                else if (curEvent.button == 0 && curEvent.isMouse)
-                {
-                    if (curEvent.type == EventType.MouseUp)
-                    {
-                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
-
-                        if (win != null
-                            && win.Id != Id
-                            && win.windowType != NodeType.Start)
-                        {
-                            SetNext(win);
-                        }
-
-                        connectFlag = false;
-                    }
                 }
             }
             #endregion
         }
 
+        void connectAnotherPort(object[] objs)
+        {
+            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+
+            BaseWindow window = objs[0] as BaseWindow;
+
+            if (window != null && window.Id != Id)
+            {
+                SetNext(window);
+            }
+
+            connectFlag = false;
+        }
+
         private Object obj;
         private SubNodeCanvasData tempCanvas;
-        protected override void gui(int id)
+        protected override void gui()
         {
-            base.gui(id);
+            base.gui();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);
@@ -206,7 +206,6 @@ namespace ScriptNodeFlow
             GUILayout.EndHorizontal();
         }
 
-        GenericMenu menu;
 
         public override void rightMouseClick(Vector2 mouseposition)
         {
@@ -214,6 +213,10 @@ namespace ScriptNodeFlow
 
             menu.AddItem(deleteContent, false, () =>
             {
+                if (next != null)
+                {
+                    next.SetParent(null);
+                }
                 windowList.Remove(this);
             });
 

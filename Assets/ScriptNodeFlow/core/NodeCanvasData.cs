@@ -14,7 +14,9 @@ namespace ScriptNodeFlow
         public List<RouterWindowData> routerlist = new List<RouterWindowData>();
         public List<CanvasWindowData> subCanvaslist = new List<CanvasWindowData>();
 
-        public WindowDataBase Get(int id)
+        public string desc;
+
+        public WindowDataBase Get(string id)
         {
             WindowDataBase data = null;
 

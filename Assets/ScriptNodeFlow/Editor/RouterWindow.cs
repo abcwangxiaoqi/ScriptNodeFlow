@@ -65,7 +65,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        protected Vector2 _size = new Vector2(150, 115);
+        protected Vector2 _size = new Vector2(180, 115);
         protected override Vector2 size
         {
             get
@@ -218,7 +218,7 @@ namespace ScriptNodeFlow
 
             #region draw connect port
 
-            GUI.Button(InPortRect, "", parent == null ? Styles.connectBtn : Styles.connectedBtn);
+            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
 
             drawConditionsConnect();
 
@@ -234,7 +234,8 @@ namespace ScriptNodeFlow
                 if (GUI.Button(condition.connectRect, "",
                     (condition.nextWindow != null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
                 {
-                    condition.nextWindow = null;
+                    setConditionNext(condition, null);
+                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
                     condition.connectFlag = true;
                 }
 
@@ -247,20 +248,24 @@ namespace ScriptNodeFlow
 
                     if (curEvent.button == 1) // mouse right key
                     {
+                        DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
                         condition.connectFlag = false;
                     }
                     else if (curEvent.button == 0 && curEvent.isMouse)
                     {
-                        if (curEvent.type == EventType.MouseUp)
+                        if (curEvent.type == EventType.MouseDown)
                         {
-                            BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
+                            BaseWindow win = windowList.Find(window =>
+                            {
+                                return window.isClick(curEvent.mousePosition) || window.isClickInPort(curEvent.mousePosition);
+                            });
 
                             if (win != null
                                 && win.Id != Id
                                 && win.windowType != NodeType.Start
                                 && win.windowType != NodeType.Router)
                             {
-                                condition.nextWindow = win;
+                                setConditionNext(condition, win);
                             }
 
                             condition.connectFlag = false;
@@ -270,12 +275,50 @@ namespace ScriptNodeFlow
             }
         }
 
+        void connectConditionAnotherPort(object[] objs)
+        {
+            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+
+            BaseWindow window = objs[0] as BaseWindow;
+
+            RouterWindowCondition condition = conditions.Find((cond)=> 
+            {
+                return cond.connectFlag;
+            });
+
+            if (window != null && window.Id != Id
+                && window.windowType != NodeType.Router)
+            {
+                setConditionNext(condition, window);
+            }
+
+            condition.connectFlag = false;
+        }
+
+
+        void setConditionNext(RouterWindowCondition condition,BaseWindow next)
+        {
+            if (condition.nextWindow != null)
+            {
+                condition.nextWindow.SetParent(null);
+            }
+
+            if (next != null)
+            {
+                next.SetParent(this);
+            }
+
+            condition.nextWindow = next;
+        }
+
+
         protected virtual void drawDefaultConnect()
         {
             if (GUI.Button(defaultConnectRect, "", 
                 (defaultNextWindow!=null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
             {
                 SetDefault(null);
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
                 defaultConnectFlag = true;
             }
 
@@ -287,32 +330,31 @@ namespace ScriptNodeFlow
 
                 if (curEvent.button == 1) // mouse right key
                 {
+                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
                     defaultConnectFlag = false;
-                }
-                else if (curEvent.button == 0 && curEvent.isMouse)
-                {
-                    if (curEvent.type == EventType.MouseUp)
-                    {
-                        BaseWindow win = windowList.Find(window => { return window.isClick(curEvent.mousePosition); });
-
-                        if (win != null
-                            && win.Id != Id
-                            && win.windowType != NodeType.Start
-                            && win.windowType != NodeType.Router)
-                        {
-                            SetDefault(win);
-                        }
-
-                        defaultConnectFlag = false;
-                    }
                 }
             }
         }
-        
-        protected float addHeight;
-        protected override void gui(int id)
+
+        void connectDefaultAnotherPort(object[] objs)
         {
-            base.gui(id);
+            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+
+            BaseWindow window = objs[0] as BaseWindow;
+
+            if (window != null && window.Id != Id
+                && window.windowType != NodeType.Router)
+            {
+                SetDefault(window);
+            }
+
+            defaultConnectFlag = false;
+        }
+
+        protected float addHeight;
+        protected override void gui()
+        {
+            base.gui();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
@@ -390,7 +432,7 @@ namespace ScriptNodeFlow
                 Rect rect = GUILayoutUtility.GetRect(0, 0);
                 if (rect.position != Vector2.zero)
                 {
-                    rect.position += position + new Vector2(connectPortOffset, connectPortOffset);
+                    rect.position += position + new Vector2(0, connectPortOffset);
                     rect.size = new Vector2(connectPortSize, connectPortSize);
                     rc.connectRect = rect;
                 }
@@ -410,7 +452,7 @@ namespace ScriptNodeFlow
             Rect rect = GUILayoutUtility.GetRect(0, 0);
             if (rect.position != Vector2.zero)
             {
-                rect.position += position + new Vector2(connectPortOffset, connectPortOffset);
+                rect.position += position + new Vector2(0, connectPortOffset);
                 rect.size = new Vector2(connectPortSize, connectPortSize);
 
                 defaultConnectRect = rect;
@@ -425,6 +467,20 @@ namespace ScriptNodeFlow
 
             menu.AddItem(deleteNode, false, () =>
             {
+
+                if(defaultNextWindow!=null)
+                {
+                    defaultNextWindow.SetParent(null);
+                }
+
+                foreach (var item in conditions)
+                {
+                    if(item.nextWindow!=null)
+                    {
+                        item.nextWindow.SetParent(null);
+                    }
+                }
+
                 windowList.Remove(this);
             });
 

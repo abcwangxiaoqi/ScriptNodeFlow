@@ -19,7 +19,7 @@ namespace ScriptNodeFlow
 
         #region runtime
 
-        [NonSerialized] public int runtimeNextId = -1;
+        [NonSerialized] public string runtimeNextId = null;
         public void excute(SharedData sdata)
         {
             try
@@ -59,7 +59,7 @@ namespace ScriptNodeFlow
     public class RouterWindowConditionData
     {
         public string className;
-        public int nextWindowId = -1;
+        public string nextWindowId = null;
 
         private RouterCondition condition;
         public bool excute(SharedData sdata)

@@ -12,5 +12,7 @@ namespace ScriptNodeFlow
         public const string SELECTMAINCANVAS = "select_maincanvas";
 
         public const string TOOLBARFOCUS = "toolbar_focus";
+
+        public const string HANDLECONNECTPORT = "handle_connectport";
     }
 }
