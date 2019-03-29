@@ -36,13 +36,18 @@ namespace ScriptNodeFlow
         public Vector2 position { get; set; }
         protected abstract Vector2 size { get; }
 
+        //whether be selected
+        protected bool selected = false;
+
+        public string describe;
+
         protected Rect windowRect;
 
         protected List<BaseWindow> windowList;
         public abstract NodeType windowType { get; }
 
         public string Id { get; private set; }
-        public string Name { get; protected set; }
+        public string Name;
 
         public int parentRef { get; protected set; }
 
@@ -106,6 +111,17 @@ namespace ScriptNodeFlow
             Name = _data.name;
         }
 
+        public Rect selectRect
+        {
+            get
+            {
+                Rect rect = windowRect;
+                rect.size += new Vector2(10, 10);
+                rect.position -= new Vector2(5, 5);
+                return rect;
+            }
+        }
+
         public virtual void draw()
         {
             windowRect.position = position;
@@ -127,8 +143,14 @@ namespace ScriptNodeFlow
                 }
             }
 
+            GUIContent c = new GUIContent(windowType.ToString(), describe);                 
 
-            GUILayout.BeginArea(windowRect, windowType.ToString(), GUI.skin.window);
+            if(selected)
+            {
+                GUI.Box(selectRect, "", Styles.window);
+            }            
+
+            GUILayout.BeginArea(windowRect, c, GUI.skin.window);            
 
             gui();
 
@@ -159,6 +181,16 @@ namespace ScriptNodeFlow
         public virtual void leftMouseDoubleClick()
         {
 
+        }
+
+        public void Selected(bool select)
+        {
+            selected = select;
+
+            //if(selected)
+            //{
+            //    DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, this);
+            //}
         }
 
         public bool isClick(Vector2 mouseposition)

@@ -251,26 +251,6 @@ namespace ScriptNodeFlow
                         DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
                         condition.connectFlag = false;
                     }
-                    else if (curEvent.button == 0 && curEvent.isMouse)
-                    {
-                        if (curEvent.type == EventType.MouseDown)
-                        {
-                            BaseWindow win = windowList.Find(window =>
-                            {
-                                return window.isClick(curEvent.mousePosition) || window.isClickInPort(curEvent.mousePosition);
-                            });
-
-                            if (win != null
-                                && win.Id != Id
-                                && win.windowType != NodeType.Start
-                                && win.windowType != NodeType.Router)
-                            {
-                                setConditionNext(condition, win);
-                            }
-
-                            condition.connectFlag = false;
-                        }
-                    }
                 }
             }
         }

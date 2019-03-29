@@ -78,7 +78,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        BaseWindow curSelect = null;
+        
         Event curEvent;
         Vector2 mousePosition;
 
@@ -91,12 +91,12 @@ namespace ScriptNodeFlow
         bool clickArea = false;
 
         protected override void OnGUI()
-        {   
+        {
             if (EditorApplication.isCompiling)
             {
                 ShowNotification(comiling);
 
-                if(!EditorPrefs.HasKey(nodeAssetPath))
+                if (!EditorPrefs.HasKey(nodeAssetPath))
                 {
                     EditorPrefs.SetString(nodeAssetPath, scriptable.path);
                     OnDestroy();
@@ -105,7 +105,7 @@ namespace ScriptNodeFlow
                 return;
             }
 
-            if(EditorPrefs.HasKey(nodeAssetPath))
+            if (EditorPrefs.HasKey(nodeAssetPath))
             {
                 // once compiled
                 string path = EditorPrefs.GetString(nodeAssetPath);
@@ -118,6 +118,8 @@ namespace ScriptNodeFlow
                 Repaint();
             }
 
+            base.OnGUI();
+
             curEvent = Event.current;
 
             if (rightArea.Contains(curEvent.mousePosition))
@@ -127,7 +129,7 @@ namespace ScriptNodeFlow
 
                 if (curEvent.button == 1) // mouse right key
                 {
-                    ShowMenu();
+                    RightMouseSelect();
                 }
                 else if (curEvent.button == 0 && curEvent.isMouse)
                 {
@@ -141,19 +143,34 @@ namespace ScriptNodeFlow
                             return w.isClick(mousePosition);
                         });
 
-                        if (curSelect != null
-                            && curEvent.clickCount == 2)
+                        if (curSelect != null)
                         {
-                            if (curSelect != null)
+                            curSelect.Selected(true);                            
+
+                            foreach (var item in windowList)
+                            {
+                                if (item == curSelect)
+                                    continue;
+
+                                item.Selected(false);
+                            }
+
+                            if (curEvent.clickCount == 2)
                             {
                                 curSelect.leftMouseDoubleClick();
                             }
                         }
-
-                        if(curSelect == null)
+                        else
                         {
                             GUI.FocusControl("");
+
+                            foreach (var item in windowList)
+                            {
+                                item.Selected(false);
+                            }
                         }
+                        DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, curSelect);
+
 
                         connectWin = windowList.Find((BaseWindow w) =>
                             {
@@ -173,7 +190,7 @@ namespace ScriptNodeFlow
                         {
                             curSelect.leftMouseDrag(curEvent.delta);
                         }
-                        else if(clickArea)
+                        else if (clickArea)
                         {
                             if (nodesArea.Contains(curEvent.mousePosition))
                             {
@@ -188,8 +205,6 @@ namespace ScriptNodeFlow
                 }
                 Repaint();
             }
-
-            base.OnGUI();
         }
 
         protected override void OnDestroy()
@@ -202,7 +217,7 @@ namespace ScriptNodeFlow
             AssetDatabase.Refresh();
         }
 
-        private void ShowMenu()
+        private void RightMouseSelect()
         {
             GUI.FocusControl("");
             // add a new Node
@@ -222,12 +237,12 @@ namespace ScriptNodeFlow
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(addNode, false, () =>
                     {
-                        windowList.Add(new NodeWindow(Orgin,mousePosition, windowList));
+                        windowList.Add(new NodeWindow(Orgin, mousePosition, windowList));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow(Orgin,mousePosition, windowList));
+                        windowList.Add(new RouterWindow(Orgin, mousePosition, windowList));
                     });
 
                     if (canvasType == CanvasType.Main)
@@ -237,7 +252,7 @@ namespace ScriptNodeFlow
                             windowList.Add(new SubCanvasWindow(Orgin, mousePosition, windowList));
                         });
                     }
-                    
+
                     menu.ShowAsContext();
                 }
             }
@@ -260,11 +275,11 @@ namespace ScriptNodeFlow
         {
             if (canvasType == CanvasType.Main)
             {
-               saveMain();
+                saveMain();
             }
             else
             {
-               saveSub();
+                saveSub();
             }
         }
 

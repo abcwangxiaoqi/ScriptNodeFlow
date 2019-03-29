@@ -74,7 +74,7 @@ namespace ScriptNodeFlow
             }
             else if (current.type == NodeType.SubCanvas)
             {
-                (current as CanvasWindowData).excute(transform,shareData);
+                 (current as CanvasWindowData).excute(transform,shareData);
             }
         }
 

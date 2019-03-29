@@ -110,5 +110,15 @@ namespace ScriptNodeFlow
         {
             get { return skin.GetStyle("nodeWindowHeader"); }
         }
+
+        public static GUIStyle selectedBox
+        {
+            get { return skin.GetStyle("selectedBox"); }
+        }
+
+        public static GUIStyle window
+        {
+            get { return skin.window; }
+        }
     }
 }

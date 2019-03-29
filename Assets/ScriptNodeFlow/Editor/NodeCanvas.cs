@@ -29,8 +29,11 @@ namespace ScriptNodeFlow
 
         protected ShareDataWindow shareDataWindow;
         protected SubCanvasListWindow subCanvasListWindow;
+        protected SelectedWinWindow selectedWinWindow;
 
         protected CanvasType canvasType = CanvasType.Main;
+
+        protected BaseWindow curSelect = null;
 
         protected virtual void Awake()
         {
@@ -74,14 +77,15 @@ namespace ScriptNodeFlow
 
         protected virtual void OnGUI()
         {
-
             leftArea.size = new Vector2(toolWidth, position.height - 2 * border);
             rightArea.size = new Vector2(position.width - toolWidth - 4 * border, position.height - 2 * border);
-
+            
             GUILayout.BeginArea(leftArea, EditorStyles.textArea);
 
             shareDataWindow.draw(leftArea);
             subCanvasListWindow.draw(leftArea);
+            selectedWinWindow.draw(leftArea);
+
             GUILayout.EndArea();
 
             //GUILayout.BeginArea(rightArea, EditorStyles.textArea);
@@ -183,6 +187,7 @@ namespace ScriptNodeFlow
         {
             shareDataWindow = new ShareDataWindow(nodeCanvasData.shareData);
             subCanvasListWindow = new SubCanvasListWindow(nodeCanvasData);
+            selectedWinWindow = new SelectedWinWindow();
         }
 
         protected void generateMainData()
