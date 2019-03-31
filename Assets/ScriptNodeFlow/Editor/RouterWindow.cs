@@ -134,6 +134,7 @@ namespace ScriptNodeFlow
             data.ID = Id;
             data.name = Name;
             data.position = position;
+            data.desc = describe;
 
             foreach (var item in conditions)
             {
@@ -158,14 +159,74 @@ namespace ScriptNodeFlow
         }
 
         protected Color color;
-
-        public override void draw()
+        Event curEvent;
+        protected override void drawBefore()
         {
-            base.draw();
+            base.drawBefore();
 
-            #region draw line
+            curEvent = Event.current;
 
-            #region condition list
+            foreach (var condition in conditions)
+            {
+
+                if (condition.connectFlag && curEvent.button == 1)
+                {
+                    // mouse right key
+                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+                    condition.connectFlag = false;
+                }
+            }
+
+            if (defaultConnectFlag && curEvent.button == 1)
+            {
+                // mouse right key
+                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+                defaultConnectFlag = false;
+            }
+        }
+
+        protected override void drawAfter()
+        {
+            base.drawAfter();
+
+            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+
+             foreach (var condition in conditions)
+            {
+                if (GUI.Button(condition.connectRect, "",
+                    (condition.nextWindow != null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+                {
+                    setConditionNext(condition, null);
+                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+                    condition.connectFlag = true;
+                }
+            }
+
+            if (GUI.Button(defaultConnectRect, "",
+                (defaultNextWindow != null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+                SetDefault(null);
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+                defaultConnectFlag = true;
+            }
+
+
+            //-------------------------------
+
+            foreach (var condition in conditions)
+            {
+                if (condition.connectFlag)
+                {
+                    DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, Color.white);
+                }
+            }
+
+            if (defaultConnectFlag)
+            {
+                DrawArrow(GetOutPositionByPort(defaultConnectRect), curEvent.mousePosition, Color.white);
+            }
+
+            #region condition list line
             foreach (var condition in conditions)
             {
                 if (condition.nextWindow == null)
@@ -190,7 +251,7 @@ namespace ScriptNodeFlow
             }
             #endregion
 
-            #region default
+            #region default line
 
             if (defaultNextWindow != null)
             {
@@ -211,48 +272,8 @@ namespace ScriptNodeFlow
 
                 DrawArrow(GetOutPositionByPort(defaultConnectRect), defaultNextWindow.In, color);
             }
-           
-            #endregion
 
             #endregion
-
-            #region draw connect port
-
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
-
-            drawConditionsConnect();
-
-            drawDefaultConnect();
-
-            #endregion
-        }
-
-        protected virtual void drawConditionsConnect()
-        {
-            foreach (var condition in conditions)
-            {
-                if (GUI.Button(condition.connectRect, "",
-                    (condition.nextWindow != null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
-                {
-                    setConditionNext(condition, null);
-                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
-                    condition.connectFlag = true;
-                }
-
-                if (condition.connectFlag)
-                {
-                    Event curEvent = Event.current;
-
-                    DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, Color.white);
-
-
-                    if (curEvent.button == 1) // mouse right key
-                    {
-                        DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
-                        condition.connectFlag = false;
-                    }
-                }
-            }
         }
 
         void connectConditionAnotherPort(object[] objs)
@@ -291,31 +312,6 @@ namespace ScriptNodeFlow
             condition.nextWindow = next;
         }
 
-
-        protected virtual void drawDefaultConnect()
-        {
-            if (GUI.Button(defaultConnectRect, "", 
-                (defaultNextWindow!=null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
-            {
-                SetDefault(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
-                defaultConnectFlag = true;
-            }
-
-            if (defaultConnectFlag)
-            {
-                Event curEvent = Event.current;
-                DrawArrow(GetOutPositionByPort(defaultConnectRect), curEvent.mousePosition, Color.white);
-
-
-                if (curEvent.button == 1) // mouse right key
-                {
-                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
-                    defaultConnectFlag = false;
-                }
-            }
-        }
-
         void connectDefaultAnotherPort(object[] objs)
         {
             DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
@@ -332,9 +328,9 @@ namespace ScriptNodeFlow
         }
 
         protected float addHeight;
-        protected override void gui()
+        protected override void drawWindowContent()
         {
-            base.gui();
+            base.drawWindowContent();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 

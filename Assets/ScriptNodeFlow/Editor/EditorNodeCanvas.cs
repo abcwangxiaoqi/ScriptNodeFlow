@@ -86,7 +86,7 @@ namespace ScriptNodeFlow
         // need be saved when compiling
         string nodeAssetPath = "NODEASSETPATH";
 
-        BaseWindow connectWin = null;
+       
 
         bool clickArea = false;
 
@@ -118,9 +118,11 @@ namespace ScriptNodeFlow
                 Repaint();
             }
 
-            base.OnGUI();
+
+           // base.OnGUI();
 
             curEvent = Event.current;
+
 
             if (rightArea.Contains(curEvent.mousePosition))
             {
@@ -169,8 +171,7 @@ namespace ScriptNodeFlow
                                 item.Selected(false);
                             }
                         }
-                        DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, curSelect);
-
+                       // DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, curSelect);
 
                         connectWin = windowList.Find((BaseWindow w) =>
                             {
@@ -178,11 +179,11 @@ namespace ScriptNodeFlow
                             });
 
                         DelegateManager.Instance.Dispatch(DelegateCommand.HANDLECONNECTPORT, connectWin);
+
                     }
                     else if (curEvent.type == EventType.MouseUp)
                     {
                         clickArea = false;
-                        curSelect = null;
                     }
                     else if (curEvent.type == EventType.MouseDrag)
                     {
@@ -205,6 +206,7 @@ namespace ScriptNodeFlow
                 }
                 Repaint();
             }
+            base.OnGUI();
         }
 
         protected override void OnDestroy()

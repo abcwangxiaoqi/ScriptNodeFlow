@@ -49,7 +49,7 @@ namespace ScriptNodeFlow
             rect.size = new Vector2(main.width - 2*border, height);
 
             //GUILayout.BeginArea(rect,EditorStyles.textArea);
-            GUILayout.BeginArea(rect);
+            GUILayout.BeginArea(rect,Styles.window);
 
             GUILayout.Label("ShareData", Styles.titleLabel);
 

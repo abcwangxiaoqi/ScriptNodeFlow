@@ -88,6 +88,7 @@ namespace ScriptNodeFlow
             dataEntity.position = position;
             dataEntity.name = Name;
             dataEntity.ID = Id;
+            dataEntity.desc = describe;
 
             dataEntity.className = ClassName;
 
@@ -99,10 +100,34 @@ namespace ScriptNodeFlow
             return dataEntity;
         }
 
-        public override void draw()
+        protected override void drawBefore()
         {
+            base.drawBefore();
 
-            base.draw();
+            curEvent = Event.current;
+
+            if (connectFlag && curEvent.button == 1)
+            {
+                // mouse right key
+                connectFlag = false;
+                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+            }
+        }
+
+        Event curEvent;
+
+        protected override void drawAfter()
+        {
+            base.drawAfter();
+
+            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+                SetNext(null);
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                connectFlag = true;
+            }
 
             //draw line
             if (next != null)
@@ -123,30 +148,11 @@ namespace ScriptNodeFlow
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
 
-            #region draw connect port
-
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
-
-            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
-            {
-                SetNext(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                connectFlag = true;
-            }
 
             if (connectFlag)
             {
-                Event curEvent = Event.current;
                 DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
-
-                if (curEvent.button == 1) // mouse right key
-                {
-                    connectFlag = false;
-                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                }
             }
-
-            #endregion
         }
 
         void connectAnotherPort(object[] objs)
@@ -167,9 +173,9 @@ namespace ScriptNodeFlow
 
         int classIndex = -1;
 
-        protected override void gui()
+        protected override void drawWindowContent()
         {
-            base.gui();
+            base.drawWindowContent();
 
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);

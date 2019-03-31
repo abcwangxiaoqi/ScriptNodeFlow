@@ -19,24 +19,32 @@ namespace ScriptNodeFlow
         
         void refreshWindow(object[] objs)
         {
-            current = objs[0] as BaseWindow;
+            //current = objs[0] as BaseWindow;
         }
 
         private const float border = 5;
-        Vector2 position = new Vector2(border, 700);
-        private float height = 500;
+        Vector2 position = new Vector2(border, 670);
+        private float height = 250;
         BaseWindow current;
 
-        public void draw(Rect main)
+        public void draw(Rect main,List<BaseWindow> windows)
         {
+            if (Event.current.type == EventType.Ignore)
+                return;
+            
+            current = windows.Find((BaseWindow w)=>
+            {
+                return w.selected;
+            });
+            
             rect.position = position;
             rect.size = new Vector2(main.width - 2 * border, height);
             
-            GUILayout.BeginArea(rect);
+            GUILayout.BeginArea(rect,Styles.window);
 
             GUILayout.Label("Current Window", Styles.titleLabel);
 
-            if (current != null)
+            if (current != null && Event.current.type!=EventType.Ignore)
             {
                 //GUILayout.BeginHorizontal();
                 //GUILayout.Label(current.Id);

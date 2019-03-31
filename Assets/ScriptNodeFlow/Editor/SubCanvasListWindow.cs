@@ -61,7 +61,7 @@ namespace ScriptNodeFlow
             rect.position = position;
             rect.size = new Vector2(mainRect.width - 2 * border, height);
 
-            GUILayout.BeginArea(rect);
+            GUILayout.BeginArea(rect,Styles.window);
 
             GUILayout.Label("CanvasList", Styles.titleLabel);
 

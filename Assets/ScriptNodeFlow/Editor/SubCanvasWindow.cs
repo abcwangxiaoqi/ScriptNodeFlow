@@ -90,6 +90,7 @@ namespace ScriptNodeFlow
             dataEntity.position = position;
             dataEntity.name = Name;
             dataEntity.ID = Id;
+            dataEntity.desc = describe;
 
             dataEntity.canvasData = canvas;
 
@@ -102,9 +103,39 @@ namespace ScriptNodeFlow
         }
 
         private bool connectFlag = false;
-        public override void draw()
+
+        Event curEvent;
+
+        protected override void drawBefore()
         {
-            base.draw();
+            base.drawBefore();
+
+            curEvent = Event.current;
+            if (connectFlag && curEvent.button == 1)
+            {
+                // mouse right key
+                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                connectFlag = false;
+            }
+        }
+
+        protected override void drawAfter()
+        {
+            base.drawAfter();
+
+            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            {
+                SetNext(null);
+                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                connectFlag = true;
+            }
+
+            if (connectFlag)
+            {
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+            }
 
             //draw line
             if (next != null)
@@ -124,31 +155,6 @@ namespace ScriptNodeFlow
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
-
-            #region draw connect port
-
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
-
-            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
-            {
-                SetNext(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                connectFlag = true;
-            }
-
-            if (connectFlag)
-            {
-                Event curEvent = Event.current;
-                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
-
-
-                if (curEvent.button == 1) // mouse right key
-                {
-                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                    connectFlag = false;
-                }
-            }
-            #endregion
         }
 
         void connectAnotherPort(object[] objs)
@@ -167,9 +173,9 @@ namespace ScriptNodeFlow
 
         private Object obj;
         private SubNodeCanvasData tempCanvas;
-        protected override void gui()
+        protected override void drawWindowContent()
         {
-            base.gui();
+            base.drawWindowContent();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);

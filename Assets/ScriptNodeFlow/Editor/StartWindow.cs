@@ -66,12 +66,25 @@ namespace ScriptNodeFlow
         }
 
         private bool connectFlag = false;
-
-        public override void draw()
+        Event curEvent;
+        protected override void drawBefore()
         {
-            base.draw();
+            base.drawBefore();
 
-            //draw line
+            curEvent = Event.current;
+
+            if (connectFlag && curEvent.button == 1)
+            {
+                // mouse right key
+                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                connectFlag = false;
+            }
+        }
+
+        protected override void drawAfter()
+        {
+            base.drawAfter();
+
             if (next != null)
             {
                 if (!windowList.Contains(next))
@@ -90,8 +103,6 @@ namespace ScriptNodeFlow
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
 
-            #region draw connect port
-
             if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
             {
 
@@ -102,19 +113,8 @@ namespace ScriptNodeFlow
 
             if (connectFlag)
             {
-                Event curEvent = Event.current;
                 DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
-
-
-                if (curEvent.button == 1) // mouse right key
-                {
-                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                    connectFlag = false;
-                }
-
             }
-
-            #endregion
         }
 
         void connectAnotherPort(object[] objs)
@@ -134,7 +134,7 @@ namespace ScriptNodeFlow
             connectFlag = false;
         }
 
-        protected override void gui()
+        protected override void drawWindowContent()
         {
             GUILayout.Label("Start", Styles.titleLabel);
         }

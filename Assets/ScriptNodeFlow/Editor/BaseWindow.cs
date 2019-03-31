@@ -37,7 +37,7 @@ namespace ScriptNodeFlow
         protected abstract Vector2 size { get; }
 
         //whether be selected
-        protected bool selected = false;
+        public bool selected { get; protected set; }
 
         public string describe;
 
@@ -122,8 +122,19 @@ namespace ScriptNodeFlow
             }
         }
 
-        public virtual void draw()
+        protected virtual void drawBefore()
+        {}
+
+        protected virtual void drawAfter()
         {
+            
+        }
+
+        public void draw()
+        {
+            drawBefore();
+
+
             windowRect.position = position;
             windowRect.size = size;
 
@@ -152,12 +163,14 @@ namespace ScriptNodeFlow
 
             GUILayout.BeginArea(windowRect, c, GUI.skin.window);            
 
-            gui();
+            drawWindowContent();
 
             GUILayout.EndArea();
+
+            drawAfter();
         }
 
-        protected virtual void gui()
+        protected virtual void drawWindowContent()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             Name = GUILayout.TextField(Name, NameTextStyle);
@@ -195,6 +208,7 @@ namespace ScriptNodeFlow
 
         public bool isClick(Vector2 mouseposition)
         {
+            return selectRect.Contains(mouseposition);
             return windowRect.Contains(mouseposition);
         }
 

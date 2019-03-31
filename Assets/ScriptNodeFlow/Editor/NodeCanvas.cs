@@ -35,6 +35,8 @@ namespace ScriptNodeFlow
 
         protected BaseWindow curSelect = null;
 
+        protected BaseWindow connectWin = null;
+
         protected virtual void Awake()
         {
             DelegateManager.Instance.RemoveListener(DelegateCommand.OPENMAINCANVAS, OpenMainCanvas);
@@ -61,7 +63,7 @@ namespace ScriptNodeFlow
             generateSubData();
             Repaint();
         }
-
+            
         protected virtual void Update()
         { }
 
@@ -72,21 +74,28 @@ namespace ScriptNodeFlow
         protected Rect rightArea = new Rect(toolWidth + 3 * border, border, 0, 0);
 
         private const float navigationAreaH = 20;
-        Rect navigationArea = new Rect(0, 0, 0, 0);
+        Rect navigationArea = new Rect(5, 0, 0, 0);
         protected Rect nodesArea = new Rect();
 
         protected virtual void OnGUI()
         {
-            leftArea.size = new Vector2(toolWidth, position.height - 2 * border);
-            rightArea.size = new Vector2(position.width - toolWidth - 4 * border, position.height - 2 * border);
+
+
+            // rightArea.size = new Vector2(position.width - toolWidth - 4 * border, position.height - 2 * border);
+
+   
+            if(Event.current.type != EventType.Ignore)
+            {
+                drawRight();
+
+                drawLeft();
+            }
+
+            //drawRight();
             
-            GUILayout.BeginArea(leftArea, EditorStyles.textArea);
+            //drawLeft();
+            return;
 
-            shareDataWindow.draw(leftArea);
-            subCanvasListWindow.draw(leftArea);
-            selectedWinWindow.draw(leftArea);
-
-            GUILayout.EndArea();
 
             //GUILayout.BeginArea(rightArea, EditorStyles.textArea);
             GUILayout.BeginArea(rightArea, Styles.canvasArea);
@@ -119,8 +128,6 @@ namespace ScriptNodeFlow
             #endregion
 
             #region nodesArea
-            
-            //BeginWindows();
 
             nodesArea = new Rect(border, navigationArea.height + border, rightArea.width - 2 * border,
                 rightArea.height - navigationArea.height - 2 * border);
@@ -137,8 +144,6 @@ namespace ScriptNodeFlow
 
             Repaint();
 
-           // EndWindows();
-
             GUILayout.Label(canvasType == CanvasType.Main ? nodeCanvasData.name : subNodeCanvasData.name,
                 Styles.canvasTitleLabel);
 
@@ -147,6 +152,81 @@ namespace ScriptNodeFlow
             #endregion
 
             GUILayout.EndArea();
+        }
+
+        void drawLeft()
+        {
+            leftArea.size = new Vector2(toolWidth, position.height - 2 * border);
+
+            //GUILayout.BeginArea(leftArea, EditorStyles.textArea);
+            GUILayout.BeginArea(leftArea);
+
+            shareDataWindow.draw(leftArea);
+            subCanvasListWindow.draw(leftArea);
+            selectedWinWindow.draw(leftArea,windowList);
+
+            GUILayout.EndArea();
+        }
+
+        void drawRight()
+        {
+            rightArea.size = new Vector2(position.width - toolWidth - 4 * border, position.height - 2 * border);
+
+            //GUILayout.BeginArea(rightArea, EditorStyles.textArea);
+            GUILayout.BeginArea(rightArea, Styles.canvasArea);
+
+            drawRightNavigation();
+
+            drawRightNodesArea();
+
+            GUILayout.EndArea();
+        }
+
+        void drawRightNavigation()
+        {
+            navigationArea.size = new Vector2(rightArea.width - 2 * border, navigationAreaH);
+            GUILayout.BeginArea(navigationArea);
+            EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+
+            EditorGUI.BeginDisabledGroup(canvasType == CanvasType.Main);
+
+            if (GUILayout.Button("Back", EditorStyles.toolbarButton))
+            {
+                DelegateManager.Instance.Dispatch(DelegateCommand.SELECTMAINCANVAS);
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Focus", EditorStyles.toolbarButton))
+            {
+                toolbarFocus();
+            }
+            GUILayout.FlexibleSpace();
+
+            EditorGUILayout.EndHorizontal();
+            GUILayout.EndArea();
+        }
+
+        void drawRightNodesArea()
+        {
+            nodesArea = new Rect(border, navigationArea.height + border, rightArea.width - 2 * border,
+                rightArea.height - navigationArea.height - 2 * border);
+            GUILayout.BeginArea(nodesArea,Styles.window);
+
+
+            if (windowList != null)
+            {
+                for (int i = 0; i < windowList.Count; i++)
+                {
+                    windowList[i].draw();
+                }
+            }
+
+            GUILayout.EndArea();
+
+            GUILayout.Label(canvasType == CanvasType.Main ? nodeCanvasData.name : subNodeCanvasData.name,
+   Styles.canvasTitleLabel);
         }
 
         protected virtual void OnEnable()
