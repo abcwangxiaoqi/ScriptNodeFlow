@@ -16,8 +16,6 @@ namespace ScriptNodeFlow
 
         List<string> ShareDataList = new List<string>();
         
-        private Rect rect;
-
         public ShareDataWindow(string shareDataName)
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
@@ -43,13 +41,9 @@ namespace ScriptNodeFlow
         private float height = 100;
         
 
-        public void draw(Rect main)
+        public void draw()
         {
-            rect.position = position;
-            rect.size = new Vector2(main.width - 2*border, height);
-
-            //GUILayout.BeginArea(rect,EditorStyles.textArea);
-            GUILayout.BeginArea(rect,Styles.window);
+            GUILayout.BeginArea(CanvasLayout.Layout.ShareDataRect, Styles.window);
 
             GUILayout.Label("ShareData", Styles.titleLabel);
 

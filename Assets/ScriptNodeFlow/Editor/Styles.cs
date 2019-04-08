@@ -120,5 +120,15 @@ namespace ScriptNodeFlow
         {
             get { return skin.window; }
         }
+
+        public static GUIStyle textField
+        {
+            get { return skin.textField; }
+        }
+
+        public static GUIStyle label
+        {
+            get { return skin.label; }
+        }
     }
 }

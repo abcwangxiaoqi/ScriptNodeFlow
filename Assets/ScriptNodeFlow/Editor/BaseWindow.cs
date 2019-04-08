@@ -95,7 +95,7 @@ namespace ScriptNodeFlow
             position = pos;
             windowList = _windowList;
 
-            Id = Guid.NewGuid().ToString();
+            Id = DateTime.Now.ToString("yyMMddHHmmssff");
         }
 
         protected WindowDataBase windowData { get; private set; }
@@ -106,7 +106,7 @@ namespace ScriptNodeFlow
             windowData = _data;
             position = _data.position;
             windowList = _windowList;
-
+            describe = _data.desc;
             Id = _data.ID;
             Name = _data.name;
         }

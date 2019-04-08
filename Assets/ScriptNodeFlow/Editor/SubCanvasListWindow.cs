@@ -48,20 +48,15 @@ namespace ScriptNodeFlow
         private const float border = 5;
         Vector2 position = new Vector2(border, 150);
         private float height = 500;
-
-        private Rect rect;
-
+        
         private int selectHash;
 
         private string addSubName = string.Empty;
 
         private bool mainFlag = true;
-        public void draw(Rect mainRect)
+        public void draw(float mainH)
         {
-            rect.position = position;
-            rect.size = new Vector2(mainRect.width - 2 * border, height);
-
-            GUILayout.BeginArea(rect,Styles.window);
+            GUILayout.BeginArea(CanvasLayout.Layout.GetCanvasListRect(mainH), Styles.window);
 
             GUILayout.Label("CanvasList", Styles.titleLabel);
 

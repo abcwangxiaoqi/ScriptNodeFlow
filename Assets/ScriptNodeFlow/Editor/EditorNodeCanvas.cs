@@ -118,16 +118,12 @@ namespace ScriptNodeFlow
                 Repaint();
             }
 
-
-           // base.OnGUI();
-
             curEvent = Event.current;
-
 
             if (rightArea.Contains(curEvent.mousePosition))
             {
                 //must minus rightArea.position
-                mousePosition = curEvent.mousePosition - rightArea.position - nodesArea.position;
+                mousePosition = curEvent.mousePosition - rightArea.position;
 
                 if (curEvent.button == 1) // mouse right key
                 {
@@ -171,7 +167,6 @@ namespace ScriptNodeFlow
                                 item.Selected(false);
                             }
                         }
-                       // DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, curSelect);
 
                         connectWin = windowList.Find((BaseWindow w) =>
                             {
@@ -193,7 +188,7 @@ namespace ScriptNodeFlow
                         }
                         else if (clickArea)
                         {
-                            if (nodesArea.Contains(curEvent.mousePosition))
+                            if (rightArea.Contains(curEvent.mousePosition))
                             {
                                 //drag the panel
                                 foreach (var item in windowList)

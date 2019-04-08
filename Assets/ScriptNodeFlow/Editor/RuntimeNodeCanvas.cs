@@ -47,7 +47,6 @@ namespace ScriptNodeFlow
 
         Event curEvent;
         Vector2 mousePosition;
-        BaseWindow curSelect = null;
 
         protected override void OnGUI()
         {
@@ -61,7 +60,7 @@ namespace ScriptNodeFlow
             if (rightArea.Contains(curEvent.mousePosition))
             {
                 //must minus rightArea.position
-                mousePosition = curEvent.mousePosition - rightArea.position - nodesArea.position;
+                mousePosition = curEvent.mousePosition - rightArea.position;
 
                 // mouse left key
                 if (curEvent.button == 0 && curEvent.isMouse)
@@ -94,7 +93,7 @@ namespace ScriptNodeFlow
                         }
                         else
                         {
-                            if (nodesArea.Contains(curEvent.mousePosition))
+                            if (rightArea.Contains(curEvent.mousePosition))
                             {
                                 //drag the panel
                                 foreach (var item in windowList)

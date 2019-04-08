@@ -1,71 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using UnityEngine;
 using UnityEditor;
-using UnityEngine;
 
 namespace ScriptNodeFlow
 {
     public class SelectedWinWindow
     {
-        private Rect rect;
-
+        GUILayoutOption width = GUILayout.Width(50);
         public SelectedWinWindow()
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHCURRENTWINDOW, refreshWindow);
-            DelegateManager.Instance.AddListener(DelegateCommand.REFRESHCURRENTWINDOW, refreshWindow);
-        }
-        
-        void refreshWindow(object[] objs)
-        {
-            //current = objs[0] as BaseWindow;
         }
 
-        private const float border = 5;
-        Vector2 position = new Vector2(border, 670);
-        private float height = 250;
-        BaseWindow current;
+        public void draw(BaseWindow current)
+        {     
+            GUILayout.BeginArea(CanvasLayout.Layout.CurrentWindowRect, Styles.window);
 
-        public void draw(Rect main,List<BaseWindow> windows)
-        {
-            if (Event.current.type == EventType.Ignore)
-                return;
+            GUILayout.Label("Current", Styles.titleLabel);
             
-            current = windows.Find((BaseWindow w)=>
+            if (current != null 
+                && Event.current.type!=EventType.Ignore)
             {
-                return w.selected;
-            });
-            
-            rect.position = position;
-            rect.size = new Vector2(main.width - 2 * border, height);
-            
-            GUILayout.BeginArea(rect,Styles.window);
-
-            GUILayout.Label("Current Window", Styles.titleLabel);
-
-            if (current != null && Event.current.type!=EventType.Ignore)
-            {
-                //GUILayout.BeginHorizontal();
-                //GUILayout.Label(current.Id);
-                //GUILayout.EndHorizontal();
-
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("ID:");
+                GUILayout.Label(current.Id);
+                GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Type:");
-                GUILayout.Label(current.windowType.ToString());
+                GUILayout.Label(current.windowType.ToString(),GUILayout.ExpandWidth(true));
                 GUILayout.EndHorizontal();
 
                 if(current.windowType != NodeType.Start)
                 {
+                    EditorGUI.BeginDisabledGroup(Application.isPlaying);
+
                     GUILayout.BeginHorizontal();
                     GUILayout.Label("Name:");
-                    current.Name = GUILayout.TextField(current.Name);
+                    current.Name = GUILayout.TextField(current.Name,GUILayout.ExpandWidth(true));
                     GUILayout.EndHorizontal();
 
 
                     GUILayout.Label("Describe:");
-                    current.describe = GUILayout.TextArea(current.describe, GUILayout.Height(50));
+                    current.describe = GUILayout.TextArea(current.describe, GUILayout.ExpandHeight(true));
+
+                    EditorGUI.EndDisabledGroup();
                 }
             }         
 
