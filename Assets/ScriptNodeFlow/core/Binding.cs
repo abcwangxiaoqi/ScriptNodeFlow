@@ -3,17 +3,17 @@
 namespace ScriptNodeFlow
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingFlow:Attribute
+    public class BindingFlow : Attribute
     {
-        public BindingFlow(string id)
+        public BindingFlow(int id)
         {
             ID = id;
         }
-        public string ID;
+        public int ID;
     }
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingNode:Attribute
+    public class BindingNode : Attribute
     {
         public BindingNode(string id)
         {
@@ -23,9 +23,9 @@ namespace ScriptNodeFlow
     }
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingRouter:Attribute
+    public class BindingRouter : Attribute
     {
-        public BindingRouter(string routerId,string coditionId)
+        public BindingRouter(string routerId, string coditionId)
         {
             RouterID = routerId;
             CoditionId = coditionId;

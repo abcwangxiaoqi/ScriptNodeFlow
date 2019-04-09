@@ -15,8 +15,10 @@ namespace ScriptNodeFlow
         }
 
         public override void OnInspectorGUI()
-        {
-            GUILayout.Label("Desc");
+        {           
+            EditorGUILayout.LabelField("ID", data.GetInstanceID().ToString());
+
+            EditorGUILayout.PrefixLabel("Desc");
             data.desc = GUILayout.TextArea(data.desc, GUILayout.Height(100));
 
             GUILayout.Space(10);
@@ -33,5 +35,4 @@ namespace ScriptNodeFlow
             EditorGUI.EndDisabledGroup();
         }
     }
-
 }

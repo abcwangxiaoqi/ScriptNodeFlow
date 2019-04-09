@@ -32,8 +32,8 @@ namespace ScriptNodeFlow
             }
         }
 
-        public StartWindow(string orgin, StartWindowData itemData, List<BaseWindow> _windowList)
-            : base(orgin,itemData, _windowList)
+        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+            : base(itemData, _windowList, _flowID)
         {
         }
 

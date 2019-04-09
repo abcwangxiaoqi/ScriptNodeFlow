@@ -7,8 +7,8 @@ namespace ScriptNodeFlow
 {
     public class SubStartWindow : StartWindow
     {
-        public SubStartWindow(string orgin, StartWindowData itemData, List<BaseWindow> _windowList)
-            : base(orgin, itemData, _windowList)
+        public SubStartWindow(StartWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+            : base(itemData, _windowList, _flowID)
         {
         }
     }

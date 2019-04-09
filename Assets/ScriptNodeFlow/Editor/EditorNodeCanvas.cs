@@ -99,6 +99,9 @@ namespace ScriptNodeFlow
                 if (!EditorPrefs.HasKey(nodeAssetPath))
                 {
                     EditorPrefs.SetString(nodeAssetPath, scriptable.path);
+
+                    DelegateManager.Instance.Dispatch(DelegateCommand.OPENMAINCANVAS);
+
                     OnDestroy();
                 }
 
@@ -234,19 +237,19 @@ namespace ScriptNodeFlow
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(addNode, false, () =>
                     {
-                        windowList.Add(new NodeWindow(Orgin, mousePosition, windowList));
+                        windowList.Add(new NodeWindow(mousePosition, windowList, nodeCanvasData.GetInstanceID()));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow(Orgin, mousePosition, windowList));
+                        windowList.Add(new RouterWindow( mousePosition, windowList,nodeCanvasData.GetInstanceID()));
                     });
 
                     if (canvasType == CanvasType.Main)
                     {
                         menu.AddItem(addCanvas, false, () =>
                         {
-                            windowList.Add(new SubCanvasWindow(Orgin, mousePosition, windowList));
+                            windowList.Add(new SubCanvasWindow(Orgin, mousePosition, windowList, nodeCanvasData.GetInstanceID()));
                         });
                     }
 
@@ -286,7 +289,7 @@ namespace ScriptNodeFlow
             nodeCanvasData.routerlist.Clear();
             nodeCanvasData.subCanvaslist.Clear();
 
-            nodeCanvasData.shareData = shareDataWindow.shareData;
+            nodeCanvasData.shareData = infoDataWindow.shareData;
 
             for (int i = 0; i < windowList.Count; i++)
             {

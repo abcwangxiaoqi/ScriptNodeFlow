@@ -9,6 +9,7 @@ namespace ScriptNodeFlow
 {
     public class RouterWindowCondition
     {
+        public string ID = 
         public string className;
         public BaseWindow nextWindow;
         public Rect connectRect;
@@ -28,6 +29,8 @@ namespace ScriptNodeFlow
         protected static GUIStyle defaultLabel = new GUIStyle(EditorStyles.label);
 
         protected static GUIContent newCondition = new GUIContent("New", "add a new condition");
+
+        static int MaxCondition = 10;
         static RouterWindow()
         {
             defaultLButton.fixedWidth = 17;
@@ -78,16 +81,16 @@ namespace ScriptNodeFlow
         protected Rect defaultConnectRect;
         protected bool defaultConnectFlag = false;
 
-        public RouterWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
-            : base(orgin,pos, _windowList)
+        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList,int _flowID)
+            : base(pos, _windowList, _flowID)
         {
             Name = "Router";
 
             addHeight = buttonStyle.lineHeight + 8;
         }
 
-        public RouterWindow(string orgin, RouterWindowData itemData, List<BaseWindow> _windowList)
-            : base(orgin,itemData, _windowList)
+        public RouterWindow( RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+            : base(itemData, _windowList, _flowID)
         {
             addHeight = buttonStyle.lineHeight + 8;
         }
@@ -336,12 +339,15 @@ namespace ScriptNodeFlow
 
             GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
+            EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
             if (GUILayout.Button(newCondition, buttonStyle))
             {
                 conditions.Add(new RouterWindowCondition());
 
                 _size.y += addHeight;
             }
+            EditorGUI.EndDisabledGroup();
+
             GUI.color = Color.white;
 
             GUILayout.Space(10);

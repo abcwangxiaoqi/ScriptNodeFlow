@@ -57,15 +57,19 @@ namespace ScriptNodeFlow
             }
         }
         
-        public SubCanvasWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList)
-            : base(orgin,pos, _windowList)
+        public SubCanvasWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList, int _flowID)
+            : base(pos, _windowList, _flowID)
         {
+            Orgin = orgin;
             Name = "Canvas";
         }
 
-        public SubCanvasWindow(string orgin,CanvasWindowData itemData, List<BaseWindow> _windowList)
-            : base(orgin,itemData, _windowList)
+        protected string Orgin;
+
+        public SubCanvasWindow(string orgin,CanvasWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+            : base(itemData, _windowList, _flowID)
         {
+            Orgin = orgin;
             canvas = itemData.canvasData;
         }
 

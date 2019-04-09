@@ -8,26 +8,13 @@ namespace ScriptNodeFlow
 {
     public class NodeWindow : BaseWindow
     {
-        protected static List<string> allEntityClass = new List<string>();
-
-        protected GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
-        protected GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
-        protected static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
         protected GUIContent deleteContent = new GUIContent("Delte");
-        protected string separator = "Next/";
 
+        static Type[] tys;
         static NodeWindow()
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            Type[] tys = _assembly.GetTypes();
-
-            foreach (var item in tys)
-            {
-                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    allEntityClass.Add(item.FullName);
-                }
-            }
+            tys = _assembly.GetTypes();
         }
 
         protected string ClassName { get; private set; }
@@ -53,18 +40,16 @@ namespace ScriptNodeFlow
             }
         }
 
-        public NodeWindow(string orgin,Vector2 pos, List<BaseWindow> _windowList)
-            : base(orgin,pos, _windowList)
+        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
+            : base(pos, _windowList, _flowID)
         {
             Name = "Node";
         }
 
-        public NodeWindow(string orgin, NodeWindowData itemData, List<BaseWindow> _windowList)
-            : base(orgin,itemData, _windowList)
+        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+            : base(itemData, _windowList, _flowID)
         {
             ClassName = itemData.className;
-
-            classIndex = allEntityClass.IndexOf(ClassName);
         }
 
         public void SetNext(BaseWindow entity)
@@ -170,31 +155,37 @@ namespace ScriptNodeFlow
         }
 
         private bool connectFlag = false;
-
-        int classIndex = -1;
-
+        
         protected override void drawWindowContent()
         {
             base.drawWindowContent();
 
+            GUILayout.BeginHorizontal();
 
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            classIndex = EditorGUILayout.Popup(classIndex, allEntityClass.ToArray(), popupStyle);
-            EditorGUI.EndDisabledGroup();
-
-            if (classIndex >= 0)
+            if(string.IsNullOrEmpty(ClassName))
             {
-                ClassName = allEntityClass[classIndex];
+                GUILayout.Label("None");
             }
+            else
+            {
+                GUILayout.Label(ClassName);
+            }
+
+            if(!Application.isPlaying && GUILayout.Button("", Styles.refreshButton))
+            {
+                refreshScript();
+            }
+
+            GUILayout.EndHorizontal();
             
             GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
 
-            if (classIndex < 0)
+            if (string.IsNullOrEmpty(ClassName))
             {
                 GUILayout.Label("", Styles.wrongLabel);
-                GUILayout.Label("Selection is null", Styles.tipErrorLabel);
+                GUILayout.Label("Script is null", Styles.tipErrorLabel);
             }
             else
             {
@@ -203,6 +194,30 @@ namespace ScriptNodeFlow
             }
 
             GUILayout.EndHorizontal();
+        }
+
+        void refreshScript()
+        {
+            ClassName = string.Empty;
+            foreach (var item in tys)
+            {
+                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
+                {
+                    object[] bindingFlow = item.GetCustomAttributes(typeof(BindingFlow), false);
+                    object[] bindingNode = item.GetCustomAttributes(typeof(BindingNode), false);
+                    if (bindingFlow != null
+                        && bindingFlow.Length > 0
+                        && (bindingFlow[0] as BindingFlow).ID == flowID
+                        && bindingNode!=null
+                        && bindingNode.Length > 0
+                        && (bindingNode[0] as BindingNode).ID == Id
+                        )
+                    {
+                        ClassName = item.FullName;
+                        break;
+                    }
+                }
+            }
         }
 
 

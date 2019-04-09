@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+//[BindingFlow(10234)]
 public class testShareData : SharedData
 {
     public int state = 0;
 }
 
+[BindingFlow(10234)]
 public class testShareData2 : SharedData
 {
     public int state = 0;

@@ -27,7 +27,7 @@ namespace ScriptNodeFlow
         //全部
         protected List<BaseWindow> windowList = null;
 
-        protected ShareDataWindow shareDataWindow;
+        protected InfoDataWindow infoDataWindow;
         protected SubCanvasListWindow subCanvasListWindow;
         protected SelectedWinWindow selectedWinWindow;
 
@@ -82,7 +82,7 @@ namespace ScriptNodeFlow
 
         void drawLeft()
         {
-            shareDataWindow.draw();
+            infoDataWindow.draw();
             selectedWinWindow.draw(curSelect);
             subCanvasListWindow.draw(position.height);     
         }
@@ -173,7 +173,7 @@ Styles.canvasTitleLabel);
 
         protected void generateLeftArea()
         {
-            shareDataWindow = new ShareDataWindow(nodeCanvasData.shareData);
+            infoDataWindow = new InfoDataWindow(nodeCanvasData.GetInstanceID(), nodeCanvasData.shareData);
             subCanvasListWindow = new SubCanvasListWindow(nodeCanvasData);
             selectedWinWindow = new SelectedWinWindow();
         }
@@ -182,21 +182,21 @@ Styles.canvasTitleLabel);
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new StartWindow(Orgin, nodeCanvasData.start, windowList));
+            windowList.Add(new StartWindow( nodeCanvasData.start, windowList, nodeCanvasData.GetInstanceID()));
 
             foreach (var item in nodeCanvasData.nodelist)
             {
-                windowList.Add(new NodeWindow(Orgin, item, windowList));
+                windowList.Add(new NodeWindow(item, windowList, nodeCanvasData.GetInstanceID()));
             }
 
             foreach (var item in nodeCanvasData.routerlist)
             {
-                windowList.Add(new RouterWindow(Orgin, item, windowList));
+                windowList.Add(new RouterWindow(item, windowList, nodeCanvasData.GetInstanceID()));
             }
 
             foreach (var item in nodeCanvasData.subCanvaslist)
             {
-                windowList.Add(new SubCanvasWindow(Orgin, item, windowList));
+                windowList.Add(new SubCanvasWindow(Orgin, item, windowList, nodeCanvasData.GetInstanceID()));
             }
 
             //set next Node
@@ -265,16 +265,16 @@ Styles.canvasTitleLabel);
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new SubStartWindow(Orgin, subNodeCanvasData.start, windowList));
+            windowList.Add(new SubStartWindow(subNodeCanvasData.start, windowList, nodeCanvasData.GetInstanceID()));
 
             foreach (var item in subNodeCanvasData.nodelist)
             {
-                windowList.Add(new SubNodeWindow(Orgin, item, windowList));
+                windowList.Add(new SubNodeWindow(item, windowList, nodeCanvasData.GetInstanceID()));
             }
 
             foreach (var item in subNodeCanvasData.routerlist)
             {
-                windowList.Add(new SubRouterWindow(Orgin, item, windowList));
+                windowList.Add(new SubRouterWindow(item, windowList, nodeCanvasData.GetInstanceID()));
             }
 
             //set next Node

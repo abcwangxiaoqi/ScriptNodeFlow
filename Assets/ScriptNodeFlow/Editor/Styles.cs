@@ -14,6 +14,14 @@ namespace ScriptNodeFlow
                 return EditorGUIUtility.IconContent("SVN_AddedLocal");
             }
         }
+
+        public static GUIContent refresh
+        {
+            get
+            {
+                return EditorGUIUtility.IconContent("Refresh");
+            }
+        }
     }
     
     public class Styles
@@ -39,6 +47,11 @@ namespace ScriptNodeFlow
         public static GUIStyle miniDelButton
         {
             get { return skin.GetStyle("miniDelButton"); }
+        }
+
+        public static GUIStyle refreshButton
+        {
+            get { return skin.GetStyle("refreshButton"); }
         }
 
         public static GUIStyle titleLabel

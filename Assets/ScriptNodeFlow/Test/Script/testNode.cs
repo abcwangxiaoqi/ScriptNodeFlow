@@ -20,6 +20,8 @@ public class Enity1 : Node
     }
 }
 
+[BindingFlow(10234)]
+[BindingNode("19040820212371")]
 public class Enity6 : Node
 {
     public Enity6(SharedData data) : base(data) { }
