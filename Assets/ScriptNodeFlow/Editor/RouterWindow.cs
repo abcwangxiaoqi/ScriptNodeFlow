@@ -9,11 +9,12 @@ namespace ScriptNodeFlow
 {
     public class RouterWindowCondition
     {
-        public string ID = 
+        public string ID = DateTime.Now.ToString("yyMMddHHmmssff");
         public string className;
         public BaseWindow nextWindow;
         public Rect connectRect;
         public bool connectFlag = false;
+        public bool expand = false;
     }
 
     public class RouterWindow : BaseWindow
@@ -86,13 +87,13 @@ namespace ScriptNodeFlow
         {
             Name = "Router";
 
-            addHeight = buttonStyle.lineHeight + 8;
+            //addHeight = buttonStyle.lineHeight + 8;
         }
 
         public RouterWindow( RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
             : base(itemData, _windowList, _flowID)
         {
-            addHeight = buttonStyle.lineHeight + 8;
+            //addHeight = buttonStyle.lineHeight + 8;
         }
 
         public void SetDefault(BaseWindow defEntity)
@@ -330,7 +331,7 @@ namespace ScriptNodeFlow
             defaultConnectFlag = false;
         }
 
-        protected float addHeight;
+        protected float addHeight=35;
         protected override void drawWindowContent()
         {
             base.drawWindowContent();
@@ -388,38 +389,136 @@ namespace ScriptNodeFlow
             GUILayout.EndHorizontal();
         }
 
+        //protected void drawConditions()
+        //{
+        //    for (int i = 0; i < conditions.Count; i++)
+        //    {
+        //        RouterWindowCondition rc = conditions[i];
+        //        GUILayout.BeginHorizontal();
+
+        //        //删除
+        //        if (GUILayout.Button("", Styles.miniDelButton))
+        //        {
+        //            conditions.RemoveAt(i);
+        //            i--;
+        //            _size.y -= addHeight;
+        //        }
+
+        //        string c = rc.className;
+        //        int selectindex = allConditionClass.IndexOf(c);
+        //        selectindex = EditorGUILayout.Popup(selectindex, allConditionClass.ToArray(), popupStyle);
+        //        if (selectindex >= 0)
+        //        {
+        //            conditions[i].className = allConditionClass[selectindex];
+        //        }
+
+        //        Rect rect = GUILayoutUtility.GetRect(0, 0);
+        //        if (rect.position != Vector2.zero)
+        //        {
+        //            rect.position += position + new Vector2(0, connectPortOffset);
+        //            rect.size = new Vector2(connectPortSize, connectPortSize);
+        //            rc.connectRect = rect;
+        //        }
+
+        //        GUILayout.EndHorizontal();
+        //    }
+        //}
+
         protected void drawConditions()
         {
             for (int i = 0; i < conditions.Count; i++)
             {
                 RouterWindowCondition rc = conditions[i];
-                GUILayout.BeginHorizontal();
 
-                //删除
-                if (GUILayout.Button("", Styles.miniDelButton))
+                
+                //EditorGUIUtility.currentViewWidth
+                if(rc.expand)
                 {
-                    conditions.RemoveAt(i);
-                    i--;
-                    _size.y -= addHeight;
-                }
+                    GUILayout.Box("", GUILayout.Height(50), GUILayout.ExpandWidth(true));
+                    Rect r = GUILayoutUtility.GetLastRect();
+                    if (r.position != Vector2.zero)
+                    {
+                        Rect rectScript = new Rect();
+                        rectScript.position = r.position + new Vector2(5, 5);
+                        rectScript.size = new Vector2(r.size.x - 10 - 20, (r.size.y - 15) / 2);                        
+                        GUI.Label(rectScript, string.Format("Script: {0}",
+                           string.IsNullOrEmpty(rc.className) ? "Null" : rc.className));
 
-                string c = rc.className;
-                int selectindex = allConditionClass.IndexOf(c);
-                selectindex = EditorGUILayout.Popup(selectindex, allConditionClass.ToArray(), popupStyle);
-                if (selectindex >= 0)
+                        Rect rectBt = new Rect();
+                        rectBt.position = r.position + new Vector2(5 + rectScript.size.x + 2, 5);
+                        rectBt.size = new Vector2(16, 16);
+                        if (GUI.Button(rectBt, "-"))
+                        {
+                            rc.expand = false;
+                        }
+
+                        Rect rectID = new Rect();
+                        rectID.position = r.position + new Vector2(5, 5 + rectScript.size.y + 5);
+                        rectID.size = new Vector2(r.size.x - 10 - 20, (r.size.y - 15) / 2);
+                        GUI.Label(rectID, string.Format("ID: {0}", rc.ID));
+
+                        Rect rectCyBt = new Rect();
+                        rectCyBt.position = rectID.position + new Vector2(rectID.size.x + 2, 0);
+                        rectCyBt.size = new Vector2(16, 16);
+                        if (GUI.Button(rectCyBt, "C"))
+                        {
+
+                        }
+                    }
+                }
+                else
                 {
-                    conditions[i].className = allConditionClass[selectindex];
-                }
+                    GUILayout.Box("", GUILayout.Height(25), GUILayout.ExpandWidth(true));
+                    Rect r = GUILayoutUtility.GetLastRect();
+                    if (r.position != Vector2.zero)
+                    {
+                        Rect rectScript = new Rect();
+                        rectScript.position = r.position + new Vector2(5, 5);
+                        rectScript.size = new Vector2(r.size.x - 10-20, r.size.y - 10);
+                        GUI.Label(rectScript, string.Format("Script: {0}",
+                            string.IsNullOrEmpty(rc.className) ? "Null" : rc.className));
 
-                Rect rect = GUILayoutUtility.GetRect(0, 0);
-                if (rect.position != Vector2.zero)
-                {
-                    rect.position += position + new Vector2(0, connectPortOffset);
-                    rect.size = new Vector2(connectPortSize, connectPortSize);
-                    rc.connectRect = rect;
-                }
+                        Rect rectBt = new Rect();
+                        rectBt.position = r.position + new Vector2(5+ rectScript.size.x+2, 5);
+                        rectBt.size = new Vector2(16, 16);
+                        if(GUI.Button(rectBt,"+"))
+                        {
+                            rc.expand = true;
+                        }
+                    }
 
-                GUILayout.EndHorizontal();
+                }
+              
+
+                //GUILayout.Label("");
+
+                //GUILayout.BeginHorizontal();
+
+                ////删除
+                //if (GUILayout.Button("", Styles.miniDelButton))
+                //{
+                //    conditions.RemoveAt(i);
+                //    i--;
+                //    _size.y -= addHeight;
+                //}
+
+                //string c = rc.className;
+                //int selectindex = allConditionClass.IndexOf(c);
+                //selectindex = EditorGUILayout.Popup(selectindex, allConditionClass.ToArray(), popupStyle);
+                //if (selectindex >= 0)
+                //{
+                //    conditions[i].className = allConditionClass[selectindex];
+                //}
+
+                //Rect rect = GUILayoutUtility.GetRect(0, 0);
+                //if (rect.position != Vector2.zero)
+                //{
+                //    rect.position += position + new Vector2(0, connectPortOffset);
+                //    rect.size = new Vector2(connectPortSize, connectPortSize);
+                //    rc.connectRect = rect;
+                //}
+
+                //GUILayout.EndHorizontal();
             }
         }
 
