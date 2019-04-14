@@ -58,6 +58,9 @@ namespace ScriptNodeFlow
     [Serializable]
     public class RouterWindowConditionData
     {
+        public string ID;
+        public string name;
+
         public string className;
         public string nextWindowId = null;
 

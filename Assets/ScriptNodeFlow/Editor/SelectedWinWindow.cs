@@ -21,12 +21,20 @@ namespace ScriptNodeFlow
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("ID:");
-                GUILayout.Label(current.Id);
+                GUILayout.Label(current.Id,Styles.subTitleLabel);
+                GUILayout.FlexibleSpace();
+
+                if(GUILayout.Button(GUIContents.copyID,Styles.copyButton))
+                {
+                    EditorGUIUtility.systemCopyBuffer = current.Id;
+                }
+
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("Type:");
-                GUILayout.Label(current.windowType.ToString(),GUILayout.ExpandWidth(true));
+                GUILayout.Label(current.windowType.ToString(),Styles.subTitleLabel,GUILayout.ExpandWidth(true));
+                GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
 
                 if(current.windowType != NodeType.Start)
@@ -34,8 +42,9 @@ namespace ScriptNodeFlow
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label("Name:");
+                    GUILayout.Label("Name:",GUILayout.Width(38));
                     current.Name = GUILayout.TextField(current.Name,GUILayout.ExpandWidth(true));
+                    //GUILayout.FlexibleSpace();
                     GUILayout.EndHorizontal();
 
 

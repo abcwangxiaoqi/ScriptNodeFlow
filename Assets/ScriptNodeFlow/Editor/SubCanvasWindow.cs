@@ -10,28 +10,12 @@ namespace ScriptNodeFlow
 {
     public class SubCanvasWindow : BaseWindow
     {
-        static List<string> allEntityClass = new List<string>();
-
         static GUIContent doubleClickContent = new GUIContent("double click to open canvas");
 
-        static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
-        static GUIContent nextNewRouterContent = new GUIContent("Next/New Router");
-        static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
         static GUIContent deleteContent = new GUIContent("Delte");
-        static string separator = "Next/";
 
         static SubCanvasWindow()
         {
-            Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            Type[] tys = _assembly.GetTypes();
-
-            foreach (var item in tys)
-            {
-                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    allEntityClass.Add(item.FullName);
-                }
-            }
         }
 
         protected SubNodeCanvasData canvas { get; private set; }
@@ -184,6 +168,12 @@ namespace ScriptNodeFlow
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);
 
+            if(tempCanvas!=null)
+            {
+                //Debug.Log(">>>" + tempCanvas.GetInstanceID());
+            }
+
+
             if (tempCanvas!=null && AssetDatabase.GetAssetPath(tempCanvas) == Orgin)
             {
                 canvas = tempCanvas;
@@ -199,7 +189,7 @@ namespace ScriptNodeFlow
 
             EditorGUI.EndDisabledGroup();
 
-            GUILayout.FlexibleSpace();
+            /*GUILayout.FlexibleSpace();
 
             GUILayout.BeginHorizontal();
             if (canvas == null)
@@ -213,7 +203,7 @@ namespace ScriptNodeFlow
                 GUILayout.Label("Everything is right", Styles.tipLabel);
             }
 
-            GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();*/
         }
 
 

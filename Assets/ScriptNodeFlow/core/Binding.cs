@@ -5,11 +5,11 @@ namespace ScriptNodeFlow
     [AttributeUsage(AttributeTargets.Class)]
     public class BindingFlow : Attribute
     {
-        public BindingFlow(int id)
+        public BindingFlow(string id)
         {
             ID = id;
         }
-        public int ID;
+        public string ID;
     }
 
     [AttributeUsage(AttributeTargets.Class)]

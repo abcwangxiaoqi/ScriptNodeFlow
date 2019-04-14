@@ -22,6 +22,10 @@ namespace ScriptNodeFlow
                 return EditorGUIUtility.IconContent("Refresh");
             }
         }
+
+        public static GUIContent copyID = new GUIContent("", "Copy the ID");
+
+        public static GUIContent scriptRefNone = new GUIContent("script ref is none", "you need binding a script");
     }
     
     public class Styles
@@ -31,7 +35,8 @@ namespace ScriptNodeFlow
         {
             if (EditorGUIUtility.isProSkin)
             {
-                skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPro.guiskin");
+               // skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPro.guiskin");
+                skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPersonal.guiskin");
             }
             else
             {
@@ -128,6 +133,62 @@ namespace ScriptNodeFlow
         {
             get { return skin.GetStyle("selectedBox"); }
         }
+
+        public static GUIStyle expandButton
+        {
+            get { return skin.GetStyle("expandButton"); }
+        }
+
+        public static GUIStyle unexpandButton
+        {
+            get { return skin.GetStyle("unexpandButton"); }
+        }
+
+        public static GUIStyle copyButton
+        {
+            get { return skin.GetStyle("copyButton"); }
+        }
+
+        public static GUIStyle subTitleLabel
+        {
+            get { return skin.GetStyle("subTitleLabel"); }
+        }
+
+        public static GUIStyle nodeErrorLabel
+        {
+            get { return skin.GetStyle("nodeErrorLabel"); }
+        }
+
+        public static GUIStyle nodeClassNameLabel
+        {
+            get { return skin.GetStyle("nodeClassNameLabel"); }
+        }
+
+        public static GUIStyle infoErrorLabel
+        {
+            get { return skin.GetStyle("infoErrorLabel"); }
+        }
+
+        public static GUIStyle routerconditionErrorLabel
+        {
+            get { return skin.GetStyle("routerconditionErrorLabel"); }
+        }
+
+        public static GUIStyle routerconditionLabel
+        {
+            get { return skin.GetStyle("routerconditionLabel"); }
+        }
+
+        public static GUIStyle routerconditionNameLabel
+        {
+            get { return skin.GetStyle("routerconditionNameLabel"); }
+        }
+
+        public static GUIStyle routerconditionNameErrorLabel
+        {
+            get { return skin.GetStyle("routerconditionNameErrorLabel"); }
+        }
+
 
         public static GUIStyle window
         {

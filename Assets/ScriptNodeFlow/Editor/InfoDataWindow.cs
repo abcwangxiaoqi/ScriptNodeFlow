@@ -12,48 +12,14 @@ namespace ScriptNodeFlow
     {
         public string shareData { get; private set; }
 
-        int ID;
+        string ID;
 
-        Type[] tys;
         public InfoDataWindow(int id,string shareDataName)
         {
-            shareData = shareDataName;
-            ID = id;
+            ID = id.ToString();
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            tys = _assembly.GetTypes();
-        }        
+            Type[] tys = _assembly.GetTypes();
 
-        public void draw()
-        {
-            GUILayout.BeginArea(CanvasLayout.Layout.ShareDataRect, Styles.window);            
-
-            GUILayout.Label("Info", Styles.titleLabel);
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.Label("ID:", GUILayout.Width(25));
-            GUILayout.Label(ID.ToString());
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-
-            GUILayout.Label("ShareData:", GUILayout.Width(25));
-            GUILayout.Label(string.IsNullOrEmpty(shareData) ? "None" : shareData);
-
-             if(!Application.isPlaying && GUILayout.Button("", Styles.refreshButton))
-            //if (GUILayout.Button(GUIContents.refresh,EditorStyles.miniButton))
-            {
-                refreshShareData();
-            }
-
-            GUILayout.EndHorizontal();
-
-            GUILayout.EndArea();
-        }
-
-        void refreshShareData()
-        {            
             foreach (var item in tys)
             {
                 if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
@@ -68,6 +34,47 @@ namespace ScriptNodeFlow
                     }
                 }
             }
+        }        
+
+        public void draw()
+        {
+            GUILayout.BeginArea(CanvasLayout.Layout.ShareDataRect, Styles.window);           
+
+            GUILayout.Label("Info", Styles.titleLabel);
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("ID:");
+            GUILayout.Label(ID,Styles.subTitleLabel);
+
+            GUILayout.FlexibleSpace();
+
+            if(GUILayout.Button(GUIContents.copyID,Styles.copyButton))
+            {
+                EditorGUIUtility.systemCopyBuffer = ID;
+            }
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label("ShareData:");
+
+            if(string.IsNullOrEmpty(shareData))
+            {
+                GUILayout.Label(GUIContents.scriptRefNone,Styles.infoErrorLabel);
+            }
+            else
+            {
+                GUILayout.Label(shareData, Styles.subTitleLabel);
+            }
+
+
+            GUILayout.FlexibleSpace();
+
+            GUILayout.EndHorizontal();
+
+            GUILayout.EndArea();
         }
     }
 }

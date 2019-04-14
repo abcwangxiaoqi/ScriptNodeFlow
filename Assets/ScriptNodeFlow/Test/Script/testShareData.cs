@@ -10,7 +10,7 @@ public class testShareData : SharedData
     public int state = 0;
 }
 
-[BindingFlow(10234)]
+//[BindingFlow("10234")]
 public class testShareData2 : SharedData
 {
     public int state = 0;

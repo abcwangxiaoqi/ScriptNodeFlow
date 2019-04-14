@@ -49,7 +49,32 @@ namespace ScriptNodeFlow
         public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, int _flowID)
             : base(itemData, _windowList, _flowID)
         {
-            ClassName = itemData.className;
+            if(Application.isPlaying)
+            {
+                ClassName = itemData.className;
+            }
+            else
+            {
+                foreach (var item in tys)
+                {
+                    if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
+                    {
+                        object[] bindings = item.GetCustomAttributes(typeof(BindingFlow), false);
+                        object[] nodeBinings = item.GetCustomAttributes(typeof(BindingNode), false);
+                        if (bindings != null
+                            && bindings.Length > 0
+                            && (bindings[0] as BindingFlow).ID == flowID
+                            //--node
+                            && nodeBinings!=null
+                            && nodeBinings.Length>0
+                            && (nodeBinings[0] as BindingNode).ID == Id)
+                        {
+                            ClassName = item.FullName;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         public void SetNext(BaseWindow entity)
@@ -164,33 +189,11 @@ namespace ScriptNodeFlow
 
             if(string.IsNullOrEmpty(ClassName))
             {
-                GUILayout.Label("None");
+                GUILayout.Label(GUIContents.scriptRefNone,Styles.nodeErrorLabel);
             }
             else
             {
-                GUILayout.Label(ClassName);
-            }
-
-            if(!Application.isPlaying && GUILayout.Button("", Styles.refreshButton))
-            {
-                refreshScript();
-            }
-
-            GUILayout.EndHorizontal();
-            
-            GUILayout.FlexibleSpace();
-
-            GUILayout.BeginHorizontal();
-
-            if (string.IsNullOrEmpty(ClassName))
-            {
-                GUILayout.Label("", Styles.wrongLabel);
-                GUILayout.Label("Script is null", Styles.tipErrorLabel);
-            }
-            else
-            {
-                GUILayout.Label("", Styles.rightLabel);
-                GUILayout.Label("Everything is right", Styles.tipLabel);
+                GUILayout.Label(ClassName,Styles.nodeClassNameLabel);
             }
 
             GUILayout.EndHorizontal();

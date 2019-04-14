@@ -230,8 +230,10 @@ Styles.canvasTitleLabel);
                     foreach (var con in edata.conditions)
                     {
                         RouterWindowCondition rcon = new RouterWindowCondition();
-                        rcon.className = con.className;
+                        rcon.ID = con.ID;
+                        rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
+                        rcon.updateClassName(nodeCanvasData.GetInstanceID(), win.Id, con.className);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
@@ -308,8 +310,10 @@ Styles.canvasTitleLabel);
                     foreach (var con in edata.conditions)
                     {
                         RouterWindowCondition rcon = new RouterWindowCondition();
-                        rcon.className = con.className;
+                        rcon.ID = con.ID;
+                        rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
+                        rcon.updateClassName(nodeCanvasData.GetInstanceID(), win.Id, con.className);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
