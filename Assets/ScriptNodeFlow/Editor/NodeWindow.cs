@@ -14,8 +14,10 @@ namespace ScriptNodeFlow
         static NodeWindow()
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            tys = _assembly.GetTypes();
+            tys = _assembly.GetTypes();             
         }
+
+        protected string flowID;
 
         protected string ClassName { get; private set; }
 
@@ -41,15 +43,18 @@ namespace ScriptNodeFlow
         }
 
         public NodeWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
-            : base(pos, _windowList, _flowID)
+            : base(pos, _windowList)
         {
+            flowID = _flowID.ToString();
             Name = "Node";
         }
 
         public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, int _flowID)
-            : base(itemData, _windowList, _flowID)
+            : base(itemData, _windowList)
         {
-            if(Application.isPlaying)
+            flowID = _flowID.ToString();
+
+            if (Application.isPlaying)
             {
                 ClassName = itemData.className;
             }

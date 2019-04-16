@@ -44,9 +44,7 @@ namespace ScriptNodeFlow
         protected Rect windowRect;
 
         protected List<BaseWindow> windowList;
-        public abstract NodeType windowType { get; }
-
-        protected string flowID;
+        public abstract NodeType windowType { get; }       
 
         public string Id { get; private set; }
         public string Name;
@@ -91,18 +89,17 @@ namespace ScriptNodeFlow
             }
         }
 
-        public BaseWindow( Vector2 pos, List<BaseWindow> _windowList, int _flowID)
+        public BaseWindow( Vector2 pos, List<BaseWindow> _windowList)
         {
             position = pos;
             windowList = _windowList;
-            flowID = _flowID.ToString();
 
             Id = DateTime.Now.ToString("yyMMddHHmmssff");
         }
 
         protected WindowDataBase windowData { get; private set; }
       
-        public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList, int _flowID)
+        public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList)
         {
             windowData = _data;
             position = _data.position;
@@ -110,7 +107,6 @@ namespace ScriptNodeFlow
             describe = _data.desc;
             Id = _data.ID;
             Name = _data.name;
-            flowID = _flowID.ToString();
         }
 
         public Rect selectRect

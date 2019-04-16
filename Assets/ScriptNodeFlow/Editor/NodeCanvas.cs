@@ -20,8 +20,6 @@ namespace ScriptNodeFlow
 
         protected NodeCanvasData nodeCanvasData;
 
-        protected string Orgin;//nodeCanvasData's asset path
-
         protected SubNodeCanvasData subNodeCanvasData;
 
         //全部
@@ -44,6 +42,8 @@ namespace ScriptNodeFlow
 
             DelegateManager.Instance.RemoveListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
             DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
+
+              
         }
 
         protected virtual void OpenMainCanvas(object[] objs)
@@ -182,7 +182,7 @@ Styles.canvasTitleLabel);
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new StartWindow( nodeCanvasData.start, windowList, nodeCanvasData.GetInstanceID()));
+            windowList.Add(new StartWindow( nodeCanvasData.start, windowList));
 
             foreach (var item in nodeCanvasData.nodelist)
             {
@@ -196,7 +196,7 @@ Styles.canvasTitleLabel);
 
             foreach (var item in nodeCanvasData.subCanvaslist)
             {
-                windowList.Add(new SubCanvasWindow(Orgin, item, windowList, nodeCanvasData.GetInstanceID()));
+                windowList.Add(new SubCanvasWindow(item, windowList, nodeCanvasData));
             }
 
             //set next Node
@@ -267,7 +267,7 @@ Styles.canvasTitleLabel);
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new SubStartWindow(subNodeCanvasData.start, windowList, nodeCanvasData.GetInstanceID()));
+            windowList.Add(new SubStartWindow(subNodeCanvasData.start, windowList));
 
             foreach (var item in subNodeCanvasData.nodelist)
             {

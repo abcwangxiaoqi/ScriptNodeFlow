@@ -102,16 +102,18 @@ namespace ScriptNodeFlow
         protected BaseWindow defaultNextWindow = null;
         protected Rect defaultConnectRect;
         protected bool defaultConnectFlag = false;
-
+        protected string flowID;
         public RouterWindow(Vector2 pos, List<BaseWindow> _windowList,int _flowID)
-            : base(pos, _windowList, _flowID)
+            : base(pos, _windowList)
         {
+            flowID = _flowID.ToString();
             Name = "Router";
         }
 
         public RouterWindow( RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
-            : base(itemData, _windowList, _flowID)
+            : base(itemData, _windowList)
         {
+            flowID = _flowID.ToString();
         }
 
         public void SetDefault(BaseWindow defEntity)

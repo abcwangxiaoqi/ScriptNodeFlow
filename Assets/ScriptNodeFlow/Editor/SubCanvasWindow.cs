@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace ScriptNodeFlow
 {
-    public class SubCanvasWindow : BaseWindow
+    public class SubCanvasWindow : BaseWindow,IDisposable
     {
         static GUIContent doubleClickContent = new GUIContent("double click to open canvas");
 
@@ -40,21 +40,43 @@ namespace ScriptNodeFlow
                 return NodeType.SubCanvas;
             }
         }
-        
-        public SubCanvasWindow(string orgin, Vector2 pos, List<BaseWindow> _windowList, int _flowID)
-            : base(pos, _windowList, _flowID)
+
+        List<SubNodeCanvasData> subCanvasList= new List<SubNodeCanvasData>();
+        List<string> subCanvasNameList = new List<string>();
+        void refreshSublist(object[] objs)
         {
-            Orgin = orgin;
-            Name = "Canvas";
+            subCanvasList.Clear();
+            subCanvasNameList.Clear();
+
+            Object[] subs = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(orginData));
+            foreach (var item in subs)
+            {
+                if (item is SubNodeCanvasData)
+                {
+                    subCanvasList.Add(item as SubNodeCanvasData);
+                    subCanvasNameList.Add(item.name);
+                }
+            }
         }
 
-        protected string Orgin;
+        NodeCanvasData orginData;
 
-        public SubCanvasWindow(string orgin,CanvasWindowData itemData, List<BaseWindow> _windowList, int _flowID)
-            : base(itemData, _windowList, _flowID)
+        public SubCanvasWindow(Vector2 pos, List<BaseWindow> _windowList, NodeCanvasData _orginData)
+            : base(pos, _windowList)
         {
-            Orgin = orgin;
+            Name = "Canvas";
+            orginData = _orginData;
+            refreshSublist(null);
+            DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
+        }
+
+        public SubCanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList, NodeCanvasData _orginData)
+            : base(itemData, _windowList)
+        {
+            orginData = _orginData;
             canvas = itemData.canvasData;
+            refreshSublist(null);            
+            DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
 
         public void SetNext(BaseWindow entity)
@@ -166,46 +188,29 @@ namespace ScriptNodeFlow
             base.drawWindowContent();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            tempCanvas = (SubNodeCanvasData)EditorGUILayout.ObjectField(canvas, typeof(SubNodeCanvasData), false);
 
-            if(tempCanvas!=null)
+            GUILayout.Space(4);
+
+            int index = subCanvasList.IndexOf(canvas);
+            index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray());
+            if(index>=0)
             {
-                //Debug.Log(">>>" + tempCanvas.GetInstanceID());
+                canvas = subCanvasList[index];
             }
 
+            GUILayout.FlexibleSpace();
 
-            if (tempCanvas!=null && AssetDatabase.GetAssetPath(tempCanvas) == Orgin)
+            if(canvas == null)
             {
-                canvas = tempCanvas;
-            }
-            else if(tempCanvas == null)
-            {
-                canvas = null;
-            }
-            else
-            {
-                tempCanvas = canvas;
+                GUILayout.Label(NoneCanvasContent, Styles.subCanvasErrorLabel);
             }
 
             EditorGUI.EndDisabledGroup();
-
-            /*GUILayout.FlexibleSpace();
-
-            GUILayout.BeginHorizontal();
-            if (canvas == null)
-            {
-                GUILayout.Label("", Styles.wrongLabel);
-                GUILayout.Label("Canvas asset is null", Styles.tipErrorLabel);
-            }
-            else
-            {
-                GUILayout.Label("", Styles.rightLabel);
-                GUILayout.Label("Everything is right", Styles.tipLabel);
-            }
-
-            GUILayout.EndHorizontal();*/
         }
 
+        string tt;
+
+        static GUIContent NoneCanvasContent = new GUIContent("no subcanvas");
 
         public override void rightMouseClick(Vector2 mouseposition)
         {
@@ -232,6 +237,11 @@ namespace ScriptNodeFlow
             DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
                 canvas);
             GUIUtility.ExitGUI();
+        }
+
+        public void Dispose()
+        {
+            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
     }
 }

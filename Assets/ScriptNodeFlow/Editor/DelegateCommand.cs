@@ -14,5 +14,7 @@ namespace ScriptNodeFlow
         public const string TOOLBARFOCUS = "toolbar_focus";
 
         public const string HANDLECONNECTPORT = "handle_connectport";
+
+        public const string REFRESHSUBLIST = "refreshsublist";
     }
 }

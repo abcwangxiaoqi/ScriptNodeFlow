@@ -51,12 +51,11 @@ namespace ScriptNodeFlow
         
         private int selectHash;
 
-        private string addSubName = string.Empty;
-
         private bool mainFlag = true;
         public void draw(float mainH)
         {
-            GUILayout.BeginArea(CanvasLayout.Layout.GetCanvasListRect(mainH), Styles.window);
+            Rect mainRect = CanvasLayout.Layout.GetCanvasListRect(mainH);
+            GUILayout.BeginArea(mainRect, Styles.window);
 
             GUILayout.Label("CanvasList", Styles.titleLabel);
 
@@ -67,23 +66,44 @@ namespace ScriptNodeFlow
             }
             EditorGUI.EndDisabledGroup();
 
-            GUILayout.Space(10);
+            GUILayout.Space(5);
+
+            if (!Application.isPlaying
+                && GUILayout.Button("", Styles.addSubCanvasButton))
+            {
+                SubNodeCanvasData sub = ScriptableObject.CreateInstance<SubNodeCanvasData>();
+
+                string addSubName = "SubCanvas";
+
+                int index = 1;
+
+                while(subCanvasList.Exists((s)=> { return s.name == (addSubName + index); }))
+                {
+                    index++;
+                }
+
+                addSubName += index;
+
+                sub.name = addSubName;
+
+                AssetDatabase.AddObjectToAsset(sub, mainData);
+                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(sub));
+
+                subCanvasList.Add(sub);
+
+                DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHSUBLIST);
+            }
+
+            GUILayout.Space(5);
 
             for (int i = 0; i < subCanvasList.Count; i++)
             {
                 GUILayout.BeginHorizontal();
 
-                EditorGUI.BeginDisabledGroup(selectHash == subCanvasList[i].GetInstanceID());
-                if (GUILayout.Button(subCanvasList[i].name,EditorStyles.miniButton))
-                {
-                    DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
-                }
-                EditorGUI.EndDisabledGroup();
-
                 if (!Application.isPlaying)
                 {
                     if (GUILayout.Button("", Styles.miniDelButton))
-                    {
+                    {                        
                         if (selectHash == subCanvasList[i].GetInstanceID())
                         {
                             DelegateManager.Instance.Dispatch(DelegateCommand.OPENMAINCANVAS);
@@ -92,6 +112,8 @@ namespace ScriptNodeFlow
                         Object.DestroyImmediate(subCanvasList[i], true);
                         AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(mainData));
 
+                        DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHSUBLIST);
+
                         subCanvasList.RemoveAt(i);
                         i--;
 
@@ -99,37 +121,37 @@ namespace ScriptNodeFlow
                     }
                 }
 
-                GUILayout.EndHorizontal();
-            }
-
-            GUILayout.Space(10);
-
-            GUILayout.BeginHorizontal();
-            addSubName = EditorGUILayout.TextField(addSubName);
-            GUILayout.FlexibleSpace();
-
-            if (!Application.isPlaying)
-            {
-                if (GUILayout.Button("New", EditorStyles.miniButton))
+                EditorGUI.BeginDisabledGroup(selectHash == subCanvasList[i].GetInstanceID());
+                if (GUILayout.Button(subCanvasList[i].name, EditorStyles.miniButton))
                 {
-                    if (!string.IsNullOrEmpty(addSubName))
-                    {
-                        SubNodeCanvasData sub = ScriptableObject.CreateInstance<SubNodeCanvasData>();
-                        sub.name = addSubName;
-
-                        AssetDatabase.AddObjectToAsset(sub, mainData);
-                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(sub));
-
-                        subCanvasList.Add(sub);
-
-                        addSubName = "";
-
-                        GUI.FocusControl("");
-                    }
+                    DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
                 }
-            }
+                EditorGUI.EndDisabledGroup();               
+
+                GUILayout.EndHorizontal();
+
+                if(selectHash == subCanvasList[i].GetInstanceID())
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(20);
+                    string tempName = EditorGUILayout.TextField(subCanvasList[i].name);
+                    if(tempName!= subCanvasList[i].name
+                        && !string.IsNullOrEmpty(tempName)
+                        && !subCanvasList.Exists((sub) => { return sub.name.Equals(tempName); }))
+                    {
+                        subCanvasList[i].name = tempName;
+                    }
+
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Space(20);
+                    subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, GUILayout.Height(100)); ;
+                    GUILayout.EndHorizontal();
+                }
+            }            
             
-            GUILayout.EndHorizontal();
+            //GUILayout.EndHorizontal();
 
             GUILayout.EndArea();
         }

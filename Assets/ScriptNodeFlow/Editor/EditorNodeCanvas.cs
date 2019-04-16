@@ -62,8 +62,6 @@ namespace ScriptNodeFlow
 
             nodeCanvasData = scriptable.Load<NodeCanvasData>();
 
-            Orgin = scriptable.path;
-
             generateLeftArea();
 
             generateMainData();
@@ -249,7 +247,7 @@ namespace ScriptNodeFlow
                     {
                         menu.AddItem(addCanvas, false, () =>
                         {
-                            windowList.Add(new SubCanvasWindow(Orgin, mousePosition, windowList, nodeCanvasData.GetInstanceID()));
+                            windowList.Add(new SubCanvasWindow(mousePosition, windowList, nodeCanvasData));
                         });
                     }
 

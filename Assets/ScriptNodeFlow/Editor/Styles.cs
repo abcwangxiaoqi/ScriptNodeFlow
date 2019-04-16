@@ -189,6 +189,15 @@ namespace ScriptNodeFlow
             get { return skin.GetStyle("routerconditionNameErrorLabel"); }
         }
 
+        public static GUIStyle subCanvasErrorLabel
+        {
+            get { return skin.GetStyle("subCanvasErrorLabel"); }
+        }
+
+        public static GUIStyle addSubCanvasButton
+        {
+            get { return skin.GetStyle("addSubCanvasButton"); }
+        }
 
         public static GUIStyle window
         {
