@@ -4,30 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace ScriptNodeFlow
-{
-    public class GUIContents
-    {
-        public static GUIContent add
-        {
-            get
-            {
-                return EditorGUIUtility.IconContent("SVN_AddedLocal");
-            }
-        }
-
-        public static GUIContent refresh
-        {
-            get
-            {
-                return EditorGUIUtility.IconContent("Refresh");
-            }
-        }
-
-        public static GUIContent copyID = new GUIContent("", "Copy the ID");
-
-        public static GUIContent scriptRefNone = new GUIContent("script ref is none", "you need binding a script");
-    }
-    
+{    
     public class Styles
     {
         public static GUISkin skin;
@@ -35,168 +12,12 @@ namespace ScriptNodeFlow
         {
             if (EditorGUIUtility.isProSkin)
             {
-               // skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPro.guiskin");
                 skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPersonal.guiskin");
             }
             else
             {
                 skin = AssetDatabase.LoadAssetAtPath<GUISkin>("Assets/GUISkinPersonal.guiskin");
             }
-        }
-
-        public static GUIStyle delButton
-        {
-            get { return skin.GetStyle("delButton"); }
-        }
-
-        public static GUIStyle miniDelButton
-        {
-            get { return skin.GetStyle("miniDelButton"); }
-        }
-
-        public static GUIStyle refreshButton
-        {
-            get { return skin.GetStyle("refreshButton"); }
-        }
-
-        public static GUIStyle titleLabel
-        {
-            get { return skin.GetStyle("titleLabel"); }
-        }
-
-        public static GUIStyle winTitleLabel
-        {
-            get { return skin.GetStyle("winTitleLabel"); }
-        }
-
-        public static GUIStyle canvasTitleLabel
-        {
-            get { return skin.GetStyle("canvasTitleLabel"); }
-        }
-
-        public static GUIStyle wrongLabel
-        {
-            get { return skin.GetStyle("wrongLabel"); }
-        }
-
-        public static GUIStyle rightLabel
-        {
-            get { return skin.GetStyle("rightLabel"); }
-        }
-
-        public static GUIStyle tipLabel
-        {
-            get { return skin.GetStyle("tipLabel"); }
-        }
-
-        public static GUIStyle tipErrorLabel
-        {
-            get { return skin.GetStyle("tipErrorLabel"); }
-        }
-
-        public static GUIStyle addButton
-        {
-            get { return skin.GetStyle("addButton"); }
-        }
-
-        public static GUIStyle winNameText
-        {
-            get { return skin.GetStyle("winNameText"); }
-        }
-
-        public static GUIStyle canvasArea
-        {
-            get { return skin.GetStyle("canvasArea"); }
-        }
-
-        public static GUIStyle connectBtn
-        {
-            get { return skin.GetStyle("connectBtn"); }
-        }
-
-        public static GUIStyle connectedBtn
-        {
-            get { return skin.GetStyle("connectedBtn"); }
-        }
-
-        public static GUIStyle nodeWindow
-        {
-            get { return skin.GetStyle("nodeWindow"); }
-        }
-
-        public static GUIStyle nodeWindowHeader
-        {
-            get { return skin.GetStyle("nodeWindowHeader"); }
-        }
-
-        public static GUIStyle selectedBox
-        {
-            get { return skin.GetStyle("selectedBox"); }
-        }
-
-        public static GUIStyle expandButton
-        {
-            get { return skin.GetStyle("expandButton"); }
-        }
-
-        public static GUIStyle unexpandButton
-        {
-            get { return skin.GetStyle("unexpandButton"); }
-        }
-
-        public static GUIStyle copyButton
-        {
-            get { return skin.GetStyle("copyButton"); }
-        }
-
-        public static GUIStyle subTitleLabel
-        {
-            get { return skin.GetStyle("subTitleLabel"); }
-        }
-
-        public static GUIStyle nodeErrorLabel
-        {
-            get { return skin.GetStyle("nodeErrorLabel"); }
-        }
-
-        public static GUIStyle nodeClassNameLabel
-        {
-            get { return skin.GetStyle("nodeClassNameLabel"); }
-        }
-
-        public static GUIStyle infoErrorLabel
-        {
-            get { return skin.GetStyle("infoErrorLabel"); }
-        }
-
-        public static GUIStyle routerconditionErrorLabel
-        {
-            get { return skin.GetStyle("routerconditionErrorLabel"); }
-        }
-
-        public static GUIStyle routerconditionLabel
-        {
-            get { return skin.GetStyle("routerconditionLabel"); }
-        }
-
-        public static GUIStyle routerconditionNameLabel
-        {
-            get { return skin.GetStyle("routerconditionNameLabel"); }
-        }
-
-        public static GUIStyle routerconditionNameErrorLabel
-        {
-            get { return skin.GetStyle("routerconditionNameErrorLabel"); }
-        }
-
-        public static GUIStyle subCanvasErrorLabel
-        {
-            get { return skin.GetStyle("subCanvasErrorLabel"); }
-        }
-
-        public static GUIStyle addSubCanvasButton
-        {
-            get { return skin.GetStyle("addSubCanvasButton"); }
         }
 
         public static GUIStyle window
@@ -206,12 +27,76 @@ namespace ScriptNodeFlow
 
         public static GUIStyle textField
         {
-            get { return skin.textField; }
+            get { return EditorStyles.textField; }
+        }
+
+        public static GUIStyle textArea
+        {
+            get { return EditorStyles.textArea; }
         }
 
         public static GUIStyle label
         {
-            get { return skin.label; }
+            get { return EditorStyles.label; }
+        }
+
+
+        //-------------------specific----------------------
+        static GUIStyle _windowNameText = null;
+        public static GUIStyle windowNameText
+        {
+            get
+            {
+                if(_windowNameText == null)
+                {
+                    _windowNameText = new GUIStyle(UnityEditor.EditorStyles.textField);
+                    _windowNameText.fontSize = 12;
+                    _windowNameText.fontStyle = FontStyle.Bold;
+                    _windowNameText.alignment = TextAnchor.MiddleCenter;
+
+                    if(EditorGUIUtility.isProSkin)
+                    {
+                        _windowNameText.normal.textColor = Color.white;
+                        _windowNameText.active.textColor = Color.white;
+                    }
+                    else
+                    {
+                        _windowNameText.normal.textColor = Color.white;
+                        _windowNameText.focused.textColor = Color.white;
+                    }
+                    
+                }
+                return _windowNameText;
+            }
+        }
+
+
+        static GUIStyle _conditionNameText = null;
+        public static GUIStyle conditionNameText
+        {
+            get
+            {
+                if (_conditionNameText == null)
+                {
+                    _conditionNameText = new GUIStyle(UnityEditor.EditorStyles.textField);
+                    _conditionNameText.fontSize = 12;
+                    _conditionNameText.fontStyle = FontStyle.Bold;
+                    _conditionNameText.alignment = TextAnchor.MiddleCenter;
+
+                    if (EditorGUIUtility.isProSkin)
+                    {
+                        _conditionNameText.normal.textColor = Color.white;
+                        _conditionNameText.active.textColor = Color.white;
+                    }
+                    else
+                    {
+                        _conditionNameText.normal.textColor = Color.white;
+                        _conditionNameText.focused.textColor = Color.white;
+                    }
+
+                }
+                return _conditionNameText;
+            }
         }
     }
 }

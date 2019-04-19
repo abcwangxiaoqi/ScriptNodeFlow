@@ -15,23 +15,8 @@ namespace ScriptNodeFlow
 
     public abstract class BaseWindow
     {
-        protected static GUIStyle NameTextStyle;
         protected static float connectPortSize = 12;
         protected static float connectPortOffset = 4;
-
-        static BaseWindow()
-        {
-            NameTextStyle = new GUIStyle(UnityEditor.EditorStyles.textField);
-            NameTextStyle.fixedHeight = 15;
-            NameTextStyle.fontSize = 12;
-            NameTextStyle.fontStyle = FontStyle.Bold;
-            NameTextStyle.alignment = TextAnchor.MiddleCenter;
-            NameTextStyle.normal.textColor = Color.white;
-            NameTextStyle.focused.textColor = Color.white;
-        }
-
-        protected GUIStyle buttonStyle = EditorStyles.miniButton;
-        protected GUIStyle popupStyle = EditorStyles.popup;
         
         public Vector2 position { get; set; }
         protected abstract Vector2 size { get; }
@@ -171,7 +156,7 @@ namespace ScriptNodeFlow
         protected virtual void drawWindowContent()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            Name = GUILayout.TextField(Name, NameTextStyle);
+            Name = GUILayout.TextField(Name, Styles.windowNameText);
             EditorGUI.EndDisabledGroup();
         }
 
@@ -216,19 +201,7 @@ namespace ScriptNodeFlow
         }
 
         public abstract WindowDataBase GetData();
-
-        protected void DrawArrow2(Vector2 from, Vector2 to, Color color)
-        {
-            Handles.BeginGUI();
-            Handles.color = color;
-            Handles.DrawAAPolyLine(3, from, to);
-            Vector2 v0 = from - to;
-            v0 *= 10 / v0.magnitude;
-            Vector2 v1 = new Vector2(v0.x * 0.866f - v0.y * 0.5f, v0.x * 0.5f + v0.y * 0.866f);
-            Vector2 v2 = new Vector2(v0.x * 0.866f + v0.y * 0.5f, v0.x * -0.5f + v0.y * 0.866f); ;
-            Handles.DrawAAPolyLine(3, to + v1, to, to + v2);
-            Handles.EndGUI();
-        }
+        
 
         protected void DrawArrow(Vector2 from, Vector2 to, Color color)
         {

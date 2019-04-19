@@ -3,34 +3,44 @@
 namespace ScriptNodeFlow
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingFlow : Attribute
+    public class ShareDataBinding : Attribute
     {
-        public BindingFlow(string id)
+        public ShareDataBinding(string canvasid)
         {
-            ID = id;
+            CanvasID = canvasid;
         }
-        public string ID;
+        public string CanvasID;
+
+        public const string Format = "[ShareDataBinding(\"{0}\")]";
     }
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingNode : Attribute
+    public class NodeBinding : Attribute
     {
-        public BindingNode(string id)
+        public NodeBinding(string canvasid,string windowid)
         {
-            ID = id;
+            CanvasID = canvasid;
+            WindowID = windowid;
         }
-        public string ID;
-    }
+        public string CanvasID;
+        public string WindowID;
 
+        public const string Format = "[NodeBinding(\"{0}\",\"{1}\")]";
+    }
+    
     [AttributeUsage(AttributeTargets.Class)]
-    public class BindingRouter : Attribute
+    public class RouterBinding : Attribute
     {
-        public BindingRouter(string routerId, string coditionId)
+        public RouterBinding(string canvasid,string routerId, string conditionId)
         {
             RouterID = routerId;
-            CoditionId = coditionId;
+            ConditionID = conditionId;
+            CanvasID = canvasid;
         }
+        public string CanvasID;
         public string RouterID;
-        public string CoditionId;
+        public string ConditionID;
+
+        public const string Format = "[RouterBinding(\"{0}\",\"{1}\",\"{2}\")]";
     }
 }

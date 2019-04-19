@@ -6,9 +6,9 @@ public class AssetModify : UnityEditor.AssetModificationProcessor
 {
     static string[] OnWillSaveAssets(string[] paths)
     {
-        Debug.Log("OnWillSaveAssets");
-        foreach (string path in paths)
-            Debug.Log(path);
+        //Debug.Log("OnWillSaveAssets");
+        //foreach (string path in paths)
+        //    Debug.Log(path);
         return paths;
     }
 }

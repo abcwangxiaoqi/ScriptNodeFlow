@@ -15,7 +15,7 @@ namespace ScriptNodeFlow
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
             tys = _assembly.GetTypes();
         }
-        
+
         public string ID = DateTime.Now.ToString("yyMMddHHmmssff");
         public string name = "Condition Name";
         public string className;
@@ -24,28 +24,24 @@ namespace ScriptNodeFlow
         public bool connectFlag = false;
         public bool expand = false;
 
-        public void updateClassName(int flowID,string routerID,string cName)
+        public void updateClassName(int flowID, string routerID, string cName)
         {
             className = cName;
 
             if (Application.isPlaying)
                 return;
-            
+
             className = null;
             foreach (var item in tys)
             {
                 if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    object[] bindings = item.GetCustomAttributes(typeof(BindingFlow), false);
-                    object[] routerBindings = item.GetCustomAttributes(typeof(BindingRouter), false);
-                    if (bindings != null
-                        && bindings.Length > 0
-                        && (bindings[0] as BindingFlow).ID == flowID.ToString()
-                        //--node
-                        && routerBindings != null
+                    object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
+                    if (routerBindings != null
                         && routerBindings.Length > 0
-                        && (routerBindings[0] as BindingRouter).RouterID == routerID
-                        && (routerBindings[0] as BindingRouter).CoditionId == ID)
+                        && (routerBindings[0] as RouterBinding).CanvasID == flowID.ToString()
+                        && (routerBindings[0] as RouterBinding).RouterID == routerID
+                        && (routerBindings[0] as RouterBinding).ConditionID == ID)
                     {
                         className = item.FullName;
                         break;
@@ -57,23 +53,7 @@ namespace ScriptNodeFlow
 
     public class RouterWindow : BaseWindow
     {
-        protected static GUIContent deleteNode = new GUIContent("Delte");
-
-        protected static GUIContent newCondition = new GUIContent("New", "add a new condition");
-
-        protected static GUIStyle conditionNameStyle ;
-
         static int MaxCondition = 10;
-        static RouterWindow()
-        {
-            conditionNameStyle = new GUIStyle(UnityEditor.EditorStyles.textField);
-            conditionNameStyle.fontSize = 12;
-            conditionNameStyle.fontStyle = FontStyle.Bold;
-            conditionNameStyle.alignment = TextAnchor.MiddleCenter;
-            conditionNameStyle.normal.textColor = Color.white;
-            conditionNameStyle.focused.textColor = Color.white;
-            conditionNameStyle.stretchWidth = true;
-        }
 
         protected List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
 
@@ -98,19 +78,19 @@ namespace ScriptNodeFlow
                 return _size;
             }
         }
-        
+
         protected BaseWindow defaultNextWindow = null;
         protected Rect defaultConnectRect;
         protected bool defaultConnectFlag = false;
         protected string flowID;
-        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList,int _flowID)
+        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
             : base(pos, _windowList)
         {
             flowID = _flowID.ToString();
             Name = "Router";
         }
 
-        public RouterWindow( RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
             : base(itemData, _windowList)
         {
             flowID = _flowID.ToString();
@@ -213,29 +193,30 @@ namespace ScriptNodeFlow
 
             foreach (var c in conditions)
             {
-                if(c.expand)
+                if (c.expand)
                 {
-                    h += expandConditionH+lineSpace;
+                    h += expandConditionH + lineSpace;
                 }
                 else
                 {
-                    h += ConditionH+lineSpace;
+                    h += ConditionH + lineSpace;
                 }
             }
 
-            _size.y =defaultWindowHeigth+ h;
+            _size.y = defaultWindowHeigth + h;
         }
 
         protected override void drawAfter()
         {
             base.drawAfter();
 
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+            GUI.Button(InPortRect, "", parentRef == 0 ? CanvasLayout.Layout.canvas.ConnectBtStyle : CanvasLayout.Layout.canvas.ConnectedBtStyle);
 
-             foreach (var condition in conditions)
+            foreach (var condition in conditions)
             {
-                if (GUI.Button(condition.connectRect, "",
-                    (condition.nextWindow != null || condition.connectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+                if (!Application.isPlaying &&
+                    GUI.Button(condition.connectRect, "",
+                    (condition.nextWindow != null || condition.connectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
                 {
                     setConditionNext(condition, null);
                     DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
@@ -243,8 +224,9 @@ namespace ScriptNodeFlow
                 }
             }
 
-            if (GUI.Button(defaultConnectRect, "",
-                (defaultNextWindow != null || defaultConnectFlag) ? Styles.connectedBtn : Styles.connectBtn))
+            if (!Application.isPlaying 
+                && GUI.Button(defaultConnectRect, "",
+                (defaultNextWindow != null || defaultConnectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
                 SetDefault(null);
                 DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
@@ -258,13 +240,13 @@ namespace ScriptNodeFlow
             {
                 if (condition.connectFlag)
                 {
-                    DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, Color.white);
+                    DrawArrow(GetOutPositionByPort(condition.connectRect), curEvent.mousePosition, CanvasLayout.Layout.canvas.lineColor);
                 }
             }
 
             if (defaultConnectFlag)
             {
-                DrawArrow(GetOutPositionByPort(defaultConnectRect), curEvent.mousePosition, Color.white);
+                DrawArrow(GetOutPositionByPort(defaultConnectRect), curEvent.mousePosition, CanvasLayout.Layout.canvas.lineColor);
             }
 
             #region condition list line
@@ -279,13 +261,13 @@ namespace ScriptNodeFlow
                     continue;
                 }
 
-                color = Color.white;
+                color = CanvasLayout.Layout.canvas.lineColor;
 
                 if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
                     && (windowData as RouterWindowData).runtimeNextId == condition.nextWindow.Id)
                 {
-                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                    color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
 
                 DrawArrow(GetOutPositionByPort(condition.connectRect), condition.nextWindow.In, color);
@@ -302,13 +284,13 @@ namespace ScriptNodeFlow
                     return;
                 }
 
-                color = Color.white;
+                color = CanvasLayout.Layout.canvas.lineColor;
 
                 if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
                     && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
                 {
-                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                    color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
 
                 DrawArrow(GetOutPositionByPort(defaultConnectRect), defaultNextWindow.In, color);
@@ -323,7 +305,7 @@ namespace ScriptNodeFlow
 
             BaseWindow window = objs[0] as BaseWindow;
 
-            RouterWindowCondition condition = conditions.Find((cond)=> 
+            RouterWindowCondition condition = conditions.Find((cond) =>
             {
                 return cond.connectFlag;
             });
@@ -338,7 +320,7 @@ namespace ScriptNodeFlow
         }
 
 
-        void setConditionNext(RouterWindowCondition condition,BaseWindow next)
+        void setConditionNext(RouterWindowCondition condition, BaseWindow next)
         {
             if (condition.nextWindow != null)
             {
@@ -377,15 +359,19 @@ namespace ScriptNodeFlow
             GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
 
             EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
-            if (GUILayout.Button(newCondition, buttonStyle))
+
+            GUILayout.Space(5);
+            
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, EditorStyles.miniButton))
             {
                 conditions.Add(new RouterWindowCondition());
             }
+
             EditorGUI.EndDisabledGroup();
 
             GUI.color = Color.white;
 
-            GUILayout.Space(10);
+            GUILayout.Space(5);
 
             drawConditions();
 
@@ -403,7 +389,7 @@ namespace ScriptNodeFlow
                 RouterWindowCondition rc = conditions[i];
 
 
-                if(rc.expand)
+                if (rc.expand)
                 {
                     GUILayout.Box("", GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
                     Rect r = GUILayoutUtility.GetLastRect();
@@ -412,22 +398,22 @@ namespace ScriptNodeFlow
                         Rect rectBtDelete = new Rect();
                         rectBtDelete.position = r.position + new Vector2(2, (r.size.y / 2) - 8);
                         rectBtDelete.size = new Vector2(16, 16);
-                        if (GUI.Button(rectBtDelete, "", Styles.miniDelButton))
+
+                        if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent, CanvasLayout.Layout.canvas.DelConditionStyle))
                         {
                             conditions.RemoveAt(i);
                             return;
                         }
 
-
                         Rect rectNameText = new Rect();
                         rectNameText.position = r.position + new Vector2(20, 5);
-                        rectNameText.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);  
-                        rc.name = EditorGUI.TextField(rectNameText, rc.name,conditionNameStyle);
+                        rectNameText.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
+                        rc.name = EditorGUI.TextField(rectNameText, rc.name, Styles.conditionNameText);
 
                         Rect rectBt = new Rect();
                         rectBt.position = r.position + new Vector2(20 + rectNameText.size.x + 2, 5);
                         rectBt.size = new Vector2(16, 16);
-                        if (GUI.Button(rectBt, "", Styles.unexpandButton))
+                        if (GUI.Button(rectBt, CanvasLayout.Layout.canvas.ConditionUnexpandBtContent, CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle))
                         {
                             rc.expand = false;
                         }
@@ -436,31 +422,31 @@ namespace ScriptNodeFlow
                         rectID.position = r.position + new Vector2(20, 5 + rectNameText.size.y + 5);
                         rectID.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
 
-                        EditorGUI.LabelField(rectID, string.Format("ID: {0}", rc.ID),Styles.subTitleLabel);
+                        EditorGUI.LabelField(rectID, string.Format("ID: {0}", rc.ID), CanvasLayout.Layout.canvas.IDLabelStyle);
 
                         Rect rectCyBt = new Rect();
-                        rectCyBt.position = r.position + new Vector2(20+rectID.size.x + 2, 5 + rectNameText.size.y + 5);
+                        rectCyBt.position = r.position + new Vector2(20 + rectID.size.x + 2, 5 + rectNameText.size.y + 5 + 2);
                         rectCyBt.size = new Vector2(16, 16);
 
-                        if (GUI.Button(rectCyBt, GUIContents.copyID,Styles.copyButton))
+                        if (GUI.Button(rectCyBt, CanvasLayout.Layout.canvas.CopyBtContent, CanvasLayout.Layout.common.CopyBtStyle))
                         {
-                            EditorGUIUtility.systemCopyBuffer = rc.ID;
+                            EditorGUIUtility.systemCopyBuffer = string.Format(RouterBinding.Format, flowID, Id, rc.ID);
                         }
 
                         Rect rectScript = new Rect();
                         rectScript.position = r.position + new Vector2(20, 5 + rectID.size.y + 5 + rectID.size.y + 5);
-                        rectScript.size = new Vector2(r.size.x-40, (r.size.y - 20) / 3);
+                        rectScript.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
 
                         if (string.IsNullOrEmpty(rc.className))
                         {
-                            EditorGUI.LabelField(rectScript, GUIContents.scriptRefNone, Styles.routerconditionErrorLabel);
+                            EditorGUI.LabelField(rectScript, CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.canvas.ConditionErrorLabelStyle);
                         }
                         else
                         {
-                            EditorGUI.LabelField(rectScript, string.Format("Ref: {0}",rc.className), Styles.routerconditionLabel);
+                            EditorGUI.LabelField(rectScript, string.Format("Ref: {0}", rc.className), CanvasLayout.Layout.canvas.ConditionLabelStyle);
                         }
 
-                        rc.connectRect.position = position+ r.position + new Vector2(r.size.x+2, -connectPortOffset+r.size.y / 2);
+                        rc.connectRect.position = position + r.position + new Vector2(r.size.x + 2, -connectPortOffset + r.size.y / 2);
                         rc.connectRect.size = new Vector2(connectPortSize, connectPortSize);
                     }
                 }
@@ -471,47 +457,44 @@ namespace ScriptNodeFlow
                     if (r.position != Vector2.zero)
                     {
                         Rect rectBtDelete = new Rect();
-                        rectBtDelete.position = r.position + new Vector2(2, (r.size.y/2)-8);
-                        rectBtDelete.size = new Vector2(16,16);
-                        if(GUI.Button(rectBtDelete,"",Styles.miniDelButton))
+                        rectBtDelete.position = r.position + new Vector2(2, (r.size.y / 2) - 8);
+                        rectBtDelete.size = new Vector2(16, 16);
+                        if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent, CanvasLayout.Layout.canvas.DelConditionStyle))
                         {
                             conditions.RemoveAt(i);
                             return;
                         }
-                        
+
                         Rect rectScript = new Rect();
                         rectScript.position = r.position + new Vector2(20, 5);
                         rectScript.size = new Vector2(r.size.x - 40, r.size.y - 10);
 
                         GUIContent nameContent = new GUIContent(rc.name);
-                        if(string.IsNullOrEmpty(rc.className))
+                        if (string.IsNullOrEmpty(rc.className))
                         {
                             nameContent.tooltip = "script ref is none";
-                            EditorGUI.LabelField(rectScript, nameContent,Styles.routerconditionNameErrorLabel);
+                            EditorGUI.LabelField(rectScript, nameContent, CanvasLayout.Layout.canvas.ConditionErrorLabelStyle);
                         }
                         else
                         {
-                            EditorGUI.LabelField(rectScript, nameContent, Styles.routerconditionNameLabel);
+                            EditorGUI.LabelField(rectScript, nameContent, CanvasLayout.Layout.canvas.ConditionLabelStyle);
                         }
-                      
+
 
                         Rect rectBt = new Rect();
-                        rectBt.position = r.position + new Vector2(20+ rectScript.size.x+2, 5);
+                        rectBt.position = r.position + new Vector2(20 + rectScript.size.x + 2, 5);
                         rectBt.size = new Vector2(16, 16);
-                        if (GUI.Button(rectBt, "",Styles.expandButton))
+                        if (GUI.Button(rectBt, CanvasLayout.Layout.canvas.ConditionExpandBtContent, CanvasLayout.Layout.canvas.ConditionExpandBtStyle))
                         {
                             rc.expand = true;
                         }
 
-                        rc.connectRect.position = position + r.position + new Vector2(r.size.x+2, -connectPortOffset+r.size.y / 2);
+                        rc.connectRect.position = position + r.position + new Vector2(r.size.x + 2, -connectPortOffset + r.size.y / 2);
                         rc.connectRect.size = new Vector2(connectPortSize, connectPortSize);
                     }
                 }
             }
         }
-
-        static GUIContent defaultContent = new GUIContent("Defualt", "router default condition");
-        static GUIContent defaultErrotContent = new GUIContent("Defualt", "router default link is none");
 
         protected void drawDefualt()
         {
@@ -519,14 +502,13 @@ namespace ScriptNodeFlow
 
             GUILayout.FlexibleSpace();
 
-            if(defaultNextWindow!=null)
+            if (defaultNextWindow != null)
             {
-                
-                GUILayout.Label(defaultContent, Styles.routerconditionLabel);
+                GUILayout.Label(CanvasLayout.Layout.canvas.DefaultContent, CanvasLayout.Layout.canvas.DefaultLabelStyle);
             }
             else
             {
-                GUILayout.Label(defaultErrotContent, Styles.routerconditionErrorLabel);
+                GUILayout.Label(CanvasLayout.Layout.canvas.DefaultErrorContent, CanvasLayout.Layout.canvas.DefaultErrorLabelStyle);
             }
 
             GUILayout.Space(10);
@@ -547,17 +529,16 @@ namespace ScriptNodeFlow
         {
             GenericMenu menu = new GenericMenu();
 
-            menu.AddItem(deleteNode, false, () =>
+            menu.AddItem(CanvasLayout.Layout.canvas.DelWindowsContent, false, () =>
             {
-
-                if(defaultNextWindow!=null)
+                if (defaultNextWindow != null)
                 {
                     defaultNextWindow.SetParent(null);
                 }
 
                 foreach (var item in conditions)
                 {
-                    if(item.nextWindow!=null)
+                    if (item.nextWindow != null)
                     {
                         item.nextWindow.SetParent(null);
                     }

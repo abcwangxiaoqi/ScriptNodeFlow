@@ -10,10 +10,6 @@ namespace ScriptNodeFlow
 {
     public class SubCanvasWindow : BaseWindow,IDisposable
     {
-        static GUIContent doubleClickContent = new GUIContent("double click to open canvas");
-
-        static GUIContent deleteContent = new GUIContent("Delte");
-
         static SubCanvasWindow()
         {
         }
@@ -133,9 +129,10 @@ namespace ScriptNodeFlow
         {
             base.drawAfter();
 
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+            GUI.Button(InPortRect, "", parentRef == 0 ? CanvasLayout.Layout.canvas.ConnectBtStyle : CanvasLayout.Layout.canvas.ConnectedBtStyle);
 
-            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            if (!Application.isPlaying 
+                && GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
                 SetNext(null);
                 DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
@@ -144,7 +141,7 @@ namespace ScriptNodeFlow
 
             if (connectFlag)
             {
-                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, CanvasLayout.Layout.canvas.lineColor);
             }
 
             //draw line
@@ -156,11 +153,11 @@ namespace ScriptNodeFlow
                     return;
                 }
 
-                Color color = Color.white;
+                Color color = CanvasLayout.Layout.canvas.lineColor;
 
                 if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
-                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                    color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
@@ -202,21 +199,17 @@ namespace ScriptNodeFlow
 
             if(canvas == null)
             {
-                GUILayout.Label(NoneCanvasContent, Styles.subCanvasErrorLabel);
+                GUILayout.Label(CanvasLayout.Layout.canvas.SubCanvasNoneContent, CanvasLayout.Layout.canvas.SubCanvasErrorLabel);
             }
 
             EditorGUI.EndDisabledGroup();
         }
 
-        string tt;
-
-        static GUIContent NoneCanvasContent = new GUIContent("no subcanvas");
-
         public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
 
-            menu.AddItem(deleteContent, false, () =>
+            menu.AddItem(CanvasLayout.Layout.canvas.DelWindowsContent, false, () =>
             {
                 if (next != null)
                 {

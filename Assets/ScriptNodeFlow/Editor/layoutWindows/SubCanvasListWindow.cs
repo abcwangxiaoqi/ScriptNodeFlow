@@ -7,6 +7,14 @@ namespace ScriptNodeFlow
 {
     public class SubCanvasListWindow
     {
+        static GUIStyle nameStyle;
+        static SubCanvasListWindow()
+        {
+            nameStyle = new GUIStyle(Styles.textField);
+            nameStyle.fontStyle = FontStyle.Bold;
+            nameStyle.alignment = TextAnchor.MiddleCenter;
+        }
+
         private NodeCanvasData mainData;
 
         List<SubNodeCanvasData> subCanvasList = new List<SubNodeCanvasData>();
@@ -48,36 +56,34 @@ namespace ScriptNodeFlow
         private const float border = 5;
         Vector2 position = new Vector2(border, 150);
         private float height = 500;
-        
+
         private int selectHash;
 
         private bool mainFlag = true;
+        Vector2 scrollPostion;
         public void draw(float mainH)
         {
+
             Rect mainRect = CanvasLayout.Layout.GetCanvasListRect(mainH);
             GUILayout.BeginArea(mainRect, Styles.window);
+            
+            GUILayout.Label(CanvasLayout.Layout.sublist.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
-            GUILayout.Label("CanvasList", Styles.titleLabel);
+            GUILayout.BeginHorizontal();
 
-            EditorGUI.BeginDisabledGroup(selectHash == mainData.GetInstanceID());
-            if (GUILayout.Button("MAIN"))
-            {
-                selectMainCanvas();
-            }
-            EditorGUI.EndDisabledGroup();
-
-            GUILayout.Space(5);
+            
 
             if (!Application.isPlaying
-                && GUILayout.Button("", Styles.addSubCanvasButton))
+                && GUILayout.Button(CanvasLayout.Layout.sublist.AddSubBtContent, CanvasLayout.Layout.sublist.AddSubBtStyle,GUILayout.Width(13)))
             {
                 SubNodeCanvasData sub = ScriptableObject.CreateInstance<SubNodeCanvasData>();
 
                 string addSubName = "SubCanvas";
 
+
                 int index = 1;
 
-                while(subCanvasList.Exists((s)=> { return s.name == (addSubName + index); }))
+                while (subCanvasList.Exists((s) => { return s.name == (addSubName + index); }))
                 {
                     index++;
                 }
@@ -94,7 +100,19 @@ namespace ScriptNodeFlow
                 DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHSUBLIST);
             }
 
+            EditorGUI.BeginDisabledGroup(selectHash == mainData.GetInstanceID());
+            if (GUILayout.Button(CanvasLayout.Layout.sublist.MainBtContent))
+            {
+                selectMainCanvas();
+            }
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.EndHorizontal();            
+
             GUILayout.Space(5);
+
+            scrollPostion = GUILayout.BeginScrollView(scrollPostion, false, 
+                subCanvasList.Count * EditorGUIUtility.singleLineHeight + 50 > mainRect.size.y);
 
             for (int i = 0; i < subCanvasList.Count; i++)
             {
@@ -102,8 +120,8 @@ namespace ScriptNodeFlow
 
                 if (!Application.isPlaying)
                 {
-                    if (GUILayout.Button("", Styles.miniDelButton))
-                    {                        
+                    if (GUILayout.Button(CanvasLayout.Layout.sublist.DelSubBtContent, CanvasLayout.Layout.sublist.DelSubBtStyle))
+                    {
                         if (selectHash == subCanvasList[i].GetInstanceID())
                         {
                             DelegateManager.Instance.Dispatch(DelegateCommand.OPENMAINCANVAS);
@@ -122,20 +140,23 @@ namespace ScriptNodeFlow
                 }
 
                 EditorGUI.BeginDisabledGroup(selectHash == subCanvasList[i].GetInstanceID());
-                if (GUILayout.Button(subCanvasList[i].name, EditorStyles.miniButton))
+                GUIContent content = new GUIContent(subCanvasList[i].name, "open the subcanvas");
+                if (GUILayout.Button(content, EditorStyles.miniButton))
                 {
+                    GUI.FocusControl("");
                     DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
                 }
-                EditorGUI.EndDisabledGroup();               
+                EditorGUI.EndDisabledGroup();
 
                 GUILayout.EndHorizontal();
 
-                if(selectHash == subCanvasList[i].GetInstanceID())
+                if (!Application.isPlaying
+                    && selectHash == subCanvasList[i].GetInstanceID())
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
-                    string tempName = EditorGUILayout.TextField(subCanvasList[i].name);
-                    if(tempName!= subCanvasList[i].name
+                    string tempName = EditorGUILayout.TextField(subCanvasList[i].name, nameStyle);
+                    if (tempName != subCanvasList[i].name
                         && !string.IsNullOrEmpty(tempName)
                         && !subCanvasList.Exists((sub) => { return sub.name.Equals(tempName); }))
                     {
@@ -146,12 +167,12 @@ namespace ScriptNodeFlow
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
-                    subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, GUILayout.Height(100)); ;
+                    subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, Styles.textArea, GUILayout.Height(100));
                     GUILayout.EndHorizontal();
                 }
-            }            
-            
-            //GUILayout.EndHorizontal();
+            }
+
+            GUILayout.EndScrollView();
 
             GUILayout.EndArea();
         }

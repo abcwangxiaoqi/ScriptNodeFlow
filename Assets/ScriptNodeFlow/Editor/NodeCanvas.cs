@@ -1,10 +1,6 @@
-﻿using EditorTools;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace ScriptNodeFlow
 {
@@ -41,9 +37,7 @@ namespace ScriptNodeFlow
             DelegateManager.Instance.AddListener(DelegateCommand.OPENMAINCANVAS, OpenMainCanvas);
 
             DelegateManager.Instance.RemoveListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
-            DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
-
-              
+            DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);              
         }
 
         protected virtual void OpenMainCanvas(object[] objs)
@@ -107,14 +101,14 @@ namespace ScriptNodeFlow
 
             EditorGUI.BeginDisabledGroup(canvasType == CanvasType.Main);
 
-            if (GUILayout.Button("Back", EditorStyles.toolbarButton))
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.BackBtContent, EditorStyles.toolbarButton))
             {
                 DelegateManager.Instance.Dispatch(DelegateCommand.SELECTMAINCANVAS);
             }
 
             EditorGUI.EndDisabledGroup();
             
-            if (GUILayout.Button("Focus", EditorStyles.toolbarButton))
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.FocusBtContent, EditorStyles.toolbarButton))
             {
                 toolbarFocus();
             }
@@ -123,7 +117,7 @@ namespace ScriptNodeFlow
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Label(canvasType == CanvasType.Main ? nodeCanvasData.name : subNodeCanvasData.name,
-Styles.canvasTitleLabel);
+CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         }
 
         void drawRightNodesArea()
@@ -175,7 +169,7 @@ Styles.canvasTitleLabel);
         {
             infoDataWindow = new InfoDataWindow(nodeCanvasData.GetInstanceID(), nodeCanvasData.shareData);
             subCanvasListWindow = new SubCanvasListWindow(nodeCanvasData);
-            selectedWinWindow = new SelectedWinWindow();
+            selectedWinWindow = new SelectedWinWindow(nodeCanvasData.GetInstanceID());
         }
 
         protected void generateMainData()

@@ -3,8 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[BindingFlow("10212")]
-[BindingNode("19041415581345")]
+[NodeBinding("10234", "19041916590153")]
 public class Enity1 : Node
 {
     public Enity1(SharedData data) : base(data) { }
@@ -21,8 +20,6 @@ public class Enity1 : Node
     }
 }
 
-[BindingFlow("10234")]
-[BindingNode("19040820212371")]
 public class Enity6 : Node
 {
     public Enity6(SharedData data) : base(data) { }

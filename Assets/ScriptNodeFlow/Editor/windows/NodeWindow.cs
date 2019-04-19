@@ -8,13 +8,11 @@ namespace ScriptNodeFlow
 {
     public class NodeWindow : BaseWindow
     {
-        protected GUIContent deleteContent = new GUIContent("Delte");
-
         static Type[] tys;
         static NodeWindow()
         {
             Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            tys = _assembly.GetTypes();             
+            tys = _assembly.GetTypes();
         }
 
         protected string flowID;
@@ -64,15 +62,11 @@ namespace ScriptNodeFlow
                 {
                     if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
                     {
-                        object[] bindings = item.GetCustomAttributes(typeof(BindingFlow), false);
-                        object[] nodeBinings = item.GetCustomAttributes(typeof(BindingNode), false);
-                        if (bindings != null
-                            && bindings.Length > 0
-                            && (bindings[0] as BindingFlow).ID == flowID
-                            //--node
-                            && nodeBinings!=null
-                            && nodeBinings.Length>0
-                            && (nodeBinings[0] as BindingNode).ID == Id)
+                        object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
+                        if (nodeBinings != null
+                            && nodeBinings.Length > 0
+                            && (nodeBinings[0] as NodeBinding).WindowID == Id
+                            && (nodeBinings[0] as NodeBinding).CanvasID == flowID)
                         {
                             ClassName = item.FullName;
                             break;
@@ -135,9 +129,9 @@ namespace ScriptNodeFlow
         {
             base.drawAfter();
 
-            GUI.Button(InPortRect, "", parentRef == 0 ? Styles.connectBtn : Styles.connectedBtn);
+            GUI.Button(InPortRect, "", parentRef == 0 ? CanvasLayout.Layout.canvas.ConnectBtStyle : CanvasLayout.Layout.canvas.ConnectedBtStyle);
 
-            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            if (!Application.isPlaying && GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
                 SetNext(null);
                 DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
@@ -153,11 +147,11 @@ namespace ScriptNodeFlow
                     return;
                 }
 
-                Color color = Color.white;
+                Color color = CanvasLayout.Layout.canvas.lineColor;
 
                 if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
-                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                    color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
@@ -166,7 +160,7 @@ namespace ScriptNodeFlow
 
             if (connectFlag)
             {
-                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, CanvasLayout.Layout.canvas.lineColor);
             }
         }
 
@@ -176,7 +170,7 @@ namespace ScriptNodeFlow
 
             BaseWindow window = objs[0] as BaseWindow;
 
-            if (window!=null && window.Id != Id)
+            if (window != null && window.Id != Id)
             {
                 SetNext(window);
             }
@@ -185,20 +179,20 @@ namespace ScriptNodeFlow
         }
 
         private bool connectFlag = false;
-        
+
         protected override void drawWindowContent()
         {
             base.drawWindowContent();
 
             GUILayout.BeginHorizontal();
 
-            if(string.IsNullOrEmpty(ClassName))
+            if (string.IsNullOrEmpty(ClassName))
             {
-                GUILayout.Label(GUIContents.scriptRefNone,Styles.nodeErrorLabel);
+                GUILayout.Label(CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.canvas.NodeRefErrorLabelStyle);
             }
             else
             {
-                GUILayout.Label(ClassName,Styles.nodeClassNameLabel);
+                GUILayout.Label(ClassName, CanvasLayout.Layout.canvas.NodeRefNameLabelStyle);
             }
 
             GUILayout.EndHorizontal();
@@ -211,14 +205,11 @@ namespace ScriptNodeFlow
             {
                 if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    object[] bindingFlow = item.GetCustomAttributes(typeof(BindingFlow), false);
-                    object[] bindingNode = item.GetCustomAttributes(typeof(BindingNode), false);
-                    if (bindingFlow != null
-                        && bindingFlow.Length > 0
-                        && (bindingFlow[0] as BindingFlow).ID == flowID
-                        && bindingNode!=null
+                    object[] bindingNode = item.GetCustomAttributes(typeof(NodeBinding), false);
+                    if (bindingNode != null
                         && bindingNode.Length > 0
-                        && (bindingNode[0] as BindingNode).ID == Id
+                        && (bindingNode[0] as NodeBinding).WindowID == Id
+                        && (bindingNode[0] as NodeBinding).CanvasID == flowID
                         )
                     {
                         ClassName = item.FullName;
@@ -232,16 +223,15 @@ namespace ScriptNodeFlow
         public override void rightMouseClick(Vector2 mouseposition)
         {
             GenericMenu menu = new GenericMenu();
-
-            menu.AddItem(deleteContent, false, () =>
+            
+            menu.AddItem(CanvasLayout.Layout.canvas.DelWindowsContent, false, () =>
             {
-                if(next!=null)
+                if (next != null)
                 {
                     next.SetParent(null);
                 }
                 windowList.Remove(this);
             });
-
 
             menu.ShowAsContext();
         }

@@ -6,34 +6,36 @@ namespace ScriptNodeFlow
     public class SelectedWinWindow
     {
         GUILayoutOption width = GUILayout.Width(50);
-        public SelectedWinWindow()
+        string CanvasID;
+        public SelectedWinWindow(int canvasid)
         {
+            CanvasID = canvasid.ToString();
         }
 
         public void draw(BaseWindow current)
         {     
-            GUILayout.BeginArea(CanvasLayout.Layout.CurrentWindowRect, Styles.window);
-
-            GUILayout.Label("Current", Styles.titleLabel);
+            GUILayout.BeginArea(CanvasLayout.Layout.selected.rect, Styles.window);
+            
+            GUILayout.Label(CanvasLayout.Layout.selected.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
             
             if (current != null 
                 && Event.current.type!=EventType.Ignore)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("ID:");
-                GUILayout.Label(current.Id,Styles.subTitleLabel);
+                GUILayout.Label(CanvasLayout.Layout.selected.IDContent);
+                GUILayout.Label(current.Id, CanvasLayout.Layout.selected.IDLabelStyle);
                 GUILayout.FlexibleSpace();
 
-                if(GUILayout.Button(GUIContents.copyID,Styles.copyButton))
+                if(GUILayout.Button(CanvasLayout.Layout.selected.CopyBtContent, CanvasLayout.Layout.common.CopyBtStyle))
                 {
-                    EditorGUIUtility.systemCopyBuffer = current.Id;
+                    EditorGUIUtility.systemCopyBuffer = string.Format(NodeBinding.Format, CanvasID, current.Id);
                 }
 
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Type:");
-                GUILayout.Label(current.windowType.ToString(),Styles.subTitleLabel,GUILayout.ExpandWidth(true));
+                GUILayout.Label(CanvasLayout.Layout.selected.TypeContent);
+                GUILayout.Label(current.windowType.ToString(), CanvasLayout.Layout.selected.TypeLabelStyle, GUILayout.ExpandWidth(true));
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
 
@@ -41,14 +43,13 @@ namespace ScriptNodeFlow
                 {
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label("Name:",GUILayout.Width(38));
+                    GUILayout.BeginHorizontal();                   
+                    GUILayout.Label(CanvasLayout.Layout.selected.NameContent, GUILayout.Width(38));
                     current.Name = GUILayout.TextField(current.Name,GUILayout.ExpandWidth(true));
-                    //GUILayout.FlexibleSpace();
                     GUILayout.EndHorizontal();
 
 
-                    GUILayout.Label("Describe:");
+                    GUILayout.Label(CanvasLayout.Layout.selected.DesContent);
                     current.describe = GUILayout.TextArea(current.describe, GUILayout.ExpandHeight(true));
 
                     EditorGUI.EndDisabledGroup();

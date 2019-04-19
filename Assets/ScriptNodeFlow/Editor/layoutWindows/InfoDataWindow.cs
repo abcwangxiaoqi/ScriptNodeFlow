@@ -24,10 +24,10 @@ namespace ScriptNodeFlow
             {
                 if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    object[] bindings = item.GetCustomAttributes(typeof(BindingFlow), false);
+                    object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
                     if (bindings != null
                         && bindings.Length > 0
-                        && (bindings[0] as BindingFlow).ID == ID)
+                        && (bindings[0] as ShareDataBinding).CanvasID == ID)
                     {
                         shareData = item.FullName;
                         break;
@@ -38,35 +38,36 @@ namespace ScriptNodeFlow
 
         public void draw()
         {
-            GUILayout.BeginArea(CanvasLayout.Layout.ShareDataRect, Styles.window);           
+            GUILayout.BeginArea(CanvasLayout.Layout.info.rect, Styles.window);
 
-            GUILayout.Label("Info", Styles.titleLabel);
+            
+            GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("ID:");
-            GUILayout.Label(ID,Styles.subTitleLabel);
+            GUILayout.Label(CanvasLayout.Layout.info.IDContent);
+            GUILayout.Label(ID, CanvasLayout.Layout.info.IDLabelStyle);
 
             GUILayout.FlexibleSpace();
-
-            if(GUILayout.Button(GUIContents.copyID,Styles.copyButton))
+            
+            if (GUILayout.Button(CanvasLayout.Layout.info.CopyBtContent, CanvasLayout.Layout.common.CopyBtStyle))
             {
-                EditorGUIUtility.systemCopyBuffer = ID;
+                EditorGUIUtility.systemCopyBuffer = string.Format(ShareDataBinding.Format, ID);
             }
 
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label("ShareData:");
+            GUILayout.Label(CanvasLayout.Layout.info.ShareDataContent);
 
             if(string.IsNullOrEmpty(shareData))
             {
-                GUILayout.Label(GUIContents.scriptRefNone,Styles.infoErrorLabel);
+                GUILayout.Label(CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.info.ShareDataErrorLabelStyle);
             }
             else
             {
-                GUILayout.Label(shareData, Styles.subTitleLabel);
+                GUILayout.Label(shareData, CanvasLayout.Layout.info.ShareDataLabelStyle);
             }
 
 

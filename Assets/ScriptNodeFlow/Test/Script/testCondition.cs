@@ -18,9 +18,7 @@ public class Condition1 : RouterCondition
         return data.state == 1;
     }
 }
-
-[BindingFlow("10212")]
-[BindingRouter("19041413374591","19041413424940")]
+[RouterBinding("10234", "19041915084610", "19041915084718")]
 public class Condition2 : RouterCondition
 {
     public Condition2(SharedData data) : base(data) { }

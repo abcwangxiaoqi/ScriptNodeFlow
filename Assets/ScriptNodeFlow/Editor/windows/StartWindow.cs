@@ -7,10 +7,6 @@ namespace ScriptNodeFlow
 {
     public class StartWindow : BaseWindow
     {
-        protected static GUIContent nextNewNodeContent = new GUIContent("Next/New Node");
-        protected static GUIContent nextNewSubCanvasContent = new GUIContent("Next/New SubCanvas");
-        protected static string separator = "Next/";
-
         //下一节点
         public BaseWindow next { get; protected set; }
 
@@ -93,17 +89,18 @@ namespace ScriptNodeFlow
                     return;
                 }
 
-                Color color = Color.white;
+                Color color = CanvasLayout.Layout.canvas.lineColor;
 
                 if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
-                    color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
+                    color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
-
-            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? Styles.connectedBtn : Styles.connectBtn))
+            
+            if (!Application.isPlaying 
+                && GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
 
                 SetNext(null);
@@ -113,7 +110,7 @@ namespace ScriptNodeFlow
 
             if (connectFlag)
             {
-                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, Color.white);
+                DrawArrow(GetOutPositionByPort(OutPortRect), curEvent.mousePosition, CanvasLayout.Layout.canvas.lineColor);
             }
         }
 
@@ -135,8 +132,8 @@ namespace ScriptNodeFlow
         }
 
         protected override void drawWindowContent()
-        {
-            GUILayout.Label("Start", Styles.titleLabel);
+        {            
+            GUILayout.Label(CanvasLayout.Layout.canvas.StartContent, CanvasLayout.Layout.canvas.StartLabelStyle);
         }
     }
 }
