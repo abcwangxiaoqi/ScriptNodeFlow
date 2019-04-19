@@ -117,23 +117,19 @@ namespace ScriptNodeFlow
         {
             drawBefore();
 
-
             windowRect.position = position;
             windowRect.size = size;
 
             if (Application.isPlaying)
             {
+                Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
                 if (windowData.runtimeState == RuntimeState.Running)
                 {
-                    Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
-                    //GUI.Label(rect, "Running...", BigLabelStyle);
-                    GUI.Label(rect, "Running...");
+                    GUI.Label(rect, CanvasLayout.Layout.common.RunningLabelContent, CanvasLayout.Layout.common.RunningLabelStyle);
                 }
                 else if (windowData.runtimeState == RuntimeState.Error)
                 {
-                    Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
-                    //GUI.Label(rect, "Error", BigLabelStyle);
-                    GUI.Label(rect, "Error");
+                    GUI.Label(rect, CanvasLayout.Layout.common.ErrorLabelContent, CanvasLayout.Layout.common.ErrorLabelStyle);
                 }
             }
 

@@ -74,6 +74,11 @@ public class CommonCfg
     public GUIStyle CopyBtStyle = new GUIStyle();
 
     public GUIContent scriptRefNone = new GUIContent("script ref is none", "you need binding a script");
+
+    public GUIContent RunningLabelContent = new GUIContent("Running...");
+    public GUIStyle RunningLabelStyle = new GUIStyle();
+    public GUIContent ErrorLabelContent = new GUIContent("Error...");
+    public GUIStyle ErrorLabelStyle = new GUIStyle();
 }
 
 [Serializable]
