@@ -16,7 +16,10 @@ namespace ScriptNodeFlow
 
         public override void OnInspectorGUI()
         {           
-            EditorGUILayout.LabelField("ID", data.GetInstanceID().ToString());
+            //EditorGUILayout.LabelField("ID", data.GetInstanceID().ToString());
+            EditorGUILayout.LabelField("ID", data.ID.ToString());
+            //EditorGUILayout.LabelField("ID", data.GetHashCode().ToString());
+            //data.GetHashCode
 
             EditorGUILayout.PrefixLabel("Desc");
             data.desc = GUILayout.TextArea(data.desc, GUILayout.Height(100));

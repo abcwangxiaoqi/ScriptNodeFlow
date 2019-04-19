@@ -7,9 +7,9 @@ namespace ScriptNodeFlow
     {
         GUILayoutOption width = GUILayout.Width(50);
         string CanvasID;
-        public SelectedWinWindow(int canvasid)
+        public SelectedWinWindow(string canvasid)
         {
-            CanvasID = canvasid.ToString();
+            CanvasID = canvasid;
         }
 
         public void draw(BaseWindow current)

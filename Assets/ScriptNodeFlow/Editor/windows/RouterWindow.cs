@@ -9,13 +9,6 @@ namespace ScriptNodeFlow
 {
     public class RouterWindowCondition
     {
-        static Type[] tys;
-        static RouterWindowCondition()
-        {
-            Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            tys = _assembly.GetTypes();
-        }
-
         public string ID = DateTime.Now.ToString("yyMMddHHmmssff");
         public string name = "Condition Name";
         public string className;
@@ -24,7 +17,7 @@ namespace ScriptNodeFlow
         public bool connectFlag = false;
         public bool expand = false;
 
-        public void updateClassName(int flowID, string routerID, string cName)
+        public void updateClassName(string canvasID, string routerID, string cName)
         {
             className = cName;
 
@@ -32,14 +25,14 @@ namespace ScriptNodeFlow
                 return;
 
             className = null;
-            foreach (var item in tys)
+            foreach (var item in Util.EngineTypes)
             {
                 if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
                 {
                     object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
                     if (routerBindings != null
                         && routerBindings.Length > 0
-                        && (routerBindings[0] as RouterBinding).CanvasID == flowID.ToString()
+                        && (routerBindings[0] as RouterBinding).CanvasID == canvasID
                         && (routerBindings[0] as RouterBinding).RouterID == routerID
                         && (routerBindings[0] as RouterBinding).ConditionID == ID)
                     {
@@ -82,18 +75,18 @@ namespace ScriptNodeFlow
         protected BaseWindow defaultNextWindow = null;
         protected Rect defaultConnectRect;
         protected bool defaultConnectFlag = false;
-        protected string flowID;
-        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
+        protected string canvasID;
+        public RouterWindow(Vector2 pos, List<BaseWindow> _windowList, string _canvasID)
             : base(pos, _windowList)
         {
-            flowID = _flowID.ToString();
+            canvasID = _canvasID;
             Name = "Router";
         }
 
-        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, string _canvasID)
             : base(itemData, _windowList)
         {
-            flowID = _flowID.ToString();
+            canvasID = _canvasID;
         }
 
         public void SetDefault(BaseWindow defEntity)
@@ -214,23 +207,27 @@ namespace ScriptNodeFlow
 
             foreach (var condition in conditions)
             {
-                if (!Application.isPlaying &&
-                    GUI.Button(condition.connectRect, "",
+                if (GUI.Button(condition.connectRect, "",
                     (condition.nextWindow != null || condition.connectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
                 {
-                    setConditionNext(condition, null);
-                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
-                    condition.connectFlag = true;
+                    if(!Application.isPlaying)
+                    {
+                        setConditionNext(condition, null);
+                        DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+                        condition.connectFlag = true;
+                    }
                 }
             }
 
-            if (!Application.isPlaying 
-                && GUI.Button(defaultConnectRect, "",
+            if (GUI.Button(defaultConnectRect, "",
                 (defaultNextWindow != null || defaultConnectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
-                SetDefault(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
-                defaultConnectFlag = true;
+                if(!Application.isPlaying)
+                {
+                    SetDefault(null);
+                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+                    defaultConnectFlag = true;
+                }
             }
 
 
@@ -430,7 +427,7 @@ namespace ScriptNodeFlow
 
                         if (GUI.Button(rectCyBt, CanvasLayout.Layout.canvas.CopyBtContent, CanvasLayout.Layout.common.CopyBtStyle))
                         {
-                            EditorGUIUtility.systemCopyBuffer = string.Format(RouterBinding.Format, flowID, Id, rc.ID);
+                            EditorGUIUtility.systemCopyBuffer = string.Format(RouterBinding.Format, canvasID, Id, rc.ID);
                         }
 
                         Rect rectScript = new Rect();

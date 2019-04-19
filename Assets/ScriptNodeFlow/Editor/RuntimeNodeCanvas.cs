@@ -47,7 +47,7 @@ namespace ScriptNodeFlow
 
         Event curEvent;
         Vector2 mousePosition;
-
+        bool clickArea;
         protected override void OnGUI()
         {
             if (EditorApplication.isCompiling)
@@ -62,36 +62,57 @@ namespace ScriptNodeFlow
                 //must minus rightArea.position
                 mousePosition = curEvent.mousePosition - rightArea.position;
 
-                // mouse left key
                 if (curEvent.button == 0 && curEvent.isMouse)
                 {
                     //a window is whether selected
                     if (curEvent.type == EventType.MouseDown)
                     {
+                        clickArea = true;
+
                         curSelect = windowList.Find((BaseWindow w) =>
                         {
                             return w.isClick(mousePosition);
                         });
-                        if (curSelect != null
-                            && curEvent.clickCount == 2)
+
+                        if (curSelect != null)
                         {
-                            if (curSelect != null)
+                            curSelect.Selected(true);
+
+                            foreach (var item in windowList)
+                            {
+                                if (item == curSelect)
+                                    continue;
+
+                                item.Selected(false);
+                            }
+
+                            if (curEvent.clickCount == 2)
                             {
                                 curSelect.leftMouseDoubleClick();
                             }
                         }
+                        else
+                        {
+                            GUI.FocusControl("");
+
+                            foreach (var item in windowList)
+                            {
+                                item.Selected(false);
+                            }
+                        }
+
                     }
                     else if (curEvent.type == EventType.MouseUp)
                     {
-                        curSelect = null;
+                        clickArea = false;
                     }
-                    else if(curEvent.type == EventType.MouseDrag)
+                    else if (curEvent.type == EventType.MouseDrag)
                     {
                         if (curSelect != null)
                         {
                             curSelect.leftMouseDrag(curEvent.delta);
                         }
-                        else
+                        else if (clickArea)
                         {
                             if (rightArea.Contains(curEvent.mousePosition))
                             {
@@ -104,9 +125,8 @@ namespace ScriptNodeFlow
                         }
                     }
                 }
-                this.Repaint();
+                Repaint();
             }
-
             base.OnGUI();
         }
 

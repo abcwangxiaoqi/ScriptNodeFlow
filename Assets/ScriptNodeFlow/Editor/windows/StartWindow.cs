@@ -52,7 +52,7 @@ namespace ScriptNodeFlow
         {
             StartWindowData dataEntity = new StartWindowData();
             dataEntity.position = position;
-
+            dataEntity.ID = Id;
             if (next != null)
             {
                 dataEntity.nextWindowId = next.Id;
@@ -99,13 +99,14 @@ namespace ScriptNodeFlow
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
             
-            if (!Application.isPlaying 
-                && GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
-
-                SetNext(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                connectFlag = true;
+                if(!Application.isPlaying)
+                {
+                    SetNext(null);
+                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                    connectFlag = true;
+                }
             }
 
             if (connectFlag)

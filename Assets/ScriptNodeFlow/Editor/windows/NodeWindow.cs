@@ -8,14 +8,7 @@ namespace ScriptNodeFlow
 {
     public class NodeWindow : BaseWindow
     {
-        static Type[] tys;
-        static NodeWindow()
-        {
-            Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            tys = _assembly.GetTypes();
-        }
-
-        protected string flowID;
+        protected string canvasID;
 
         protected string ClassName { get; private set; }
 
@@ -40,17 +33,17 @@ namespace ScriptNodeFlow
             }
         }
 
-        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
+        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList, string _canvasID)
             : base(pos, _windowList)
         {
-            flowID = _flowID.ToString();
+            canvasID = _canvasID;
             Name = "Node";
         }
 
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, int _flowID)
+        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, string _canvasID)
             : base(itemData, _windowList)
         {
-            flowID = _flowID.ToString();
+            canvasID = _canvasID;
 
             if (Application.isPlaying)
             {
@@ -58,7 +51,7 @@ namespace ScriptNodeFlow
             }
             else
             {
-                foreach (var item in tys)
+                foreach (var item in Util.EngineTypes)
                 {
                     if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
                     {
@@ -66,7 +59,7 @@ namespace ScriptNodeFlow
                         if (nodeBinings != null
                             && nodeBinings.Length > 0
                             && (nodeBinings[0] as NodeBinding).WindowID == Id
-                            && (nodeBinings[0] as NodeBinding).CanvasID == flowID)
+                            && (nodeBinings[0] as NodeBinding).CanvasID == canvasID)
                         {
                             ClassName = item.FullName;
                             break;
@@ -131,11 +124,14 @@ namespace ScriptNodeFlow
 
             GUI.Button(InPortRect, "", parentRef == 0 ? CanvasLayout.Layout.canvas.ConnectBtStyle : CanvasLayout.Layout.canvas.ConnectedBtStyle);
 
-            if (!Application.isPlaying && GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
+            if (GUI.Button(OutPortRect, "", (connectFlag || next != null) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
-                SetNext(null);
-                DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
-                connectFlag = true;
+                if(!Application.isPlaying)
+                {
+                    SetNext(null);
+                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                    connectFlag = true;
+                }
             }
 
             //draw line
@@ -197,28 +193,6 @@ namespace ScriptNodeFlow
 
             GUILayout.EndHorizontal();
         }
-
-        void refreshScript()
-        {
-            ClassName = string.Empty;
-            foreach (var item in tys)
-            {
-                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    object[] bindingNode = item.GetCustomAttributes(typeof(NodeBinding), false);
-                    if (bindingNode != null
-                        && bindingNode.Length > 0
-                        && (bindingNode[0] as NodeBinding).WindowID == Id
-                        && (bindingNode[0] as NodeBinding).CanvasID == flowID
-                        )
-                    {
-                        ClassName = item.FullName;
-                        break;
-                    }
-                }
-            }
-        }
-
 
         public override void rightMouseClick(Vector2 mouseposition)
         {

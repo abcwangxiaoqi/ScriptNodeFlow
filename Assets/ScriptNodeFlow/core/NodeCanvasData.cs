@@ -7,6 +7,8 @@ namespace ScriptNodeFlow
     [Serializable]
     public class NodeCanvasData : ScriptableObject
     {
+        public string ID = DateTime.UtcNow.ToString("yyMMddHHmmssff");
+        
         public string shareData;
 
         public StartWindowData start = new StartWindowData();

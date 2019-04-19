@@ -7,13 +7,13 @@ namespace ScriptNodeFlow
 {
     public class SubNodeWindow : NodeWindow
     {
-        public SubNodeWindow(Vector2 pos, List<BaseWindow> _windowList, int _flowID)
-            : base( pos, _windowList, _flowID)
+        public SubNodeWindow(Vector2 pos, List<BaseWindow> _windowList, string _canvasID)
+            : base( pos, _windowList, _canvasID)
         {
         }
 
-        public SubNodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, int _flowID)
-            : base(itemData, _windowList, _flowID)
+        public SubNodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, string _canvasID)
+            : base(itemData, _windowList, _canvasID)
         {
         }
     }

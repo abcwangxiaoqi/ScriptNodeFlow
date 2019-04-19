@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[ShareDataBinding("10234")]
+[ShareDataBinding("19041921060585")]
 public class testShareData : SharedData
 {
     public int state = 0;

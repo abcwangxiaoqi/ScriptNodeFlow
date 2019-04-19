@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[NodeBinding("10234", "19041916590153")]
+[NodeBinding("19041921060585", "19041923280876")]
 public class Enity1 : Node
 {
     public Enity1(SharedData data) : base(data) { }
@@ -20,6 +20,7 @@ public class Enity1 : Node
     }
 }
 
+[NodeBinding("19041921060585", "19041923144744")]
 public class Enity6 : Node
 {
     public Enity6(SharedData data) : base(data) { }
@@ -33,6 +34,7 @@ public class Enity6 : Node
     }
 }
 
+[NodeBinding("19041921060585", "19041923150914")]
 public class Enity2 : Node
 {
     public Enity2(SharedData data) : base(data) { }
@@ -45,6 +47,7 @@ public class Enity2 : Node
     }
 }
 
+[NodeBinding("19041921060585", "19041923152073")]
 public class Enity3 : Node
 {
     public Enity3(SharedData data) : base(data) { }
@@ -57,6 +60,7 @@ public class Enity3 : Node
     }
 }
 
+[NodeBinding("19041921060585", "19041923152191")]
 public class Enity4 : Node
 {
     public Enity4(SharedData data) : base(data) { }
@@ -74,6 +78,9 @@ public class Enity4 : Node
 
 
 //////====================================
+/// 
+
+[NodeBinding("19041921060585", "19041923135646")]
 public class Enity10 : Node
 {
     public Enity10(SharedData data) : base(data) { }

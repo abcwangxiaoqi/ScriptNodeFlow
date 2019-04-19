@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RouterBinding("19041921060585", "19041923090308", "19041923091205")]
 public class Condition1 : RouterCondition
 {
     public Condition1(SharedData data) : base(data) { }
@@ -18,7 +19,7 @@ public class Condition1 : RouterCondition
         return data.state == 1;
     }
 }
-[RouterBinding("10234", "19041915084610", "19041915084718")]
+[RouterBinding("19041921060585", "19041915084610", "19041915084718")]
 public class Condition2 : RouterCondition
 {
     public Condition2(SharedData data) : base(data) { }

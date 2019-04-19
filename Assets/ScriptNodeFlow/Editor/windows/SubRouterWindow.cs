@@ -9,13 +9,13 @@ namespace ScriptNodeFlow
 {
     public class SubRouterWindow : RouterWindow
     {
-        public SubRouterWindow(Vector2 pos, List<BaseWindow> _windowList,int _flowID)
-            : base( pos, _windowList, _flowID)
+        public SubRouterWindow(Vector2 pos, List<BaseWindow> _windowList,string _canvasID)
+            : base( pos, _windowList, _canvasID)
         {
         }
 
-        public SubRouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, int _flowID)
-            : base(itemData, _windowList, _flowID)
+        public SubRouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, string _canvasID)
+            : base(itemData, _windowList, _canvasID)
         {
         }
     }

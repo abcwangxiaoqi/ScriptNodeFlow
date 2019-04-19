@@ -70,7 +70,8 @@ namespace ScriptNodeFlow
         //close window when playModeStateChanged
         private void playModeStateChanged(PlayModeStateChange obj)
         {
-            if (obj == PlayModeStateChange.ExitingEditMode)
+            if (obj == PlayModeStateChange.ExitingEditMode || 
+                obj == PlayModeStateChange.EnteredPlayMode)
             {
                 window.Close();
             }
@@ -113,6 +114,8 @@ namespace ScriptNodeFlow
                 EditorPrefs.DeleteKey(nodeAssetPath);
 
                 scriptable = new ScriptableItem(path);
+
+                window = this;
 
                 Awake();
 
@@ -235,12 +238,12 @@ namespace ScriptNodeFlow
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(addNode, false, () =>
                     {
-                        windowList.Add(new NodeWindow(mousePosition, windowList, nodeCanvasData.GetInstanceID()));
+                        windowList.Add(new NodeWindow(mousePosition, windowList, nodeCanvasData.ID));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow( mousePosition, windowList,nodeCanvasData.GetInstanceID()));
+                        windowList.Add(new RouterWindow( mousePosition, windowList,nodeCanvasData.ID));
                     });
 
                     if (canvasType == CanvasType.Main)

@@ -178,11 +178,6 @@ namespace ScriptNodeFlow
         public void Selected(bool select)
         {
             selected = select;
-
-            //if(selected)
-            //{
-            //    DelegateManager.Instance.Dispatch(DelegateCommand.REFRESHCURRENTWINDOW, this);
-            //}
         }
 
         public bool isClick(Vector2 mouseposition)
