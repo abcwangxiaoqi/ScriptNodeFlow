@@ -130,6 +130,99 @@ namespace ScriptNodeFlow
             base.OnGUI();
         }
 
+        protected override void OpenMainCanvas(object[] objs)
+        {
+            save();
+            base.OpenMainCanvas(objs);
+        }
+
+        protected override void OpenSubCanvas(object[] objs)
+        {
+            save();
+
+            base.OpenSubCanvas(objs);
+        }
+
+        private void save()
+        {
+            if (canvasType == CanvasType.Main)
+            {
+                saveMain();
+            }
+            else
+            {
+                saveSub();
+            }
+        }
+
+        void saveMain()
+        {
+            for (int i = 0; i < windowList.Count; i++)
+            {
+                BaseWindow win = windowList[i];
+
+                var cur = nodeCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
+
+                if(cur!=null)
+                {
+                    cur.position = win.position;
+                    continue;
+                }
+
+                var router = nodeCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
+
+                if (router != null)
+                {
+                    router.position = win.position;
+                    continue;
+                }
+
+                var sub = nodeCanvasData.subCanvaslist.Find((w) => { return win.Id == w.ID; });
+
+                if (sub != null)
+                {
+                    sub.position = win.position;
+                    continue;
+                }
+
+                //set start windows position
+                if(win.windowType == NodeType.Start)
+                {
+                    nodeCanvasData.start.position = win.position;
+                }
+            }
+        }
+
+        void saveSub()
+        {
+            for (int i = 0; i < windowList.Count; i++)
+            {
+                BaseWindow win = windowList[i];
+
+                var cur = subNodeCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
+
+                if (cur != null)
+                {
+                    cur.position = win.position;
+                    continue;
+                }
+
+                var router = subNodeCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
+
+                if (router != null)
+                {
+                    router.position = win.position;
+                    continue;
+                }
+
+                //set start windows position
+                if (win.windowType == NodeType.Start)
+                {
+                    subNodeCanvasData.start.position = win.position;
+                }
+            }
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();

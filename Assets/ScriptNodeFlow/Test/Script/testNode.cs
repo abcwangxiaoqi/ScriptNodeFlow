@@ -13,7 +13,7 @@ public class Enity1 : Node
         Debug.Log("Enity1");
 
         //get share data and you can modify it
-        (shareData as testShareData).state = 3;
+        Debug.Log(">>>state = " + (shareData as testShareData).state);
 
         //call finish method when you're sure finished completely        
         finish(true);
@@ -28,7 +28,7 @@ public class Enity6 : Node
     public override void execute()
     {
         Debug.Log("Enity6");
-
+        Debug.Log("state = " + (shareData as testShareData).state);
         (shareData as testShareData).state = 3;
         finish(true);
     }
@@ -42,6 +42,7 @@ public class Enity2 : Node
     public override void execute()
     {
         Debug.Log("Enity2");
+        Debug.Log("state = " + (shareData as testShareData).state);
         (shareData as testShareData).state = 10;
         finish(true);
     }
@@ -55,6 +56,7 @@ public class Enity3 : Node
     public override void execute()
     {
         Debug.Log("Enity3");
+        Debug.Log("state = " + (shareData as testShareData).state);
         (shareData as testShareData).state = 20;
         finish(true);
     }
@@ -68,6 +70,7 @@ public class Enity4 : Node
     public override void execute()
     {
         Debug.Log("Enity4");
+        Debug.Log("state = " + (shareData as testShareData).state);
         (shareData as testShareData).state = 30;
         finish(true);
         
@@ -105,14 +108,15 @@ public class Enity11 : Node
 
     }
 }
+
+[NodeBinding("19041921060585", "19042013565051")]
 public class Enity12 : Node
 {
     public Enity12(SharedData data) : base(data) { }
 
     public override void execute()
     {
-        Debug.Log("Enity12");
-        (shareData as testShareData).state = 30;
+        Debug.Log("state = "+(shareData as testShareData).state);
         finish(true);
 
     }

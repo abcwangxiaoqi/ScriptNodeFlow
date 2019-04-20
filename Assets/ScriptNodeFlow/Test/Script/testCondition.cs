@@ -42,6 +42,7 @@ public class Condition3 : RouterCondition
     }
 }
 
+[RouterBinding("19041921060585", "19041923275615", "19042013504536")]
 public class Condition4 : RouterCondition
 {
     public Condition4(SharedData data) : base(data) { }
@@ -49,6 +50,6 @@ public class Condition4 : RouterCondition
     public override bool justify()
     {
         Debug.Log("Condition4");
-        return (shareData as testShareData).state == 4;
+        return (shareData as testShareData).state == 10;
     }
 }

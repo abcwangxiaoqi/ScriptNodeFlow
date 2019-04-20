@@ -150,9 +150,9 @@ namespace ScriptNodeFlow
 
                 GUILayout.EndHorizontal();
 
-                if (!Application.isPlaying
-                    && selectHash == subCanvasList[i].GetInstanceID())
+                if (selectHash == subCanvasList[i].GetInstanceID())
                 {
+                    EditorGUI.BeginDisabledGroup(Application.isPlaying);
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
                     string tempName = EditorGUILayout.TextField(subCanvasList[i].name, nameStyle);
@@ -169,6 +169,7 @@ namespace ScriptNodeFlow
                     GUILayout.Space(20);
                     subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, Styles.textArea, GUILayout.Height(100));
                     GUILayout.EndHorizontal();
+                    EditorGUI.EndDisabledGroup();
                 }
             }
 

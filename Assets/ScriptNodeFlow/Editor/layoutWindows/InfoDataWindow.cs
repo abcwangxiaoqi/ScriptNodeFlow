@@ -17,8 +17,6 @@ namespace ScriptNodeFlow
         public InfoDataWindow(string id,string shareDataName)
         {
             ID = id;
-            Assembly _assembly = Assembly.LoadFile("Library/ScriptAssemblies/Assembly-CSharp.dll");
-            Type[] tys = _assembly.GetTypes();
 
             if(Application.isPlaying)
             {
