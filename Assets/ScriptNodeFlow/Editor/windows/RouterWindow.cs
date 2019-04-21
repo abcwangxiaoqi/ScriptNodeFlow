@@ -358,8 +358,8 @@ namespace ScriptNodeFlow
             EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
 
             GUILayout.Space(5);
-            
-            if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, EditorStyles.miniButton))
+
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
                 conditions.Add(new RouterWindowCondition());
             }
@@ -388,7 +388,10 @@ namespace ScriptNodeFlow
 
                 if (rc.expand)
                 {
-                    GUILayout.Box("", GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
+                    GUIStyle box = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene).box;
+                    // box style 不对 要修改
+                    GUILayout.Box("",CanvasLayout.Layout.canvas.ConditionBoxStyle ,GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
+                    //GUILayout.Box("", box,GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
                     Rect r = GUILayoutUtility.GetLastRect();
                     if (r.position != Vector2.zero)
                     {
@@ -405,7 +408,7 @@ namespace ScriptNodeFlow
                         Rect rectNameText = new Rect();
                         rectNameText.position = r.position + new Vector2(20, 5);
                         rectNameText.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
-                        rc.name = EditorGUI.TextField(rectNameText, rc.name, Styles.conditionNameText);
+                        rc.name = EditorGUI.TextField(rectNameText, rc.name, CanvasLayout.Layout.canvas.ConditionNameText);
 
                         Rect rectBt = new Rect();
                         rectBt.position = r.position + new Vector2(20 + rectNameText.size.x + 2, 5);
@@ -449,7 +452,7 @@ namespace ScriptNodeFlow
                 }
                 else
                 {
-                    GUILayout.Box("", GUILayout.Height(ConditionH), GUILayout.ExpandWidth(true));
+                    GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle,GUILayout.Height(ConditionH), GUILayout.ExpandWidth(true));
                     Rect r = GUILayoutUtility.GetLastRect();
                     if (r.position != Vector2.zero)
                     {

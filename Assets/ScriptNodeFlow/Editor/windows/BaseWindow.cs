@@ -137,10 +137,15 @@ namespace ScriptNodeFlow
 
             if(selected)
             {
-                GUI.Box(selectRect, "", Styles.window);
-            }            
-
-            GUILayout.BeginArea(windowRect, c, GUI.skin.window);            
+               // GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.SelectedWidnowsStyle);
+                GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.BaseWindowsStyle);
+            }
+            else
+            {
+                GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.BaseWindowsStyle);
+            }
+             
+            GUILayout.BeginArea(windowRect, c, CanvasLayout.Layout.canvas.WindowStyle);    
 
             drawWindowContent();
 
@@ -152,7 +157,7 @@ namespace ScriptNodeFlow
         protected virtual void drawWindowContent()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            Name = GUILayout.TextField(Name, Styles.windowNameText);
+            Name = GUILayout.TextField(Name, CanvasLayout.Layout.canvas.windowNameTextStyle);
             EditorGUI.EndDisabledGroup();
         }
 
@@ -183,7 +188,7 @@ namespace ScriptNodeFlow
         public bool isClick(Vector2 mouseposition)
         {
             return selectRect.Contains(mouseposition);
-            return windowRect.Contains(mouseposition);
+            //return windowRect.Contains(mouseposition);
         }
 
         public bool isClickInPort(Vector2 mouseposition)

@@ -32,6 +32,55 @@ public class FileHelper
         fs.Close();
     }
 
+    /// <summary>
+    /// Creats the file.
+    /// </summary>
+    /// <param name="filepath">Filepath. file full path</param>
+    /// <param name="content">Content.</param>
+    public static void CreatFile(string filepath, string content)
+    {
+        if (string.IsNullOrEmpty(filepath)) return;
+
+        string fold = Path.GetDirectoryName(filepath);
+        if (!Directory.Exists(fold))
+        {
+            Directory.CreateDirectory(fold);
+        }
+
+        if (File.Exists(filepath))
+        {
+            File.Delete(filepath);
+        }
+
+        FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.Write);
+
+        StreamWriter sr = new StreamWriter(fs);
+        sr.Write(content);//写入
+        sr.Close();
+        fs.Close();
+    }
+
+    public static void CreatFile(string filepath, byte[] content)
+    {
+        if (string.IsNullOrEmpty(filepath)) return;
+
+        string fold = Path.GetDirectoryName(filepath);
+        if (!Directory.Exists(fold))
+        {
+            Directory.CreateDirectory(fold);
+        }
+
+        if (File.Exists(filepath))
+        {
+            File.Delete(filepath);
+        }
+
+        FileStream fs = File.Open(filepath, FileMode.Create);
+        BinaryWriter binaryWriter = new BinaryWriter(fs);
+        binaryWriter.Write(content);
+        fs.Close();
+    }
+
 
     /// <summary>
     /// 写入文本

@@ -44,7 +44,7 @@ namespace ScriptNodeFlow
 
         public void draw()
         {
-            GUILayout.BeginArea(CanvasLayout.Layout.info.rect, Styles.window);
+            GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
 
             
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);

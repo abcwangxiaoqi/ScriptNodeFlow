@@ -68,9 +68,14 @@ namespace ScriptNodeFlow
         {   
             if(Event.current.type != EventType.Ignore)
             {
+                Rect rect = new Rect(Vector2.zero, position.size);
+                GUILayout.BeginArea(rect,CanvasLayout.Layout.common.CanvasBgStyle);
+                
                 drawRight();
 
                 drawLeft();
+
+                GUILayout.EndArea();
             }
         }
 
@@ -84,7 +89,7 @@ namespace ScriptNodeFlow
         void drawRight()
         {
             rightArea = CanvasLayout.Layout.GetNodeCanvasRect(position.size);
-            GUILayout.BeginArea(rightArea, Styles.window);
+            GUILayout.BeginArea(rightArea, CanvasLayout.Layout.common.window);
 
             drawRightNodesArea();
 
@@ -101,14 +106,14 @@ namespace ScriptNodeFlow
 
             EditorGUI.BeginDisabledGroup(canvasType == CanvasType.Main);
 
-            if (GUILayout.Button(CanvasLayout.Layout.canvas.BackBtContent, EditorStyles.toolbarButton))
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.BackBtContent, CanvasLayout.Layout.canvas.NavigationBtStyle))
             {
                 DelegateManager.Instance.Dispatch(DelegateCommand.SELECTMAINCANVAS);
             }
 
             EditorGUI.EndDisabledGroup();
             
-            if (GUILayout.Button(CanvasLayout.Layout.canvas.FocusBtContent, EditorStyles.toolbarButton))
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.FocusBtContent, CanvasLayout.Layout.canvas.NavigationBtStyle))
             {
                 toolbarFocus();
             }

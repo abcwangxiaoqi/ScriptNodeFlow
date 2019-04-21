@@ -69,8 +69,10 @@ public class CanvasLayout : ScriptableObject
 [Serializable]
 public class CommonCfg
 {
+    public GUIStyle CanvasBgStyle = new GUIStyle();
+    
     public GUIStyle WindowTitleStyle = new GUIStyle();
-    //public GUIStyle window = GUI.skin.window;
+    public GUIStyle window = new GUIStyle();
     public GUIStyle CopyBtStyle = new GUIStyle();
 
     public GUIContent scriptRefNone = new GUIContent("script ref is none", "you need binding a script");
@@ -92,6 +94,7 @@ public class SubListWindowCfg
     public GUIContent TitleContent = new GUIContent("SubCanvasList");
 
     public GUIContent MainBtContent = new GUIContent("MAIN");
+    public GUIStyle MainBtStyle = new GUIStyle();
 
     public GUIContent AddSubBtContent = new GUIContent("", "add a sub canvas");
     public GUIStyle AddSubBtStyle = new GUIStyle();
@@ -99,11 +102,11 @@ public class SubListWindowCfg
     public GUIContent DelSubBtContent = new GUIContent("");
     public GUIStyle DelSubBtStyle = new GUIStyle();
 
-    // public GUIStyle OpenSubBtStyle = new GUIStyle(EditorStyles.miniButton);
+    public GUIStyle OpenSubBtStyle = new GUIStyle();
 
     public GUIStyle SubNameTextStyle = new GUIStyle();
 
-    // public GUIStyle SubDesTextStyle = new GUIStyle(EditorStyles.textArea);
+    public GUIStyle SubDesTextStyle = new GUIStyle();
 
 }
 
@@ -126,8 +129,10 @@ public class SelectedWindowCfg
     public GUIStyle TypeLabelStyle = new GUIStyle();
 
     public GUIContent NameContent = new GUIContent("Name:");
+    public GUIStyle NameTextStyle = new GUIStyle();
 
     public GUIContent DesContent = new GUIContent("Describe:");
+    public GUIStyle DesTextStyle = new GUIStyle();
 }
 
 [Serializable]
@@ -164,11 +169,16 @@ public class CanvasCfg
     public GUIContent BackBtContent = new GUIContent("Back", "back to the main canvas");
     public GUIContent FocusBtContent = new GUIContent("Focuse");
     public GUIStyle CanvasNamelabelStyle = new GUIStyle();
+    public GUIStyle windowNameTextStyle = new GUIStyle();
+    public GUIStyle WindowStyle = new GUIStyle();
 
     [Header("Common")]
     public GUIContent DelWindowsContent = new GUIContent("Delete", "delete the windows");
     public GUIStyle ConnectedBtStyle = new GUIStyle();
     public GUIStyle ConnectBtStyle = new GUIStyle();
+    public GUIStyle NavigationBtStyle = new GUIStyle();
+    public GUIStyle BaseWindowsStyle = new GUIStyle();
+    public GUIStyle SelectedWidnowsStyle = new GUIStyle();
 
     [Space(10)]
     [Header("Start Window")]
@@ -193,6 +203,9 @@ public class CanvasCfg
     public GUIStyle DefaultErrorLabelStyle = new GUIStyle();
 
     public GUIContent AddConditionContent = new GUIContent("", "add a new condition");
+    public GUIStyle AddConditionBtStyle = new GUIStyle();
+
+    public GUIStyle ConditionBoxStyle = new GUIStyle();
 
     public GUIContent DelConditionContent = new GUIContent("", "delete this condition");
     public GUIStyle DelConditionStyle = new GUIStyle();
@@ -208,4 +221,7 @@ public class CanvasCfg
 
     public GUIStyle ConditionErrorLabelStyle = new GUIStyle();
     public GUIStyle ConditionLabelStyle = new GUIStyle();
+
+
+    //public GUISkin scene = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
 }

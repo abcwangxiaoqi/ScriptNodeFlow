@@ -7,14 +7,6 @@ namespace ScriptNodeFlow
 {
     public class SubCanvasListWindow
     {
-        static GUIStyle nameStyle;
-        static SubCanvasListWindow()
-        {
-            nameStyle = new GUIStyle(Styles.textField);
-            nameStyle.fontStyle = FontStyle.Bold;
-            nameStyle.alignment = TextAnchor.MiddleCenter;
-        }
-
         private NodeCanvasData mainData;
 
         List<SubNodeCanvasData> subCanvasList = new List<SubNodeCanvasData>();
@@ -65,9 +57,11 @@ namespace ScriptNodeFlow
         {
 
             Rect mainRect = CanvasLayout.Layout.GetCanvasListRect(mainH);
-            GUILayout.BeginArea(mainRect, Styles.window);
+            GUILayout.BeginArea(mainRect, CanvasLayout.Layout.common.window);
             
             GUILayout.Label(CanvasLayout.Layout.sublist.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
+
+            GUILayout.Space(5);
 
             GUILayout.BeginHorizontal();
 
@@ -101,7 +95,7 @@ namespace ScriptNodeFlow
             }
 
             EditorGUI.BeginDisabledGroup(selectHash == mainData.GetInstanceID());
-            if (GUILayout.Button(CanvasLayout.Layout.sublist.MainBtContent))
+            if (GUILayout.Button(CanvasLayout.Layout.sublist.MainBtContent,CanvasLayout.Layout.sublist.MainBtStyle))
             {
                 selectMainCanvas();
             }
@@ -141,7 +135,7 @@ namespace ScriptNodeFlow
 
                 EditorGUI.BeginDisabledGroup(selectHash == subCanvasList[i].GetInstanceID());
                 GUIContent content = new GUIContent(subCanvasList[i].name, "open the subcanvas");
-                if (GUILayout.Button(content, EditorStyles.miniButton))
+                if (GUILayout.Button(content, CanvasLayout.Layout.sublist.OpenSubBtStyle))
                 {
                     GUI.FocusControl("");
                     DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
@@ -155,7 +149,7 @@ namespace ScriptNodeFlow
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
-                    string tempName = EditorGUILayout.TextField(subCanvasList[i].name, nameStyle);
+                    string tempName = EditorGUILayout.TextField(subCanvasList[i].name, CanvasLayout.Layout.sublist.SubNameTextStyle);
                     if (tempName != subCanvasList[i].name
                         && !string.IsNullOrEmpty(tempName)
                         && !subCanvasList.Exists((sub) => { return sub.name.Equals(tempName); }))
@@ -167,7 +161,7 @@ namespace ScriptNodeFlow
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
-                    subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, Styles.textArea, GUILayout.Height(100));
+                    subCanvasList[i].desc = EditorGUILayout.TextArea(subCanvasList[i].desc, CanvasLayout.Layout.sublist.SubDesTextStyle, GUILayout.Height(100));
                     GUILayout.EndHorizontal();
                     EditorGUI.EndDisabledGroup();
                 }
