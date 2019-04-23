@@ -51,7 +51,7 @@ namespace ScriptNodeFlow
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label(CanvasLayout.Layout.info.IDContent);
+            GUILayout.Label(CanvasLayout.Layout.info.IDContent,CanvasLayout.Layout.common.TextTitleStyle);
             GUILayout.Label(ID, CanvasLayout.Layout.info.IDLabelStyle);
 
             GUILayout.FlexibleSpace();
@@ -65,7 +65,7 @@ namespace ScriptNodeFlow
 
             GUILayout.BeginHorizontal();
 
-            GUILayout.Label(CanvasLayout.Layout.info.ShareDataContent);
+            GUILayout.Label(CanvasLayout.Layout.info.ShareDataContent,CanvasLayout.Layout.common.TextTitleStyle);
 
             if(string.IsNullOrEmpty(shareData))
             {

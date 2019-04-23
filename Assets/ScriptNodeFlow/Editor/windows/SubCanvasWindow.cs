@@ -191,8 +191,10 @@ namespace ScriptNodeFlow
             GUILayout.Space(4);
 
             int index = subCanvasList.IndexOf(canvas);
-            index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray());
-            if(index>=0)
+
+            //  index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray());
+            index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray(),CanvasLayout.Layout.canvas.SubCanvasPopupStyle);
+            if (index>=0)
             {
                 canvas = subCanvasList[index];
             }

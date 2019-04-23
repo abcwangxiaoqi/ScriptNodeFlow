@@ -353,20 +353,16 @@ namespace ScriptNodeFlow
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
-            GUI.color = EditorGUIUtility.isProSkin ? Color.green : Color.grey;
-
             EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
 
             GUILayout.Space(5);
-
+            GUI.color = Color.green;
             if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
                 conditions.Add(new RouterWindowCondition());
             }
-
-            EditorGUI.EndDisabledGroup();
-
             GUI.color = Color.white;
+            EditorGUI.EndDisabledGroup();            
 
             GUILayout.Space(5);
 

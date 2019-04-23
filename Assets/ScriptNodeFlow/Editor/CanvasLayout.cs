@@ -81,6 +81,8 @@ public class CommonCfg
     public GUIStyle RunningLabelStyle = new GUIStyle();
     public GUIContent ErrorLabelContent = new GUIContent("Error...");
     public GUIStyle ErrorLabelStyle = new GUIStyle();
+
+    public GUIStyle TextTitleStyle = new GUIStyle();
 }
 
 [Serializable]
@@ -194,6 +196,7 @@ public class CanvasCfg
     [Header("SubCanvas Window")]
     public GUIContent SubCanvasNoneContent = new GUIContent("no subcanvas", "you must select a valid subcanvas");
     public GUIStyle SubCanvasErrorLabel = new GUIStyle();
+    public GUIStyle SubCanvasPopupStyle = new GUIStyle();
 
     [Space(10)]
     [Header("Router Window")]

@@ -137,8 +137,7 @@ namespace ScriptNodeFlow
 
             if(selected)
             {
-               // GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.SelectedWidnowsStyle);
-                GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.BaseWindowsStyle);
+                GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.SelectedWidnowsStyle);
             }
             else
             {

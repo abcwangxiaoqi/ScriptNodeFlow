@@ -45,12 +45,11 @@ namespace ScriptNodeFlow
 
                     GUILayout.BeginHorizontal();                   
                     GUILayout.Label(CanvasLayout.Layout.selected.NameContent, GUILayout.Width(38));
-                    current.Name = GUILayout.TextField(current.Name,GUILayout.ExpandWidth(true));
+                    current.Name = GUILayout.TextField(current.Name, CanvasLayout.Layout.selected.NameTextStyle,GUILayout.ExpandWidth(true));
                     GUILayout.EndHorizontal();
 
-
                     GUILayout.Label(CanvasLayout.Layout.selected.DesContent);
-                    current.describe = GUILayout.TextArea(current.describe, GUILayout.ExpandHeight(true));
+                    current.describe = GUILayout.TextArea(current.describe, CanvasLayout.Layout.selected.DesTextStyle,GUILayout.ExpandHeight(true));
 
                     EditorGUI.EndDisabledGroup();
                 }
