@@ -34,7 +34,8 @@ namespace ScriptNodeFlow
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(CanvasLayout.Layout.selected.TypeContent);
+                GUILayout.Label(CanvasLayout.Layout.selected.TypeContent,CanvasLayout.Layout.common.TextTitleStyle);
+                GUILayout.Space(5);
                 GUILayout.Label(current.windowType.ToString(), CanvasLayout.Layout.selected.TypeLabelStyle, GUILayout.ExpandWidth(true));
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -44,11 +45,11 @@ namespace ScriptNodeFlow
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
                     GUILayout.BeginHorizontal();                   
-                    GUILayout.Label(CanvasLayout.Layout.selected.NameContent, GUILayout.Width(38));
+                    GUILayout.Label(CanvasLayout.Layout.selected.NameContent,CanvasLayout.Layout.common.TextTitleStyle, GUILayout.Width(38));
                     current.Name = GUILayout.TextField(current.Name, CanvasLayout.Layout.selected.NameTextStyle,GUILayout.ExpandWidth(true));
                     GUILayout.EndHorizontal();
 
-                    GUILayout.Label(CanvasLayout.Layout.selected.DesContent);
+                    GUILayout.Label(CanvasLayout.Layout.selected.DesContent, CanvasLayout.Layout.common.TextTitleStyle);
                     current.describe = GUILayout.TextArea(current.describe, CanvasLayout.Layout.selected.DesTextStyle,GUILayout.ExpandHeight(true));
 
                     EditorGUI.EndDisabledGroup();
