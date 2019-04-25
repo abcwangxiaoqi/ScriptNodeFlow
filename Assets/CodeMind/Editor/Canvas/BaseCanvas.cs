@@ -70,10 +70,10 @@ namespace CodeMind
             {
                 Rect rect = new Rect(Vector2.zero, position.size);
                 GUILayout.BeginArea(rect,CanvasLayout.Layout.common.CanvasBgStyle);
-                
-                drawRight();
 
                 drawLeft();
+
+                drawRight();
 
                 GUILayout.EndArea();
             }
