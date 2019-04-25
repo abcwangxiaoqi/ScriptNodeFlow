@@ -3,19 +3,19 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class EditorNodeCanvas : NodeCanvas
     {
-        [MenuItem("Assets/Script Node Flow/Edit", true)]
+        [MenuItem("Assets/Code Mind/Edit", true)]
         static bool ValidateSelection()
         {
             Object asset = Selection.activeObject;
 
-            return (asset is NodeCanvasData);
+            return (asset is CodeMindData);
         }
 
-        [MenuItem("Assets/Script Node Flow/Edit", false, priority = 49)]
+        [MenuItem("Assets/Code Mind/Edit", false, priority = 49)]
         static void Edit()
         {
             if (window != null)
@@ -29,10 +29,10 @@ namespace ScriptNodeFlow
             window = GetWindow<EditorNodeCanvas>(asset.name);
         }
 
-        [MenuItem("Assets/Script Node Flow/Create", false, priority = 49)]
+        [MenuItem("Assets/Code Mind/Create", false, priority = 49)]
         static void New()
         {
-            EditorUtil.CreatAssetCurPath<NodeCanvasData>("New Node Canvas");
+            EditorUtil.CreatAssetCurPath<CodeMindData>("New CodeMind Canvas");
         }
 
         public static void Open(Object obj)
@@ -60,7 +60,8 @@ namespace ScriptNodeFlow
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
 
-            nodeCanvasData = scriptable.Load<NodeCanvasData>();
+
+            nodeCanvasData = scriptable.Load<CodeMindData>();
 
             generateLeftArea();
 
@@ -73,7 +74,10 @@ namespace ScriptNodeFlow
             if (obj == PlayModeStateChange.ExitingEditMode || 
                 obj == PlayModeStateChange.EnteredPlayMode)
             {
-                window.Close();
+                if(window!=null)
+                {
+                    window.Close();
+                }                
             }
         }
 

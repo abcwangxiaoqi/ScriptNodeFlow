@@ -1,4 +1,4 @@
-﻿using ScriptNodeFlow;
+﻿using CodeMind;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +11,7 @@ public class test:MonoBehaviour
         UnityEngine.Object o = Resources.Load("testScriptNodeFlow");
 
         flow = GameObject.Instantiate(o) as GameObject;
-        flow.GetComponent<NodeController>().onFinish += Test_onFinish;
+        flow.GetComponent<CodeMindController>().onFinish += Test_onFinish;
 
     }
 

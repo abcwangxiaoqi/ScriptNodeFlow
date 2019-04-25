@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [Serializable]
-    public class NodeCanvasData : ScriptableObject
+    public class CodeMindData : ScriptableObject
     {
         public string ID = DateTime.UtcNow.ToString("yyMMddHHmmssff");
         

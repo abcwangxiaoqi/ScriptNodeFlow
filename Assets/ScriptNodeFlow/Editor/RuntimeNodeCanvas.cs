@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class RuntimeNodeCanvas : NodeCanvas
     {
-        static NodeController target;
-        public static void Open(NodeController obj)
+        static CodeMindController target;
+        public static void Open(CodeMindController obj)
         {
             if (obj == null)
                 return;

@@ -5,16 +5,16 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
-    [CustomEditor(typeof(NodeController))]
-    public class NodeControllerEditor : Editor
+    [CustomEditor(typeof(CodeMindController))]
+    public class CodeMindControllerEditor : Editor
     {
-        NodeController Target;
+        CodeMindController Target;
 
         private void Awake()
         {
-            Target = target as NodeController;
+            Target = target as CodeMindController;
         }
 
         int selectIndex = 0;

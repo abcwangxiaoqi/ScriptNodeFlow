@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class NodeWindow : BaseWindow
     {

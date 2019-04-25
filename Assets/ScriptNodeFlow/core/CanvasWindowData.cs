@@ -4,12 +4,12 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [Serializable]
     public class CanvasWindowData : WindowDataBase
     {
-        public SubNodeCanvasData canvasData = null;
+        public SubCanvasData canvasData = null;
 
         public override NodeType type
         {
@@ -21,7 +21,7 @@ namespace ScriptNodeFlow
 
         #region runtime
 
-        private SubNodeController nc = null;
+        private SubCodeMindController nc = null;
         private GameObject ncGameObject = null;
         public void excute(Transform root,SharedData shareData)
         {
@@ -33,7 +33,7 @@ namespace ScriptNodeFlow
                     ncGameObject = new GameObject(canvasData.name);
                     //ncGameObject.hideFlags = HideFlags.HideInHierarchy;
                     ncGameObject.transform.SetParent(root);
-                    nc = ncGameObject.AddComponent<SubNodeController>();
+                    nc = ncGameObject.AddComponent<SubCodeMindController>();
                     nc.subNodeFlowData = canvasData;
                     nc.shareData = shareData;
                     nc.onFinish += Nc_onFinish;

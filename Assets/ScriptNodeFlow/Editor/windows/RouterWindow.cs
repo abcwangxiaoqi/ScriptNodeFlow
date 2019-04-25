@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class RouterWindowCondition
     {

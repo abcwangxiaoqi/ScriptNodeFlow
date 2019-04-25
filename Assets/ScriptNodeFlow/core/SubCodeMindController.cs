@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using ScriptNodeFlow;
+using CodeMind;
 using UnityEngine;
 
-public class SubNodeController : MonoBehaviour
+public class SubCodeMindController : MonoBehaviour
 {
     public event Action<bool> onFinish;
 
-    public SubNodeCanvasData subNodeFlowData;
+    public SubCanvasData subNodeFlowData;
 
     [HideInInspector]public SharedData shareData;
 

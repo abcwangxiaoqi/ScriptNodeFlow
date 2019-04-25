@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Object = UnityEngine.Object;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class SubCanvasWindow : BaseWindow,IDisposable
     {
@@ -14,7 +14,7 @@ namespace ScriptNodeFlow
         {
         }
 
-        protected SubNodeCanvasData canvas { get; private set; }
+        protected SubCanvasData canvas { get; private set; }
 
         //下一节点
         public BaseWindow next { get; protected set; }
@@ -37,7 +37,7 @@ namespace ScriptNodeFlow
             }
         }
 
-        List<SubNodeCanvasData> subCanvasList= new List<SubNodeCanvasData>();
+        List<SubCanvasData> subCanvasList= new List<SubCanvasData>();
         List<string> subCanvasNameList = new List<string>();
         void refreshSublist(object[] objs)
         {
@@ -47,17 +47,17 @@ namespace ScriptNodeFlow
             Object[] subs = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(orginData));
             foreach (var item in subs)
             {
-                if (item is SubNodeCanvasData)
+                if (item is SubCanvasData)
                 {
-                    subCanvasList.Add(item as SubNodeCanvasData);
+                    subCanvasList.Add(item as SubCanvasData);
                     subCanvasNameList.Add(item.name);
                 }
             }
         }
 
-        NodeCanvasData orginData;
+        CodeMindData orginData;
 
-        public SubCanvasWindow(Vector2 pos, List<BaseWindow> _windowList, NodeCanvasData _orginData)
+        public SubCanvasWindow(Vector2 pos, List<BaseWindow> _windowList, CodeMindData _orginData)
             : base(pos, _windowList)
         {
             Name = "Canvas";
@@ -66,7 +66,7 @@ namespace ScriptNodeFlow
             DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
 
-        public SubCanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList, NodeCanvasData _orginData)
+        public SubCanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList, CodeMindData _orginData)
             : base(itemData, _windowList)
         {
             orginData = _orginData;
@@ -181,7 +181,7 @@ namespace ScriptNodeFlow
         }
 
         private Object obj;
-        private SubNodeCanvasData tempCanvas;
+        private SubCanvasData tempCanvas;
         protected override void drawWindowContent()
         {
             base.drawWindowContent();

@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class AssetModify : UnityEditor.AssetModificationProcessor
 {
+    /// <summary>
+    /// detect the asset save action
+    /// </summary>
+    /// <param name="paths"></param>
+    /// <returns></returns>
     static string[] OnWillSaveAssets(string[] paths)
     {
-        //Debug.Log("OnWillSaveAssets");
-        //foreach (string path in paths)
-        //    Debug.Log(path);
         return paths;
     }
 }

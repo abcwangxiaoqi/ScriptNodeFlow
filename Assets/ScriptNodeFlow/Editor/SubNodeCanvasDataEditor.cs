@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
-    [CustomEditor(typeof(SubNodeCanvasData))]
+    [CustomEditor(typeof(SubCanvasData))]
     public class SubNodeCanvasDataEditor : Editor
     {
-        SubNodeCanvasData data;
+        SubCanvasData data;
         private void Awake()
         {
-            data = target as SubNodeCanvasData;
+            data = target as SubCanvasData;
         }
 
         public override void OnInspectorGUI()

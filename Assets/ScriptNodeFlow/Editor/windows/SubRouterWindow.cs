@@ -5,7 +5,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class SubRouterWindow : RouterWindow
     {

@@ -1,7 +1,7 @@
 ﻿
 using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public abstract class Node
     {

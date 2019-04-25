@@ -6,16 +6,16 @@
 using System;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [DisallowMultipleComponent]
-    public class NodeController : MonoBehaviour
+    public class CodeMindController : MonoBehaviour
     {
         public event Action<bool> onFinish;
 
         public event Action<SharedData> onSharedDataInitialize;
 
-        public NodeCanvasData nodeFlowData;
+        public CodeMindData nodeFlowData;
 
         SharedData shareData = null;
         // Use this for initialization

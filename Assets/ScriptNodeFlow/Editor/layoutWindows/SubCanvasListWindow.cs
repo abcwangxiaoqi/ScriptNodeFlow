@@ -3,14 +3,14 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class SubCanvasListWindow
     {
-        private NodeCanvasData mainData;
+        private CodeMindData mainData;
 
-        List<SubNodeCanvasData> subCanvasList = new List<SubNodeCanvasData>();
-        public SubCanvasListWindow(NodeCanvasData _mainData)
+        List<SubCanvasData> subCanvasList = new List<SubCanvasData>();
+        public SubCanvasListWindow(CodeMindData _mainData)
         {
             mainData = _mainData;
 
@@ -18,9 +18,9 @@ namespace ScriptNodeFlow
 
             foreach (var item in subs)
             {
-                if (item is SubNodeCanvasData)
+                if (item is SubCanvasData)
                 {
-                    subCanvasList.Add(item as SubNodeCanvasData);
+                    subCanvasList.Add(item as SubCanvasData);
                 }
             }
 
@@ -35,7 +35,7 @@ namespace ScriptNodeFlow
 
         void openSubCanvas(object[] obj)
         {
-            SubNodeCanvasData d = obj[0] as SubNodeCanvasData;
+            SubCanvasData d = obj[0] as SubCanvasData;
             selectHash = d.GetInstanceID();
         }
 
@@ -70,7 +70,7 @@ namespace ScriptNodeFlow
             if (!Application.isPlaying
                 && GUILayout.Button(CanvasLayout.Layout.sublist.AddSubBtContent, CanvasLayout.Layout.sublist.AddSubBtStyle,GUILayout.Width(13)))
             {
-                SubNodeCanvasData sub = ScriptableObject.CreateInstance<SubNodeCanvasData>();
+                SubCanvasData sub = ScriptableObject.CreateInstance<SubCanvasData>();
 
                 string addSubName = "SubCanvas";
 

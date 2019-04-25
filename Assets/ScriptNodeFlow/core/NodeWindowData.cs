@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [Serializable]
     public class NodeWindowData : WindowDataBase

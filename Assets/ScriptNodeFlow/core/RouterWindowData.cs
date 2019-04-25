@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [Serializable]
     public class RouterWindowData : WindowDataBase

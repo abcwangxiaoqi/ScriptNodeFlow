@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class InfoDataWindow
     {

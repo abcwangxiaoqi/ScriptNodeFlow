@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [Serializable]
-    public class SubNodeCanvasData : ScriptableObject
+    public class SubCanvasData : ScriptableObject
     {
         public StartWindowData start = new StartWindowData();
         public List<NodeWindowData> nodelist = new List<NodeWindowData>();

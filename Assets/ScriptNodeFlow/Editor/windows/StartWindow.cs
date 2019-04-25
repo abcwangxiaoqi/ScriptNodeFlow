@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class StartWindow : BaseWindow
     {

@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public enum CanvasType
     {
@@ -14,9 +14,9 @@ namespace ScriptNodeFlow
     {
         protected static EditorWindow window;
 
-        protected NodeCanvasData nodeCanvasData;
+        protected CodeMindData nodeCanvasData;
 
-        protected SubNodeCanvasData subNodeCanvasData;
+        protected SubCanvasData subNodeCanvasData;
 
         //全部
         protected List<BaseWindow> windowList = null;
@@ -37,7 +37,7 @@ namespace ScriptNodeFlow
             DelegateManager.Instance.AddListener(DelegateCommand.OPENMAINCANVAS, OpenMainCanvas);
 
             DelegateManager.Instance.RemoveListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
-            DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);              
+            DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
         }
 
         protected virtual void OpenMainCanvas(object[] objs)
@@ -51,7 +51,7 @@ namespace ScriptNodeFlow
         protected virtual void OpenSubCanvas(object[] objs)
         {
             Focus();
-            subNodeCanvasData = objs[0] as SubNodeCanvasData;
+            subNodeCanvasData = objs[0] as SubCanvasData;
             canvasType = CanvasType.Sub;
             generateSubData();
             Repaint();

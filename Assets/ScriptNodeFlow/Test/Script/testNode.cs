@@ -1,4 +1,4 @@
-﻿using ScriptNodeFlow;
+﻿using CodeMind;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -96,6 +96,8 @@ public class Enity10 : Node
 
     }
 }
+
+[NodeBinding("19041921060585", "19042021275485")]
 public class Enity11 : Node
 {
     public Enity11(SharedData data) : base(data) { }

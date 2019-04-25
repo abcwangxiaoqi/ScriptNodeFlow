@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class ShareDataBinding : Attribute

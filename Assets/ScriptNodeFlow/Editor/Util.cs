@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Reflection;
 using System;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class Util
     {

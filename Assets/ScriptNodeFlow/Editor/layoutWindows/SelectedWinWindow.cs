@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public class SelectedWinWindow
     {

@@ -1,9 +1,9 @@
-﻿using ScriptNodeFlow;
+﻿using CodeMind;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RouterBinding("19041921060585", "19041923090308", "19041923091205")]
+[RouterBinding("19041921060585", "19042021275763", "19042021275926")]
 public class Condition1 : RouterCondition
 {
     public Condition1(SharedData data) : base(data) { }
@@ -19,7 +19,7 @@ public class Condition1 : RouterCondition
         return data.state == 1;
     }
 }
-[RouterBinding("19041921060585", "19041915084610", "19041915084718")]
+[RouterBinding("19041921060585", "19042021275763", "19042021275961")]
 public class Condition2 : RouterCondition
 {
     public Condition2(SharedData data) : base(data) { }
@@ -31,6 +31,7 @@ public class Condition2 : RouterCondition
     }
 }
 
+[RouterBinding("19041921060585", "19042021275763", "19042021275997")]
 public class Condition3 : RouterCondition
 {
     public Condition3(SharedData data) : base(data) { }
@@ -42,7 +43,7 @@ public class Condition3 : RouterCondition
     }
 }
 
-[RouterBinding("19041921060585", "19041923275615", "19042013504536")]
+[RouterBinding("19041921060585", "19042021275763", "19042022485587")]
 public class Condition4 : RouterCondition
 {
     public Condition4(SharedData data) : base(data) { }

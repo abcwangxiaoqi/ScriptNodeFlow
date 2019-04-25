@@ -1,4 +1,4 @@
-﻿namespace ScriptNodeFlow
+﻿namespace CodeMind
 {
     public abstract class RouterCondition
     {

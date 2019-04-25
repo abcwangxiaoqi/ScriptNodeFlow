@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ScriptNodeFlow
+namespace CodeMind
 {
     public enum RuntimeState
     {
