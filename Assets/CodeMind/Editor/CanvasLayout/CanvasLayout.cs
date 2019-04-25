@@ -38,7 +38,7 @@ public class CanvasLayout : ScriptableObject
             if (layout == null)
             {
                 layout = AssetDatabase.LoadAssetAtPath<CanvasLayout>
-                    ("Assets/ScriptNodeFlow/Editor/CanvasLayout/CanvasLayout.asset");
+                    ("Assets/CodeMind/Editor/CanvasLayout/CanvasLayout.asset");
             }
             return layout;
         }
