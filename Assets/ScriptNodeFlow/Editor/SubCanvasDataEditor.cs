@@ -6,7 +6,7 @@ using UnityEditor;
 namespace CodeMind
 {
     [CustomEditor(typeof(SubCanvasData))]
-    public class SubNodeCanvasDataEditor : Editor
+    public class SubCanvasDataEditor : Editor
     {
         SubCanvasData data;
         private void Awake()

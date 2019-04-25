@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CodeMind
 {
-    public class RuntimeNodeCanvas : NodeCanvas
+    public class RuntimeCanvas : BaseCanvas
     {
         static CodeMindController target;
         public static void Open(CodeMindController obj)
@@ -19,7 +19,7 @@ namespace CodeMind
             window = null;
 
             target = obj;
-            window = GetWindow<RuntimeNodeCanvas>(string.Format("{0}({1})", obj.name, obj.nodeFlowData.name));
+            window = GetWindow<RuntimeCanvas>(string.Format("{0}({1})", obj.name, obj.nodeFlowData.name));
         }
 
         protected override void Awake()
@@ -29,7 +29,7 @@ namespace CodeMind
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
 
-            nodeCanvasData = target.nodeFlowData;
+            codeMindData = target.nodeFlowData;
 
             generateLeftArea();
 
@@ -161,7 +161,7 @@ namespace CodeMind
             {
                 BaseWindow win = windowList[i];
 
-                var cur = nodeCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
+                var cur = codeMindData.nodelist.Find((w) => { return win.Id == w.ID; });
 
                 if(cur!=null)
                 {
@@ -169,7 +169,7 @@ namespace CodeMind
                     continue;
                 }
 
-                var router = nodeCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
+                var router = codeMindData.routerlist.Find((w) => { return win.Id == w.ID; });
 
                 if (router != null)
                 {
@@ -177,7 +177,7 @@ namespace CodeMind
                     continue;
                 }
 
-                var sub = nodeCanvasData.subCanvaslist.Find((w) => { return win.Id == w.ID; });
+                var sub = codeMindData.subCanvaslist.Find((w) => { return win.Id == w.ID; });
 
                 if (sub != null)
                 {
@@ -188,7 +188,7 @@ namespace CodeMind
                 //set start windows position
                 if(win.windowType == NodeType.Start)
                 {
-                    nodeCanvasData.start.position = win.position;
+                    codeMindData.start.position = win.position;
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace CodeMind
             {
                 BaseWindow win = windowList[i];
 
-                var cur = subNodeCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
+                var cur = subCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
 
                 if (cur != null)
                 {
@@ -207,7 +207,7 @@ namespace CodeMind
                     continue;
                 }
 
-                var router = subNodeCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
+                var router = subCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
 
                 if (router != null)
                 {
@@ -218,7 +218,7 @@ namespace CodeMind
                 //set start windows position
                 if (win.windowType == NodeType.Start)
                 {
-                    subNodeCanvasData.start.position = win.position;
+                    subCanvasData.start.position = win.position;
                 }
             }
         }

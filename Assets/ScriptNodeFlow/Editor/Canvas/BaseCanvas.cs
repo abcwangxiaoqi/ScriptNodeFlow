@@ -10,13 +10,13 @@ namespace CodeMind
         Sub
     }
 
-    public abstract class NodeCanvas : EditorWindow
+    public abstract class BaseCanvas : EditorWindow
     {
         protected static EditorWindow window;
 
-        protected CodeMindData nodeCanvasData;
+        protected CodeMindData codeMindData;
 
-        protected SubCanvasData subNodeCanvasData;
+        protected SubCanvasData subCanvasData;
 
         //全部
         protected List<BaseWindow> windowList = null;
@@ -51,7 +51,7 @@ namespace CodeMind
         protected virtual void OpenSubCanvas(object[] objs)
         {
             Focus();
-            subNodeCanvasData = objs[0] as SubCanvasData;
+            subCanvasData = objs[0] as SubCanvasData;
             canvasType = CanvasType.Sub;
             generateSubData();
             Repaint();
@@ -121,7 +121,7 @@ namespace CodeMind
 
             EditorGUILayout.EndHorizontal();
 
-            GUILayout.Label(canvasType == CanvasType.Main ? nodeCanvasData.name : subNodeCanvasData.name,
+            GUILayout.Label(canvasType == CanvasType.Main ? codeMindData.name : subCanvasData.name,
 CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         }
 
@@ -172,30 +172,30 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
 
         protected void generateLeftArea()
         {
-            infoDataWindow = new InfoDataWindow(nodeCanvasData.ID, nodeCanvasData.shareData);
-            subCanvasListWindow = new SubCanvasListWindow(nodeCanvasData);
-            selectedWinWindow = new SelectedWinWindow(nodeCanvasData.ID);
+            infoDataWindow = new InfoDataWindow(codeMindData.ID, codeMindData.shareData);
+            subCanvasListWindow = new SubCanvasListWindow(codeMindData);
+            selectedWinWindow = new SelectedWinWindow(codeMindData.ID);
         }
 
         protected void generateMainData()
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new StartWindow( nodeCanvasData.start, windowList));
+            windowList.Add(new StartWindow( codeMindData.start, windowList));
 
-            foreach (var item in nodeCanvasData.nodelist)
+            foreach (var item in codeMindData.nodelist)
             {
-                windowList.Add(new NodeWindow(item, windowList, nodeCanvasData.ID));
+                windowList.Add(new NodeWindow(item, windowList, codeMindData.ID));
             }
 
-            foreach (var item in nodeCanvasData.routerlist)
+            foreach (var item in codeMindData.routerlist)
             {
-                windowList.Add(new RouterWindow(item, windowList, nodeCanvasData.ID));
+                windowList.Add(new RouterWindow(item, windowList, codeMindData.ID));
             }
 
-            foreach (var item in nodeCanvasData.subCanvaslist)
+            foreach (var item in codeMindData.subCanvaslist)
             {
-                windowList.Add(new SubCanvasWindow(item, windowList, nodeCanvasData));
+                windowList.Add(new SubCanvasWindow(item, windowList, codeMindData));
             }
 
             //set next Node
@@ -203,7 +203,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
             {
                 if (item.windowType == NodeType.Node)
                 {
-                    NodeWindowData edata = nodeCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
+                    NodeWindowData edata = codeMindData.nodelist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -214,7 +214,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                 }
                 else if (item.windowType == NodeType.Router)
                 {
-                    RouterWindowData edata = nodeCanvasData.routerlist.Find(data => { return data.ID == item.Id; });
+                    RouterWindowData edata = codeMindData.routerlist.Find(data => { return data.ID == item.Id; });
                     RouterWindow win = item as RouterWindow;
 
                     //set default
@@ -232,14 +232,14 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                         rcon.ID = con.ID;
                         rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
-                        rcon.updateClassName(nodeCanvasData.ID, win.Id, con.className);
+                        rcon.updateClassName(codeMindData.ID, win.Id, con.className);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
                 }
                 else if (item.windowType == NodeType.SubCanvas)
                 {
-                    CanvasWindowData edata = nodeCanvasData.subCanvaslist.Find(data => { return data.ID == item.Id; });
+                    CanvasWindowData edata = codeMindData.subCanvaslist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -250,7 +250,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                 }
                 else if (item.windowType == NodeType.Start)
                 {
-                    StartWindowData edata = nodeCanvasData.start;
+                    StartWindowData edata = codeMindData.start;
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -266,16 +266,16 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new SubStartWindow(subNodeCanvasData.start, windowList));
+            windowList.Add(new SubStartWindow(subCanvasData.start, windowList));
 
-            foreach (var item in subNodeCanvasData.nodelist)
+            foreach (var item in subCanvasData.nodelist)
             {
-                windowList.Add(new SubNodeWindow(item, windowList, nodeCanvasData.ID));
+                windowList.Add(new SubNodeWindow(item, windowList, codeMindData.ID));
             }
 
-            foreach (var item in subNodeCanvasData.routerlist)
+            foreach (var item in subCanvasData.routerlist)
             {
-                windowList.Add(new SubRouterWindow(item, windowList, nodeCanvasData.ID));
+                windowList.Add(new SubRouterWindow(item, windowList, codeMindData.ID));
             }
 
             //set next Node
@@ -283,7 +283,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
             {
                 if (item.windowType == NodeType.Node)
                 {
-                    NodeWindowData edata = subNodeCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
+                    NodeWindowData edata = subCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -294,7 +294,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                 }
                 else if (item.windowType == NodeType.Router)
                 {
-                    RouterWindowData edata = subNodeCanvasData.routerlist.Find(data => { return data.ID == item.Id; });
+                    RouterWindowData edata = subCanvasData.routerlist.Find(data => { return data.ID == item.Id; });
                     RouterWindow win = item as RouterWindow;
 
                     //set default
@@ -312,14 +312,14 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                         rcon.ID = con.ID;
                         rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
-                        rcon.updateClassName(nodeCanvasData.ID, win.Id, con.className);
+                        rcon.updateClassName(codeMindData.ID, win.Id, con.className);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
                 }
                 else if (item.windowType == NodeType.Start)
                 {
-                    StartWindowData edata = subNodeCanvasData.start;
+                    StartWindowData edata = subCanvasData.start;
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {

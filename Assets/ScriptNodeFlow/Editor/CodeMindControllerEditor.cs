@@ -36,7 +36,7 @@ namespace CodeMind
             
             if (GUILayout.Button("Graph"))
             {
-                RuntimeNodeCanvas.Open(Target);
+                RuntimeCanvas.Open(Target);
             }
 
             EditorGUI.EndDisabledGroup();

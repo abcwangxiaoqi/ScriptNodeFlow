@@ -32,7 +32,7 @@ namespace CodeMind
 
             if (GUILayout.Button("OpenGraph", GUILayout.Height(50)))
             {
-                EditorNodeCanvas.Open(target);
+                EditorCanvas.Open(target);
             }
 
             EditorGUI.EndDisabledGroup();
