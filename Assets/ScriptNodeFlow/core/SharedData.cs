@@ -1,18 +1,10 @@
-﻿
-using System;
-
-namespace CodeMind
+﻿namespace CodeMind
 {
-    public abstract class SharedData : IDisposable
+    public abstract class SharedData
     {
-        public string flowName;
-
         public virtual void Dispose()
         {
 
         }
-
-        public virtual void reset()
-        { }
     }
 }

@@ -34,16 +34,6 @@ namespace CodeMind
             current = nodeFlowData.start;
         }
 
-        public void stateReset()
-        {
-            current = nodeFlowData.start;
-            current.reset();
-
-            shareData.reset();
-
-            finished = false;
-        }
-
         public bool finished { get; private set; }
 
         private WindowDataBase current = null;
