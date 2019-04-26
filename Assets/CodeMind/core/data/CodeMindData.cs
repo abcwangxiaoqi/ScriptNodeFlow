@@ -8,7 +8,7 @@ namespace CodeMind
     public class CodeMindData : ScriptableObject
     {
         public string ID = DateTime.UtcNow.ToString("yyMMddHHmmssff");
-        
+
         public string shareData;
 
         public StartWindowData start = new StartWindowData();
@@ -33,6 +33,14 @@ namespace CodeMind
             data = subCanvaslist.Find(windowData => { return windowData.ID == id; });
 
             return data;
+        }
+
+        public CodeMindController Instantiate()
+        {
+            GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
+            CodeMindController controller = gameObject.GetComponent<CodeMindController>();
+            controller.nodeFlowData = this;
+            return controller;
         }
     }
 }

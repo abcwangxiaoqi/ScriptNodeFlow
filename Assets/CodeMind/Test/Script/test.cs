@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class test:MonoBehaviour
 {
-    GameObject flow;
+    public CodeMindData mindData;
+
+    CodeMindController controller;
     private void Awake()
     {
-        UnityEngine.Object o = Resources.Load("testScriptNodeFlow");
-
-        flow = GameObject.Instantiate(o) as GameObject;
-        flow.GetComponent<CodeMindController>().onFinish += Test_onFinish;
-
+        controller = mindData.Instantiate();
+        controller.onFinish += Test_onFinish;
     }
 
     private void Test_onFinish(bool obj)
     {
         Debug.Log("State=>" + obj);
+        //Destroy(controller.gameObject);
     }
 }
