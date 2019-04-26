@@ -35,6 +35,11 @@ namespace CodeMind
             return data;
         }
 
+
+        /// <summary>
+        /// Instantiate this instance.
+        /// </summary>
+        /// <returns>The instantiate.</returns>
         public CodeMindController Instantiate()
         {
             GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
