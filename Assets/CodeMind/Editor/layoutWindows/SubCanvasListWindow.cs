@@ -135,6 +135,7 @@ namespace CodeMind
                 GUIContent content = new GUIContent(subCanvasList[i].name, "open the subcanvas");
                 if (GUILayout.Button(content, CanvasLayout.Layout.sublist.OpenSubBtStyle))
                 {
+                    GUI.FocusControl("");
                     DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
                 }
                 EditorGUI.EndDisabledGroup();
@@ -143,8 +144,6 @@ namespace CodeMind
 
                 if (EditorGUILayout.BeginFadeGroup(selectHash == subCanvasList[i].GetInstanceID() ? 1 : 0))
                 {
-                    EditorGUILayout.BeginFadeGroup(selectHash == subCanvasList[i].GetInstanceID() ? 1 : 0);
-
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
