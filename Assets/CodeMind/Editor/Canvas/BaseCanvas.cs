@@ -82,8 +82,11 @@ namespace CodeMind
         void drawLeft()
         {
             infoDataWindow.draw();
-            selectedWinWindow.draw(curSelect);
-            subCanvasListWindow.draw(position.height);     
+
+            //have to remain sort subCanvasListWindow->selectWinWindow
+            //whether something is wrong
+            subCanvasListWindow.draw(position.height);            
+            selectedWinWindow.draw(curSelect);   
         }
 
         void drawRight()

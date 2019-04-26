@@ -55,25 +55,23 @@ namespace CodeMind
         Vector2 scrollPostion;
         public void draw(float mainH)
         {
-
             Rect mainRect = CanvasLayout.Layout.GetCanvasListRect(mainH);
             GUILayout.BeginArea(mainRect, CanvasLayout.Layout.common.window);
-            
+
             GUILayout.Label(CanvasLayout.Layout.sublist.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
             GUILayout.Space(5);
 
             GUILayout.BeginHorizontal();
 
-            
+
 
             if (!Application.isPlaying
-                && GUILayout.Button(CanvasLayout.Layout.sublist.AddSubBtContent, CanvasLayout.Layout.sublist.AddSubBtStyle,GUILayout.Width(13)))
+                && GUILayout.Button(CanvasLayout.Layout.sublist.AddSubBtContent, CanvasLayout.Layout.sublist.AddSubBtStyle, GUILayout.Width(13)))
             {
                 SubCanvasData sub = ScriptableObject.CreateInstance<SubCanvasData>();
 
                 string addSubName = "SubCanvas";
-
 
                 int index = 1;
 
@@ -95,17 +93,17 @@ namespace CodeMind
             }
 
             EditorGUI.BeginDisabledGroup(selectHash == mainData.GetInstanceID());
-            if (GUILayout.Button(CanvasLayout.Layout.sublist.MainBtContent,CanvasLayout.Layout.sublist.MainBtStyle))
+            if (GUILayout.Button(CanvasLayout.Layout.sublist.MainBtContent, CanvasLayout.Layout.sublist.MainBtStyle))
             {
                 selectMainCanvas();
             }
             EditorGUI.EndDisabledGroup();
 
-            GUILayout.EndHorizontal();            
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(5);
 
-            scrollPostion = GUILayout.BeginScrollView(scrollPostion, false, 
+            scrollPostion = GUILayout.BeginScrollView(scrollPostion, false,
                 subCanvasList.Count * EditorGUIUtility.singleLineHeight + 50 > mainRect.size.y);
 
             for (int i = 0; i < subCanvasList.Count; i++)
@@ -137,18 +135,21 @@ namespace CodeMind
                 GUIContent content = new GUIContent(subCanvasList[i].name, "open the subcanvas");
                 if (GUILayout.Button(content, CanvasLayout.Layout.sublist.OpenSubBtStyle))
                 {
-                    GUI.FocusControl("");
                     DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS, subCanvasList[i]);
                 }
                 EditorGUI.EndDisabledGroup();
 
                 GUILayout.EndHorizontal();
 
-                if (selectHash == subCanvasList[i].GetInstanceID())
+                if (EditorGUILayout.BeginFadeGroup(selectHash == subCanvasList[i].GetInstanceID() ? 1 : 0))
                 {
+                    EditorGUILayout.BeginFadeGroup(selectHash == subCanvasList[i].GetInstanceID() ? 1 : 0);
+
                     EditorGUI.BeginDisabledGroup(Application.isPlaying);
                     GUILayout.BeginHorizontal();
                     GUILayout.Space(20);
+
+                    GUI.SetNextControlName(subCanvasList[i].name);
                     string tempName = EditorGUILayout.TextField(subCanvasList[i].name, CanvasLayout.Layout.sublist.SubNameTextStyle);
                     if (tempName != subCanvasList[i].name
                         && !string.IsNullOrEmpty(tempName)
@@ -165,6 +166,7 @@ namespace CodeMind
                     GUILayout.EndHorizontal();
                     EditorGUI.EndDisabledGroup();
                 }
+                EditorGUILayout.EndFadeGroup();
             }
 
             GUILayout.EndScrollView();

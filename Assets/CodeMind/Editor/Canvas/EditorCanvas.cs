@@ -151,7 +151,7 @@ namespace CodeMind
 
                         if (curSelect != null)
                         {
-                            curSelect.Selected(true);                            
+                            curSelect.Selected(true);
 
                             foreach (var item in windowList)
                             {
