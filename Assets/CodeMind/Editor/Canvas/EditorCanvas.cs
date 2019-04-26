@@ -53,6 +53,8 @@ namespace CodeMind
         static GUIContent addCanvas = new GUIContent("Add Canvas");
         static GUIContent comiling = new GUIContent("...Comiling...");
 
+        bool initilizeSuccess = true;
+
         protected override void Awake()
         {
             base.Awake();
@@ -60,12 +62,23 @@ namespace CodeMind
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
 
+            try
+            {
+                // quit unity editor when this window is active
+                // reopen unity have to close this error window
 
-            codeMindData = scriptable.Load<CodeMindData>();
+                codeMindData = scriptable.Load<CodeMindData>();
 
-            generateLeftArea();
+                generateLeftArea();
 
-            generateMainData();
+                generateMainData();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning(ex.Message);
+                initilizeSuccess = false;
+                Close();
+            }
         }
 
         //close window when playModeStateChanged
@@ -215,6 +228,9 @@ namespace CodeMind
 
         protected override void OnDestroy()
         {
+            if (!initilizeSuccess)
+                return;
+            
             base.OnDestroy();
 
             save();

@@ -58,7 +58,9 @@ namespace CodeMind
         }
             
         protected virtual void Update()
-        { }
+        {
+
+        }
 
         private const float border = 5;
         
