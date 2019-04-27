@@ -84,17 +84,17 @@ namespace CodeMind
         //close window when playModeStateChanged
         private void playModeStateChanged(PlayModeStateChange obj)
         {
-            if (obj == PlayModeStateChange.ExitingEditMode || 
+            if (obj == PlayModeStateChange.ExitingEditMode ||
                 obj == PlayModeStateChange.EnteredPlayMode)
             {
-                if(window!=null)
+                if (window != null)
                 {
                     window.Close();
-                }                
+                }
             }
         }
 
-        
+
         Event curEvent;
         Vector2 mousePosition;
 
@@ -102,7 +102,7 @@ namespace CodeMind
         // need be saved when compiling
         string nodeAssetPath = "NODEASSETPATH";
 
-       
+
 
         bool clickArea = false;
 
@@ -141,87 +141,92 @@ namespace CodeMind
 
             curEvent = Event.current;
 
-            if (rightArea.Contains(curEvent.mousePosition))
+
+            if (curEvent.clickCount > 0)
             {
                 //must minus rightArea.position
                 mousePosition = curEvent.mousePosition - rightArea.position;
+            }
 
-                if (curEvent.button == 1) // mouse right key
+            if (curEvent.button == 1
+                && rightArea.Contains(curEvent.mousePosition)) // mouse right key
+            {
+                RightMouseSelect();
+            }
+            else if (curEvent.button == 0 && curEvent.isMouse
+                     && rightArea.Contains(curEvent.mousePosition))
+            {
+                //a window is whether selected
+                if (curEvent.type == EventType.MouseDown)
                 {
-                    RightMouseSelect();
+                    clickArea = true;
+
+                    curSelect = windowList.Find((BaseWindow w) =>
+                    {
+                        return w.isClick(mousePosition);
+                    });
+
+                    if (curSelect != null)
+                    {
+                        curSelect.Selected(true);
+
+                        foreach (var item in windowList)
+                        {
+                            if (item == curSelect)
+                                continue;
+
+                            item.Selected(false);
+                        }
+
+                        if (curEvent.clickCount == 2)
+                        {
+                            curSelect.leftMouseDoubleClick();
+                        }
+                    }
+                    else
+                    {
+                        GUI.FocusControl("");
+
+                        foreach (var item in windowList)
+                        {
+                            item.Selected(false);
+                        }
+                    }
+
+                    connectWin = windowList.Find((BaseWindow w) =>
+                    {
+                        return w.isClickInPort(mousePosition);
+                    });
+
+                    DelegateManager.Instance.Dispatch(DelegateCommand.HANDLECONNECTPORT, connectWin);
+
                 }
-                else if (curEvent.button == 0 && curEvent.isMouse)
+                else if (curEvent.type == EventType.MouseUp)
                 {
-                    //a window is whether selected
-                    if (curEvent.type == EventType.MouseDown)
+                    clickArea = false;
+                }
+                else if (curEvent.type == EventType.MouseDrag
+                         && clickArea)
+                {
+                    if (curSelect != null)
                     {
-                        clickArea = true;
-
-                        curSelect = windowList.Find((BaseWindow w) =>
+                        curSelect.leftMouseDrag(curEvent.delta);
+                    }
+                    else
+                    {
+                        if (rightArea.Contains(curEvent.mousePosition))
                         {
-                            return w.isClick(mousePosition);
-                        });
-
-                        if (curSelect != null)
-                        {
-                            curSelect.Selected(true);
-
+                            //drag the panel
                             foreach (var item in windowList)
                             {
-                                if (item == curSelect)
-                                    continue;
-
-                                item.Selected(false);
-                            }
-
-                            if (curEvent.clickCount == 2)
-                            {
-                                curSelect.leftMouseDoubleClick();
-                            }
-                        }
-                        else
-                        {
-                            GUI.FocusControl("");
-
-                            foreach (var item in windowList)
-                            {
-                                item.Selected(false);
-                            }
-                        }
-
-                        connectWin = windowList.Find((BaseWindow w) =>
-                            {
-                                return w.isClickInPort(mousePosition);
-                            });
-
-                        DelegateManager.Instance.Dispatch(DelegateCommand.HANDLECONNECTPORT, connectWin);
-
-                    }
-                    else if (curEvent.type == EventType.MouseUp)
-                    {
-                        clickArea = false;
-                    }
-                    else if (curEvent.type == EventType.MouseDrag)
-                    {
-                        if (curSelect != null)
-                        {
-                            curSelect.leftMouseDrag(curEvent.delta);
-                        }
-                        else if (clickArea)
-                        {
-                            if (rightArea.Contains(curEvent.mousePosition))
-                            {
-                                //drag the panel
-                                foreach (var item in windowList)
-                                {
-                                    item.leftMouseDrag(curEvent.delta);
-                                }
+                                item.leftMouseDrag(curEvent.delta);
                             }
                         }
                     }
                 }
                 Repaint();
             }
+
 
             base.OnGUI();
         }
@@ -230,7 +235,7 @@ namespace CodeMind
         {
             if (!initilizeSuccess)
                 return;
-            
+
             base.OnDestroy();
 
             save();
@@ -264,7 +269,7 @@ namespace CodeMind
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow( mousePosition, windowList,codeMindData.ID));
+                        windowList.Add(new RouterWindow(mousePosition, windowList, codeMindData.ID));
                     });
 
                     if (canvasType == CanvasType.Main)
