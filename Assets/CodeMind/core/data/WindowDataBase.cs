@@ -5,10 +5,10 @@ namespace CodeMind
 {
     public enum RuntimeState
     {
-        Idle,//idle,can be called
-        Running,// was called but not finish completely 
-        Error,//something wrong
-        Finished//finish completely,and move the next one
+        Idle=0,//idle,can be called
+        Running=1,// was called but not finish completely 
+        Error=2,//something wrong
+        Finished=3//finish completely,and move the next one
     }
 
     public enum NodeType
@@ -38,9 +38,17 @@ namespace CodeMind
 
         #region runtime
 
-        public RuntimeState runtimeState { get; protected set; }
-        public string runtimeError { get; protected set; }
-        public virtual void exit()
+        [NonSerialized]
+        public RuntimeState runtimeState = RuntimeState.Idle;
+
+        [NonSerialized]
+        public string runtimeError;
+
+        public virtual void play(params object[] objs) { }
+
+        public virtual void update() { }
+
+        public virtual void stop()
         { }
 
         public virtual void reset()

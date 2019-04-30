@@ -18,20 +18,22 @@ namespace CodeMind
         #region runtime
 
         private Node node;
-        public void excute(SharedData sdata)
+
+        public override void play(params object[] objs)
         {
             try
             {
+                SharedData sdata = objs[0] as SharedData;
+
                 runtimeState = RuntimeState.Running;
 
                 if (null == node)
                 {
                     Type type = Type.GetType(className);
                     node = Activator.CreateInstance(type, sdata) as Node;
-                    node.onFinishEvent += Node_onFinishEvent;
                 }
 
-                node.execute();
+                node.Play();
             }
             catch (Exception e)
             {
@@ -41,25 +43,31 @@ namespace CodeMind
             }
         }
 
-        private void Node_onFinishEvent(bool success, string error)
-        {
-            if (success)
+        public override void update()
+        {            
+            if(node.finished)
             {
-                runtimeState = RuntimeState.Finished;
+                if(string.IsNullOrEmpty(node.errorMessage))
+                {
+                    runtimeState = RuntimeState.Finished;
+                }
+                else
+                {
+                    runtimeState = RuntimeState.Error;
+                    runtimeError = node.errorMessage;
+                }
+                return;
             }
-            else
-            {
-                runtimeState = RuntimeState.Error;
-                runtimeError = error;
-            }
+
+            node.Update();
         }
 
-
-        public override void exit()
+        public override void stop()
         {
             if (node == null)
                 return;
-            node.stop();
+
+            node.OnDestroy();
         }
         #endregion
     }

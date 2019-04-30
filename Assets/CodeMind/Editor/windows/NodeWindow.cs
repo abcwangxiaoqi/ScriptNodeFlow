@@ -45,28 +45,7 @@ namespace CodeMind
         {
             canvasID = _canvasID;
 
-            if (Application.isPlaying)
-            {
-                ClassName = itemData.className;
-            }
-            else
-            {
-                foreach (var item in Util.EngineTypes)
-                {
-                    if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                    {
-                        object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
-                        if (nodeBinings != null
-                            && nodeBinings.Length > 0
-                            && (nodeBinings[0] as NodeBinding).WindowID == Id
-                            && (nodeBinings[0] as NodeBinding).CanvasID == canvasID)
-                        {
-                            ClassName = item.FullName;
-                            break;
-                        }
-                    }
-                }
-            }
+            ClassName = itemData.className;
         }
 
         public void SetNext(BaseWindow entity)

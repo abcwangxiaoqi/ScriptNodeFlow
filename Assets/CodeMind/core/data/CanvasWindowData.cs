@@ -23,11 +23,14 @@ namespace CodeMind
 
         private SubCodeMindController nc = null;
         private GameObject ncGameObject = null;
-        public void excute(Transform root,SharedData shareData)
+        public override void play(params object[] objs)
         {
             try
             {
-                runtimeState = RuntimeState.Running;
+                Transform root = objs[0] as Transform;
+                SharedData shareData = objs[1] as SharedData;
+
+                 runtimeState = RuntimeState.Running;
                 if (ncGameObject == null)
                 {
                     ncGameObject = new GameObject(canvasData.name);

@@ -73,9 +73,9 @@ namespace CodeMind
                 Rect rect = new Rect(Vector2.zero, position.size);
                 GUILayout.BeginArea(rect,CanvasLayout.Layout.common.CanvasBgStyle);
 
-                drawLeft();
-
                 drawRight();
+
+                drawLeft();
 
                 GUILayout.EndArea();
             }
@@ -84,7 +84,7 @@ namespace CodeMind
         void drawLeft()
         {
             infoDataWindow.draw();
-
+            
             //have to remain sort subCanvasListWindow->selectWinWindow
             //whether something is wrong
             subCanvasListWindow.draw(position.height);            
@@ -237,7 +237,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                         rcon.ID = con.ID;
                         rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
-                        rcon.updateClassName(codeMindData.ID, win.Id, con.className);
+                        rcon.className = con.className;
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
@@ -317,7 +317,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                         rcon.ID = con.ID;
                         rcon.name = con.name;
                         rcon.nextWindow = FindWindow(con.nextWindowId);
-                        rcon.updateClassName(codeMindData.ID, win.Id, con.className);
+                        rcon.className = con.className;
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);

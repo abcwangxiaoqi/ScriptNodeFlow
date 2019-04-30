@@ -22,7 +22,7 @@ namespace CodeMind
 
         #region runtime
 
-        public void excute()
+        public override void play(params object[] objs)
         {
             runtimeState = RuntimeState.Finished;
         }

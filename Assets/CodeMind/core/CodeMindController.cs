@@ -47,24 +47,31 @@ namespace CodeMind
             if (current == null)
                 return;
 
+            #region Node Update
+
+            if (current.runtimeState == RuntimeState.Running)
+            {
+                current.update();
+            }
+
+            #endregion
+
+
             if (current.runtimeState != RuntimeState.Idle)
                 return;
 
             if (current.type == NodeType.Start)
             {
-                (current as StartWindowData).excute();
+                current.play();
             }
-            else if (current.type == NodeType.Node)
+            else if (current.type == NodeType.Node ||
+                current.type == NodeType.Router)
             {
-                (current as NodeWindowData).excute(shareData);
-            }
-            else if (current.type == NodeType.Router)
-            {
-                (current as RouterWindowData).excute(shareData);
+                current.play(shareData);
             }
             else if (current.type == NodeType.SubCanvas)
             {
-                 (current as CanvasWindowData).excute(transform,shareData);
+                current.play(transform, shareData);
             }
         }
 
@@ -76,6 +83,7 @@ namespace CodeMind
             if (current == null)
                 return;
 
+        
             if (current.runtimeState == RuntimeState.Finished)
             {
                 //get next
@@ -96,7 +104,7 @@ namespace CodeMind
                         onFinish.Invoke(true);
                     }
                 }
-                else
+                else if (current.runtimeState == RuntimeState.Finished)
                 {
                     current.reset();
                 }
@@ -122,7 +130,7 @@ namespace CodeMind
 
             if (current != null)
             {
-                current.exit();
+                current.stop();
             }
         }
     }

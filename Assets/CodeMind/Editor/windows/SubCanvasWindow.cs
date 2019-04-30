@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace CodeMind
 {
-    public class SubCanvasWindow : BaseWindow,IDisposable
+    public class SubCanvasWindow : BaseWindow
     {
         static SubCanvasWindow()
         {
@@ -63,6 +63,8 @@ namespace CodeMind
             Name = "Canvas";
             orginData = _orginData;
             refreshSublist(null);
+
+            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
             DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
 
@@ -71,7 +73,9 @@ namespace CodeMind
         {
             orginData = _orginData;
             canvas = itemData.canvasData;
-            refreshSublist(null);            
+            refreshSublist(null);
+
+            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
             DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
 
@@ -191,8 +195,6 @@ namespace CodeMind
             GUILayout.Space(4);
 
             int index = subCanvasList.IndexOf(canvas);
-
-            //  index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray());
             index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray(),CanvasLayout.Layout.canvas.SubCanvasPopupStyle);
             if (index>=0)
             {
@@ -234,11 +236,6 @@ namespace CodeMind
             DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
                 canvas);
             GUIUtility.ExitGUI();
-        }
-
-        public void Dispose()
-        {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
         }
     }
 }

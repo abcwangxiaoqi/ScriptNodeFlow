@@ -5,32 +5,32 @@ namespace CodeMind
 {
     public abstract class Node
     {
-        public event Action<bool, string> onFinishEvent;
+        public bool finished { get; private set; }
+        public string errorMessage { get; private set; }
+        
         protected SharedData shareData;
         public Node(SharedData data)
         {
             shareData = data;
         }
 
-        public abstract void execute();
+        public abstract void Play();
 
-        //be called when flow is broken
-        public virtual void stop()
-        {
+        public virtual void Update() { }
 
-        }
+        //be called when destroy canvas
+        public virtual void OnDestroy() { }
+        
 
         //you must call this when you're sure the execute method is finished completely,
         //then the current node move to the next one
         //
         //why be designed like this? 
         //cause maybe your execute method includes some asyn operations
-        protected void finish(bool success, string error = null)
+        protected void finish(string error = null)
         {
-            if (onFinishEvent != null)
-            {
-                onFinishEvent.Invoke(success, error);
-            }
+            finished = true;
+            errorMessage = error;
         }
     }
 }

@@ -16,32 +16,6 @@ namespace CodeMind
         public Rect connectRect;
         public bool connectFlag = false;
         public bool expand = false;
-
-        public void updateClassName(string canvasID, string routerID, string cName)
-        {
-            className = cName;
-
-            if (Application.isPlaying)
-                return;
-
-            className = null;
-            foreach (var item in Util.EngineTypes)
-            {
-                if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
-                    if (routerBindings != null
-                        && routerBindings.Length > 0
-                        && (routerBindings[0] as RouterBinding).CanvasID == canvasID
-                        && (routerBindings[0] as RouterBinding).RouterID == routerID
-                        && (routerBindings[0] as RouterBinding).ConditionID == ID)
-                    {
-                        className = item.FullName;
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     public class RouterWindow : BaseWindow

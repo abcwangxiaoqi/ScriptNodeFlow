@@ -18,28 +18,29 @@ namespace CodeMind
         {
             ID = id;
 
-            if(Application.isPlaying)
-            {
-                shareData = shareDataName;
-            }
-            else
-            {
-                foreach (var item in Util.EngineTypes)
-                {
-                    if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
-                    {
-                        object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
-                        if (bindings != null
-                            && bindings.Length > 0
-                            && (bindings[0] as ShareDataBinding).CanvasID == ID)
-                        {
-                            shareData = item.FullName;
-                            break;
-                        }
-                    }
-                }
-            }
+            shareData = shareDataName;
 
+            //if (Application.isPlaying)
+            //{
+            //    shareData = shareDataName;
+            //}
+            //else
+            //{
+            //    foreach (var item in Util.EngineTypes)
+            //    {
+            //        if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
+            //        {
+            //            object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
+            //            if (bindings != null
+            //                && bindings.Length > 0
+            //                && (bindings[0] as ShareDataBinding).CanvasID == ID)
+            //            {
+            //                shareData = item.FullName;
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
         }        
 
         public void draw()

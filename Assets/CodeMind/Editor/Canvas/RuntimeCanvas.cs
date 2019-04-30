@@ -163,7 +163,7 @@ namespace CodeMind
 
                 var cur = codeMindData.nodelist.Find((w) => { return win.Id == w.ID; });
 
-                if(cur!=null)
+                if (cur != null)
                 {
                     cur.position = win.position;
                     continue;
@@ -186,7 +186,7 @@ namespace CodeMind
                 }
 
                 //set start windows position
-                if(win.windowType == NodeType.Start)
+                if (win.windowType == NodeType.Start)
                 {
                     codeMindData.start.position = win.position;
                 }
@@ -221,11 +221,6 @@ namespace CodeMind
                     subCanvasData.start.position = win.position;
                 }
             }
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
         }
     }
 

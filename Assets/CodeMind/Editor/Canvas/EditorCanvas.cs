@@ -100,9 +100,8 @@ namespace CodeMind
 
         // the key of the asset's path
         // need be saved when compiling
-        string nodeAssetPath = "NODEASSETPATH";
-
-
+        string nodeAssetPath = "NODEASSETPATH";  
+        
 
         bool clickArea = false;
 
@@ -140,7 +139,6 @@ namespace CodeMind
             }
 
             curEvent = Event.current;
-
 
             if (curEvent.clickCount > 0)
             {
@@ -224,9 +222,9 @@ namespace CodeMind
                         }
                     }
                 }
-                Repaint();
             }
 
+            Repaint();
 
             base.OnGUI();
         }

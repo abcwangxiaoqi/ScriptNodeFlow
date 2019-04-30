@@ -20,10 +20,13 @@ namespace CodeMind
         #region runtime
 
         [NonSerialized] public string runtimeNextId = null;
-        public void excute(SharedData sdata)
+
+        public override void play(params object[] objs)
         {
             try
             {
+                SharedData sdata = objs[0] as SharedData;
+
                 runtimeState = RuntimeState.Running;
                 bool condFlag = false;
                 for (int i = 0; i < conditions.Count; i++)

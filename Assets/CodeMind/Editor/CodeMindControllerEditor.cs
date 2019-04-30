@@ -20,7 +20,6 @@ namespace CodeMind
         int selectIndex = 0;
         public override void OnInspectorGUI()
         {
-
             base.OnInspectorGUI();
 
             GUILayout.Space(10);
@@ -40,12 +39,6 @@ namespace CodeMind
             }
 
             EditorGUI.EndDisabledGroup();
-
-            
-            if (GUI.changed)
-            {
-                EditorUtility.SetDirty(Target);
-            }
         }
     }
 }

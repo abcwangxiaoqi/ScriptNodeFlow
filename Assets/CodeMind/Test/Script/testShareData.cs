@@ -16,6 +16,7 @@ public class testShareData2 : SharedData
     public int state = 0;
 }
 
+[ShareDataBinding("19042812312373")]
 public class testShareData6 : SharedData
 {
     public int state = 0;
