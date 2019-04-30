@@ -184,7 +184,7 @@ namespace CodeMind
                 if (GUI.Button(condition.connectRect, "",
                     (condition.nextWindow != null || condition.connectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
                 {
-                    if(!Application.isPlaying)
+                    if (!Application.isPlaying)
                     {
                         setConditionNext(condition, null);
                         DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
@@ -196,7 +196,7 @@ namespace CodeMind
             if (GUI.Button(defaultConnectRect, "",
                 (defaultNextWindow != null || defaultConnectFlag) ? CanvasLayout.Layout.canvas.ConnectedBtStyle : CanvasLayout.Layout.canvas.ConnectBtStyle))
             {
-                if(!Application.isPlaying)
+                if (!Application.isPlaying)
                 {
                     SetDefault(null);
                     DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
@@ -336,7 +336,7 @@ namespace CodeMind
                 conditions.Add(new RouterWindowCondition());
             }
             GUI.color = Color.white;
-            EditorGUI.EndDisabledGroup();            
+            EditorGUI.EndDisabledGroup();
 
             GUILayout.Space(5);
 
@@ -355,13 +355,11 @@ namespace CodeMind
             {
                 RouterWindowCondition rc = conditions[i];
 
-
                 if (rc.expand)
                 {
                     GUIStyle box = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene).box;
-                    // box style 不对 要修改
-                    GUILayout.Box("",CanvasLayout.Layout.canvas.ConditionBoxStyle ,GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
-                    //GUILayout.Box("", box,GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
+
+                    GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle, GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
                     Rect r = GUILayoutUtility.GetLastRect();
                     if (r.position != Vector2.zero)
                     {
@@ -422,14 +420,15 @@ namespace CodeMind
                 }
                 else
                 {
-                    GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle,GUILayout.Height(ConditionH), GUILayout.ExpandWidth(true));
+                    GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle, GUILayout.Height(ConditionH), GUILayout.ExpandWidth(true));
                     Rect r = GUILayoutUtility.GetLastRect();
                     if (r.position != Vector2.zero)
                     {
                         Rect rectBtDelete = new Rect();
                         rectBtDelete.position = r.position + new Vector2(2, (r.size.y / 2) - 8);
                         rectBtDelete.size = new Vector2(16, 16);
-                        if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent, CanvasLayout.Layout.canvas.DelConditionStyle))
+                        if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent
+                            , CanvasLayout.Layout.canvas.DelConditionStyle))
                         {
                             conditions.RemoveAt(i);
                             return;
@@ -443,11 +442,13 @@ namespace CodeMind
                         if (string.IsNullOrEmpty(rc.className))
                         {
                             nameContent.tooltip = "script ref is none";
-                            EditorGUI.LabelField(rectScript, nameContent, CanvasLayout.Layout.canvas.ConditionErrorLabelStyle);
+                            EditorGUI.LabelField(rectScript, nameContent
+                                , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
                         }
                         else
                         {
-                            EditorGUI.LabelField(rectScript, nameContent, CanvasLayout.Layout.canvas.ConditionLabelStyle);
+                            EditorGUI.LabelField(rectScript, nameContent
+                                , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
                         }
 
 

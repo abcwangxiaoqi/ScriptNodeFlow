@@ -225,6 +225,8 @@ public class CanvasCfg
     public GUIStyle ConditionErrorLabelStyle = new GUIStyle();
     public GUIStyle ConditionLabelStyle = new GUIStyle();
 
+    public GUIStyle ConditionUnExpandLabelStyle = new GUIStyle();
+    public GUIStyle ConditionUnExpandErrorLabelStyle = new GUIStyle();
 
     //public GUISkin scene = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
 }
