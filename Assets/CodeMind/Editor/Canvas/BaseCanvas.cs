@@ -134,9 +134,34 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         {
             if (windowList != null)
             {
-                for (int i = 0; i < windowList.Count; i++)
+
+                foreach (var item in windowList)
                 {
-                    windowList[i].draw();
+                    if (item.windowType != NodeType.Start)
+                        continue;
+                    item.draw();
+                }
+
+                //must keep subcanvas not lastest
+                foreach (var item in windowList)
+                {
+                    if (item.windowType != NodeType.SubCanvas)
+                        continue;
+                    item.draw();
+                }
+
+                foreach (var item in windowList)
+                {
+                    if (item.windowType != NodeType.Node)
+                        continue;
+                    item.draw();
+                }
+
+                foreach (var item in windowList)
+                {
+                    if (item.windowType != NodeType.Router)
+                        continue;
+                    item.draw();
                 }
             }
         }

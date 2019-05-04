@@ -3,77 +3,86 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[NodeBinding("19041921060585", "19041923280876")]
-public class Enity1 : Node
+[NodeBinding("19042812312373", "19043017425885")]
+public class StepOneEnity : Node
 {
-    public Enity1(SharedData data) : base(data) { }
+    public StepOneEnity(SharedData data) : base(data) { }
 
     public override void Play()
     {
-        Debug.Log("Enity1");
+        Debug.Log("Step One");
 
-        //get share data and you can modify it
-        Debug.Log(">>>state = " + (shareData as testShareData).state);
+        finish();
+    }
 
-        //call finish method when you're sure finished completely        
+    public override void Update()
+    {
+        base.Update();
+
+        /*
+         * pre frame action
+        */
+    }
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        /*
+         * on destroy action
+        */
+    }
+}
+
+[NodeBinding("19042812312373", "19043017491948")]
+public class StepTwoEnity : Node
+{
+    public StepTwoEnity(SharedData data) : base(data) { }
+
+    public override void Play()
+    {
+        Debug.Log("Step Two");
+
         finish();
     }
 }
 
-[NodeBinding("19041921060585", "19041923144744")]
-public class Enity6 : Node
+[NodeBinding("19042812312373", "19042820324515")]
+public class StepThreeEnity : Node
 {
-    public Enity6(SharedData data) : base(data) { }
+    public StepThreeEnity(SharedData data) : base(data) { }
 
     public override void Play()
     {
-        Debug.Log("Enity6");
-        Debug.Log("state = " + (shareData as testShareData).state);
-        (shareData as testShareData).state = 3;
+        Debug.Log("Enity Three");
+
         finish();
     }
 }
 
-[NodeBinding("19041921060585", "19041923150914")]
-public class Enity2 : Node
+[NodeBinding("19042812312373", "19043017421504")]
+public class StepFourEnity : Node
 {
-    public Enity2(SharedData data) : base(data) { }
+    public StepFourEnity(SharedData data) : base(data) { }
 
     public override void Play()
     {
-        Debug.Log("Enity2");
-        Debug.Log("state = " + (shareData as testShareData).state);
-        (shareData as testShareData).state = 10;
+        Debug.Log("Enity Four");
+
         finish();
     }
 }
 
-[NodeBinding("19041921060585", "19041923152073")]
-public class Enity3 : Node
+[NodeBinding("19042812312373", "19043016344040")]
+public class StepFiveEnity : Node
 {
-    public Enity3(SharedData data) : base(data) { }
+    public StepFiveEnity(SharedData data) : base(data) { }
 
     public override void Play()
     {
-        Debug.Log("Enity3");
-        Debug.Log("state = " + (shareData as testShareData).state);
-        (shareData as testShareData).state = 20;
-        finish();
-    }
-}
+        Debug.Log("Enity Five");
 
-[NodeBinding("19041921060585", "19041923152191")]
-public class Enity4 : Node
-{
-    public Enity4(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity4");
-        Debug.Log("state = " + (shareData as testShareData).state);
-        (shareData as testShareData).state = 30;
         finish();
-        
     }
 }
 
@@ -83,46 +92,6 @@ public class Enity4 : Node
 //////====================================
 /// 
 
-[NodeBinding("19041921060585", "19041923135646")]
-public class Enity10 : Node
-{
-    public Enity10(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity10");
-        (shareData as testShareData).state = 30;
-        finish();
-
-    }
-}
-
-[NodeBinding("19041921060585", "19042021275485")]
-public class Enity11 : Node
-{
-    public Enity11(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity11");
-        (shareData as testShareData).state = 30;
-        finish();
-
-    }
-}
-
-[NodeBinding("19041921060585", "19042013565051")]
-public class Enity12 : Node
-{
-    public Enity12(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("state = "+(shareData as testShareData).state);
-        finish();
-
-    }
-}
 public class Enity13 : Node
 {
     public Enity13(SharedData data) : base(data) { }
@@ -148,47 +117,6 @@ public class Enity14 : Node
     }
 }
 
-[NodeBinding("19042812312373", "19042820312736")]
-public class Enity15 : Node
-{
-    public Enity15(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity15");
-        (shareData as testShareData6).state = 30;
-        finish();
-
-    }
-}
-
-[NodeBinding("19042812312373", "19042820324515")]
-public class Enity16 : Node
-{
-    public Enity16(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity16");
-        (shareData as testShareData6).state = 30;
-        finish();
-
-    }
-}
-
-[NodeBinding("19042812312373", "19043016344040")]
-public class Enity17 : Node
-{
-    public Enity17(SharedData data) : base(data) { }
-
-    public override void Play()
-    {
-        Debug.Log("Enity17");
-        //(shareData as testShareData).state = 30;
-        finish();
-
-    }
-}
 public class Enity18 : Node
 {
     public Enity18(SharedData data) : base(data) { }

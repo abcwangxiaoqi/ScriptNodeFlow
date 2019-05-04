@@ -111,45 +111,21 @@ namespace CodeMind
         /// <param name="ID"></param>
         static void handleNode(NodeWindowData node,string ID)
         {
-            string fullClassName = node.className;
+            node.className = string.Empty;
 
-            if (string.IsNullOrEmpty(fullClassName))
+            foreach (var item in types)
             {
-                foreach (var item in types)
+                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
+                    object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
+                    if (nodeBinings != null
+                        && nodeBinings.Length > 0
+                        && (nodeBinings[0] as NodeBinding).WindowID == node.ID
+                        && (nodeBinings[0] as NodeBinding).CanvasID == ID)
                     {
-                        object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
-                        if (nodeBinings != null
-                            && nodeBinings.Length > 0
-                            && (nodeBinings[0] as NodeBinding).WindowID == node.ID
-                            && (nodeBinings[0] as NodeBinding).CanvasID == ID)
-                        {
-                            node.className = item.FullName;
-                            break;
-                        }
+                        node.className = item.FullName;
+                        break;
                     }
-                }
-                return;
-            }
-
-            var type = assembly.GetType(fullClassName);
-
-            if(type == null)
-            {
-                node.className = string.Empty;
-            }
-            else
-            {
-                object[] nodeBinings = type.GetCustomAttributes(typeof(NodeBinding), false);
-                if(nodeBinings == null || nodeBinings.Length == 0)
-                {
-                    node.className = string.Empty;
-                }
-                else if((nodeBinings[0] as NodeBinding).WindowID != node.ID
-                    || (nodeBinings[0] as NodeBinding).CanvasID != ID)
-                {
-                    node.className = string.Empty;
                 }
             }
         }
@@ -162,48 +138,22 @@ namespace CodeMind
         /// <param name="routerID"></param>
         static void handleCondition(RouterWindowConditionData condition,string ID,string routerID)
         {
-            string fullClassName = condition.className;
+            condition.className = string.Empty;
 
-            if (string.IsNullOrEmpty(fullClassName))
+            foreach (var item in types)
             {
-                foreach (var item in types)
+                if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
+                    object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
+                    if (routerBindings != null
+                        && routerBindings.Length > 0
+                        && (routerBindings[0] as RouterBinding).CanvasID == ID
+                        && (routerBindings[0] as RouterBinding).RouterID == routerID
+                        && (routerBindings[0] as RouterBinding).ConditionID == condition.ID)
                     {
-                        object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
-                        if (routerBindings != null
-                            && routerBindings.Length > 0
-                            && (routerBindings[0] as RouterBinding).CanvasID == ID
-                            && (routerBindings[0] as RouterBinding).RouterID == routerID
-                            && (routerBindings[0] as RouterBinding).ConditionID == condition.ID)
-                        {
-                            condition.className = item.FullName;
-                            break;
-                        }
+                        condition.className = item.FullName;
+                        break;
                     }
-                }
-
-                return;
-            }
-
-            var type = assembly.GetType(fullClassName);
-
-            if (type == null)
-            {
-                condition.className = string.Empty;
-            }
-            else
-            {
-                object[] routerBinings = type.GetCustomAttributes(typeof(RouterBinding), false);
-                if (routerBinings == null || routerBinings.Length == 0)
-                {
-                    condition.className = string.Empty;
-                }
-                else if ((routerBinings[0] as RouterBinding).ConditionID != condition.ID
-                    || (routerBinings[0] as RouterBinding).RouterID != routerID
-                    || (routerBinings[0] as RouterBinding).CanvasID != ID)
-                {
-                    condition.className = string.Empty;
                 }
             }
         }
@@ -214,45 +164,20 @@ namespace CodeMind
         /// <param name="data"></param>
         static void handleShareData(CodeMindData data)
         {
-            string fullClassName = data.shareData;
+            data.shareData = String.Empty;
 
-            if (string.IsNullOrEmpty(fullClassName))
+            foreach (var item in types)
             {
-                foreach (var item in types)
+                if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
                 {
-                    if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
+                    object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
+                    if (bindings != null
+                        && bindings.Length > 0
+                        && (bindings[0] as ShareDataBinding).CanvasID == data.ID)
                     {
-                        object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
-                        if (bindings != null
-                            && bindings.Length > 0
-                            && (bindings[0] as ShareDataBinding).CanvasID == data.ID)
-                        {
-                            data.shareData = item.FullName;
-                            break;
-                        }
+                        data.shareData = item.FullName;
+                        break;
                     }
-                }
-
-                return;
-            }                
-
-            var type = assembly.GetType(fullClassName);
-
-            if (type == null)
-            {
-                data.shareData = string.Empty;
-            }
-            else
-            {
-                object[] sharedataBinings = type.GetCustomAttributes(typeof(ShareDataBinding), false);
-
-                if (sharedataBinings == null || sharedataBinings.Length == 0)
-                {
-                    data.shareData = string.Empty;
-                }
-                else if ((sharedataBinings[0] as ShareDataBinding).CanvasID != data.ID)
-                {
-                    data.shareData = string.Empty;
                 }
             }
         }

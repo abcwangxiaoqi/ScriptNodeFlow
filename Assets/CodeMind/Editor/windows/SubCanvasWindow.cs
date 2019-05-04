@@ -196,7 +196,8 @@ namespace CodeMind
 
             int index = subCanvasList.IndexOf(canvas);
             index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray(),CanvasLayout.Layout.canvas.SubCanvasPopupStyle);
-            if (index>=0)
+            if (index>=0 
+                && canvas!=subCanvasList[index])
             {
                 canvas = subCanvasList[index];
             }
