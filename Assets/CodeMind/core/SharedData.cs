@@ -1,6 +1,8 @@
-﻿namespace CodeMind
+﻿using UnityEngine;
+
+namespace CodeMind
 {
-    public abstract class SharedData
+    public abstract class SharedData : ScriptableObject
     {
         public virtual void Dispose()
         {

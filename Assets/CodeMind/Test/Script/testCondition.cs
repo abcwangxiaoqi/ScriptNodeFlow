@@ -14,8 +14,7 @@ public class Condition1 : RouterCondition
 
         //get shared data
         testShareData data = shareData as testShareData;
-
-
+        
         return data.state == 1;
     }
 }

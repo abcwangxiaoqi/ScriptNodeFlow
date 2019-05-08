@@ -9,7 +9,8 @@ namespace CodeMind
     {
         public string ID = DateTime.UtcNow.ToString("yyMMddHHmmssff");
 
-        public string shareData;
+        //public string shareData;
+        public SharedData shareData;
 
         public StartWindowData start = new StartWindowData();
         public List<NodeWindowData> nodelist = new List<NodeWindowData>();

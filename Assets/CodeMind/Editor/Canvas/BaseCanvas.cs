@@ -88,7 +88,7 @@ namespace CodeMind
             //have to remain sort subCanvasListWindow->selectWinWindow
             //whether something is wrong
             subCanvasListWindow.draw(position.height);            
-            selectedWinWindow.draw(curSelect);   
+           // selectedWinWindow.draw(curSelect);   
         }
 
         void drawRight()

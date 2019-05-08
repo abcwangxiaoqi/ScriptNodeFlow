@@ -21,13 +21,21 @@ namespace CodeMind
         // Use this for initialization
         void Start()
         {
-            if (!string.IsNullOrEmpty(nodeFlowData.shareData))
-            {
-                shareData = Activator.CreateInstance(Type.GetType(nodeFlowData.shareData)) as SharedData;
+            //if (!string.IsNullOrEmpty(nodeFlowData.shareData))
+            //{
+            //    shareData = Activator.CreateInstance(Type.GetType(nodeFlowData.shareData)) as SharedData;
 
+            //    if (onSharedDataInitialize != null)
+            //    {
+            //        onSharedDataInitialize(shareData);
+            //    }
+            //}
+
+            if (nodeFlowData.shareData!=null)
+            {
                 if (onSharedDataInitialize != null)
                 {
-                    onSharedDataInitialize(shareData);
+                    onSharedDataInitialize(nodeFlowData.shareData);
                 }
             }
 

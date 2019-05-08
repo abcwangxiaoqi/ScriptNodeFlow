@@ -163,8 +163,35 @@ namespace CodeMind
         /// </summary>
         /// <param name="data"></param>
         static void handleShareData(CodeMindData data)
-        {
-            data.shareData = String.Empty;
+        {            
+            if(data.shareData!=null)
+            {
+                Type t = data.shareData.GetType();
+
+                if(!t.IsSubclassOf(typeof(SharedData)) 
+                    || t.IsInterface 
+                    || t.IsAbstract)
+                {
+                    //unmatched
+                    data.shareData = null;
+                }
+                else
+                {
+                    object[] bindings = t.GetCustomAttributes(typeof(ShareDataBinding), false);
+                    if (bindings == null
+                       || bindings.Length == 0
+                       || (bindings[0] as ShareDataBinding).CanvasID != data.ID)
+                    {
+                        //unmatched
+                        data.shareData = null;
+                    }
+                    else
+                    {
+                        //matched
+                        return;
+                    }
+                }
+            }
 
             foreach (var item in types)
             {
@@ -175,7 +202,8 @@ namespace CodeMind
                         && bindings.Length > 0
                         && (bindings[0] as ShareDataBinding).CanvasID == data.ID)
                     {
-                        data.shareData = item.FullName;
+                        //data.shareData = item.FullName;
+                        data.shareData = SharedData.CreateInstance(item.FullName) as SharedData;
                         break;
                     }
                 }
