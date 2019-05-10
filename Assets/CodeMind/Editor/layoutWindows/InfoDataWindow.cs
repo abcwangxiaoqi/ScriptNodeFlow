@@ -19,13 +19,26 @@ namespace CodeMind
             ID = id;
 
             shareData = shareDataName;
-        }        
+        }
 
+        MonoScript script;
         public void draw()
         {
             GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
 
+            var tempScript = EditorGUILayout.ObjectField("script", script, typeof(MonoScript), false) as MonoScript;
+
+            if(tempScript!=null)
+            {
+                Type t = tempScript.GetClass();
+                if (script != tempScript && t.IsSubclassOf(typeof(SharedData)))
+                {
+                    script = tempScript;
+                }
+            }
             
+
+
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
             GUILayout.BeginHorizontal();
