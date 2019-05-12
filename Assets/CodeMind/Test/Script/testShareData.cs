@@ -13,6 +13,7 @@ public class testShareData : SharedData
     public GameObject gameobject;
 
     public TTEE ttee;
+
 }
 
 [System.Serializable]

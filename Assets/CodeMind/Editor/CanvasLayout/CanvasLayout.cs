@@ -12,7 +12,7 @@ public class CanvasLayout : ScriptableObject
         float h = mainHeight
             - selected.rect.position.y - selected.rect.size.y
             - 10
-            - 20;
+            - 5;
         sublist.rect.size = new Vector2(sublist.rect.size.x, h);
 
         return sublist.rect;
@@ -23,7 +23,7 @@ public class CanvasLayout : ScriptableObject
         float h = mainSize.y
             - 10
             - 10;
-        float w = mainSize.x - 5 - 200 - 10 - 5;
+        float w = mainSize.x - 5 - 300 - 10;
 
         canvas.rect.size = new Vector2(w, h);
 

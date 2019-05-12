@@ -14,104 +14,67 @@ namespace CodeMind
 
         string ID;
 
+        MonoScript monoScript;
+        Editor editor;
+
         public InfoDataWindow(string id,SharedData shareDataName)
         {
             ID = id;
 
             shareData = shareDataName;
+
+            monoScript = MonoScript.FromScriptableObject(shareData);
+
+            editor = Editor.CreateEditor(shareData);
         }
 
-        MonoScript script;
+        Vector2 scroll = Vector2.zero;
+
         public void draw()
         {
             GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
 
-            var tempScript = EditorGUILayout.ObjectField("script", script, typeof(MonoScript), false) as MonoScript;
-
-            if(tempScript!=null)
-            {
-                Type t = tempScript.GetClass();
-                if (script != tempScript && t.IsSubclassOf(typeof(SharedData)))
-                {
-                    script = tempScript;
-                }
-            }
-            
-
-
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
-            GUILayout.BeginHorizontal();
+            var tempScript = EditorGUILayout.ObjectField("script", monoScript, typeof(MonoScript), false) as MonoScript;
 
-            GUILayout.Label(CanvasLayout.Layout.info.IDContent,CanvasLayout.Layout.common.TextTitleStyle);
-            GUILayout.Label(ID, CanvasLayout.Layout.info.IDLabelStyle);
-
-            GUILayout.FlexibleSpace();
-            
-            if (GUILayout.Button(CanvasLayout.Layout.info.CopyBtContent, CanvasLayout.Layout.common.CopyBtStyle))
+            if (tempScript != null)
             {
-                EditorGUIUtility.systemCopyBuffer = string.Format(ShareDataBinding.Format, ID);
-            }
+                if(monoScript != tempScript)
+                {
+                    Type t = tempScript.GetClass();
 
-            GUILayout.EndHorizontal();
+                    if (t!=null && t.IsSubclassOf(typeof(SharedData))
+                    && !t.IsAbstract
+                    && !t.IsInterface)
+                    {
+                        monoScript = tempScript;
 
-            //GUILayout.BeginHorizontal();
+                        shareData = ScriptableObject.CreateInstance(t) as SharedData;
 
-            //GUILayout.Label(CanvasLayout.Layout.info.ShareDataContent,CanvasLayout.Layout.common.TextTitleStyle);
-
-            //if(string.IsNullOrEmpty(shareData))
-            //{
-            //    GUILayout.Label(CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.info.ShareDataErrorLabelStyle);
-            //}
-            //else
-            //{
-            //    GUILayout.Label(shareData, CanvasLayout.Layout.info.ShareDataLabelStyle);
-            //}
-
-            if (shareData == null)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(CanvasLayout.Layout.info.ShareDataContent, CanvasLayout.Layout.common.TextTitleStyle);
-                GUILayout.Label(CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.info.ShareDataErrorLabelStyle);
-                GUILayout.EndHorizontal();
+                        editor = Editor.CreateEditor(shareData);
+                    }
+                    else
+                    {
+                        monoScript = null;
+                        shareData = null;
+                    }
+                }
             }
             else
             {
-                SerializedProperty sp = null;
-
-                SerializedObject serializedObject = new SerializedObject(shareData);
-                
-                sp = serializedObject.GetIterator();
-
-                while (sp.NextVisible(true))
-                {
-                    Debug.Log(">>>" + sp.name+">>>"+sp.propertyType);
-                    if (sp.propertyType == SerializedPropertyType.String)
-                    {
-                        sp.stringValue = EditorGUILayout.TextField(sp.name, sp.stringValue);
-                    }
-                    else if(sp.propertyType == SerializedPropertyType.Integer)
-                    {
-                        sp.intValue = EditorGUILayout.IntField(sp.name, sp.intValue);
-                    }
-                    else if(sp.propertyType == SerializedPropertyType.AnimationCurve)
-                    {
-                        sp.animationCurveValue = EditorGUILayout.CurveField(sp.name, sp.animationCurveValue);
-                    }
-                    else if(sp.propertyType == SerializedPropertyType.ObjectReference)
-                    {
-                        sp.objectReferenceValue = EditorGUILayout.ObjectField(sp.name, sp.objectReferenceValue, typeof(Object), true);
-                    }
-                }
-                serializedObject.ApplyModifiedProperties();
-
-                //GUILayout.Label(shareData, CanvasLayout.Layout.info.ShareDataLabelStyle);
+                monoScript = null;
+                shareData = null;
             }
 
+            scroll = GUILayout.BeginScrollView(scroll);
 
-            //GUILayout.FlexibleSpace();
+            if (shareData != null)
+            {
+                editor.OnInspectorGUI();
+            }
 
-            //GUILayout.EndHorizontal();
+            GUILayout.EndScrollView();
 
             GUILayout.EndArea();
         }
