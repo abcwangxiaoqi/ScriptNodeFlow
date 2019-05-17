@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace CodeMind
 {
     public class NodeWindow : BaseWindow
     {
-        protected string canvasID;
-
-        protected string ClassName { get; private set; }
-
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 80);
+        //Vector2 _size = new Vector2(150, 80);
+        Vector2 _size = new Vector2(350, 200);
         protected override Vector2 size
         {
             get
@@ -33,19 +31,21 @@ namespace CodeMind
             }
         }
 
-        public NodeWindow(Vector2 pos, List<BaseWindow> _windowList, string _canvasID)
-            : base(pos, _windowList)
-        {
-            canvasID = _canvasID;
-            Name = "Node";
-        }
+        MonoScript monoScript;
 
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList, string _canvasID)
-            : base(itemData, _windowList)
-        {
-            canvasID = _canvasID;
+        public NodeWindowData nodeData;
 
-            ClassName = itemData.className;
+        Editor scriptEditor;
+
+        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList,CodeMindData _mindData)
+            : base(itemData, _windowList, _mindData)
+        {
+            nodeData = itemData;
+            if(nodeData.node!= null)
+            {
+                monoScript = MonoScript.FromScriptableObject(nodeData.node);
+                scriptEditor = Editor.CreateEditor(nodeData.node);
+            }            
         }
 
         public void SetNext(BaseWindow entity)
@@ -55,30 +55,17 @@ namespace CodeMind
                 next.SetParent(null);
             }
 
+            next = entity;
+
             if (entity != null)
             {
                 entity.SetParent(entity);
-            }
-
-            next = entity;
-        }
-
-        public override WindowDataBase GetData()
-        {
-            NodeWindowData dataEntity = new NodeWindowData();
-            dataEntity.position = position;
-            dataEntity.name = Name;
-            dataEntity.ID = Id;
-            dataEntity.desc = describe;
-
-            dataEntity.className = ClassName;
-
-            if (next != null)
+                nodeData.nextWindowId = entity.Id;
+            }     
+            else
             {
-                dataEntity.nextWindowId = next.Id;
+                nodeData.nextWindowId = null;
             }
-
-            return dataEntity;
         }
 
         protected override void drawBefore()
@@ -154,39 +141,63 @@ namespace CodeMind
         }
 
         private bool connectFlag = false;
-
+        string error;
         protected override void drawWindowContent()
         {
             base.drawWindowContent();
 
-            GUILayout.BeginHorizontal();
+             var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
 
-            if (string.IsNullOrEmpty(ClassName))
+            if(tempScript == null && tempScript != monoScript)
             {
-                GUILayout.Label(CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.canvas.NodeRefErrorLabelStyle);
+                monoScript = tempScript;                
+                Object.DestroyImmediate(nodeData.node);
+                nodeData.node = null;
+                scriptEditor = null;
             }
             else
             {
-                GUILayout.Label(ClassName, CanvasLayout.Layout.canvas.NodeRefNameLabelStyle);
-            }
+                if (tempScript != monoScript)
+                {
+                    monoScript = tempScript;
 
-            GUILayout.EndHorizontal();
+                    var type = monoScript.GetClass();
+
+                    if (type != null
+                        && type.IsSubclassOf(typeof(Node))
+                        && !type.IsAbstract
+                        && !type.IsInterface)
+                    {
+                        var data = ScriptableObject.CreateInstance(type);
+                        data.name = "Node_" + Id;
+
+                        AssetDatabase.AddObjectToAsset(data, mindData);
+                        nodeData.node = data as Node;
+
+                        scriptEditor = Editor.CreateEditor(nodeData.node);
+                        error = null;
+                    }
+                    else
+                    {
+                        error = "script is invalid";
+                    }
+                }
+            }            
+
+            GUILayout.Label(error);
+
+            if(scriptEditor!=null)
+            {
+                scriptEditor.OnInspectorGUI();              
+            }
         }
 
-        public override void rightMouseClick(Vector2 mouseposition)
+        public override void deleteWindow()
         {
-            GenericMenu menu = new GenericMenu();
-            
-            menu.AddItem(CanvasLayout.Layout.canvas.DelWindowsContent, false, () =>
+            if (next != null)
             {
-                if (next != null)
-                {
-                    next.SetParent(null);
-                }
-                windowList.Remove(this);
-            });
-
-            menu.ShowAsContext();
+                next.SetParent(null);
+            }
         }
     }
 }

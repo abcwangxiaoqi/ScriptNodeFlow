@@ -111,23 +111,23 @@ namespace CodeMind
         /// <param name="ID"></param>
         static void handleNode(NodeWindowData node,string ID)
         {
-            node.className = string.Empty;
+            //node.node = string.Empty;
 
-            foreach (var item in types)
-            {
-                if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
-                    if (nodeBinings != null
-                        && nodeBinings.Length > 0
-                        && (nodeBinings[0] as NodeBinding).WindowID == node.ID
-                        && (nodeBinings[0] as NodeBinding).CanvasID == ID)
-                    {
-                        node.className = item.FullName;
-                        break;
-                    }
-                }
-            }
+            //foreach (var item in types)
+            //{
+            //    if (item.IsSubclassOf(typeof(Node)) && !item.IsInterface && !item.IsAbstract)
+            //    {
+            //        object[] nodeBinings = item.GetCustomAttributes(typeof(NodeBinding), false);
+            //        if (nodeBinings != null
+            //            && nodeBinings.Length > 0
+            //            && (nodeBinings[0] as NodeBinding).WindowID == node.ID
+            //            && (nodeBinings[0] as NodeBinding).CanvasID == ID)
+            //        {
+            //            node.node = item.FullName;
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -138,24 +138,24 @@ namespace CodeMind
         /// <param name="routerID"></param>
         static void handleCondition(RouterWindowConditionData condition,string ID,string routerID)
         {
-            condition.className = string.Empty;
+            //condition.className = string.Empty;
 
-            foreach (var item in types)
-            {
-                if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
-                {
-                    object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
-                    if (routerBindings != null
-                        && routerBindings.Length > 0
-                        && (routerBindings[0] as RouterBinding).CanvasID == ID
-                        && (routerBindings[0] as RouterBinding).RouterID == routerID
-                        && (routerBindings[0] as RouterBinding).ConditionID == condition.ID)
-                    {
-                        condition.className = item.FullName;
-                        break;
-                    }
-                }
-            }
+            //foreach (var item in types)
+            //{
+            //    if (item.IsSubclassOf(typeof(RouterCondition)) && !item.IsInterface && !item.IsAbstract)
+            //    {
+            //        object[] routerBindings = item.GetCustomAttributes(typeof(RouterBinding), false);
+            //        if (routerBindings != null
+            //            && routerBindings.Length > 0
+            //            && (routerBindings[0] as RouterBinding).CanvasID == ID
+            //            && (routerBindings[0] as RouterBinding).RouterID == routerID
+            //            && (routerBindings[0] as RouterBinding).ConditionID == condition.ID)
+            //        {
+            //            condition.className = item.FullName;
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>

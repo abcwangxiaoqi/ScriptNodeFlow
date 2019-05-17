@@ -74,18 +74,13 @@ namespace CodeMind
             }
         }
 
-        public BaseWindow( Vector2 pos, List<BaseWindow> _windowList)
-        {
-            position = pos;
-            windowList = _windowList;
+        public WindowDataBase windowData { get; private set; }
 
-            Id = DateTime.Now.ToString("yyMMddHHmmssff");
-        }
+        protected CodeMindData mindData { get; private set; }
 
-        protected WindowDataBase windowData { get; private set; }
-      
-        public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList)
+        public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList, CodeMindData _mindData)
         {
+            mindData = _mindData;
             windowData = _data;
             position = _data.position;
             windowList = _windowList;
@@ -156,7 +151,7 @@ namespace CodeMind
         protected virtual void drawWindowContent()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            Name = GUILayout.TextField(Name, CanvasLayout.Layout.canvas.windowNameTextStyle);
+            windowData.name = GUILayout.TextField(windowData.name, CanvasLayout.Layout.canvas.windowNameTextStyle);
             EditorGUI.EndDisabledGroup();
         }
 
@@ -165,13 +160,14 @@ namespace CodeMind
             return rect.position + new Vector2(connectPortSize, connectPortSize / 2);
         }
 
-        public virtual void rightMouseClick(Vector2 mouseposition)
+        public virtual void deleteWindow()
         {
         }
 
         public virtual void leftMouseDrag(Vector2 delta)
         {
-             position += delta;
+            position += delta;
+            windowData.position = position;
         }
 
         public virtual void leftMouseDoubleClick()
@@ -195,7 +191,7 @@ namespace CodeMind
             return InPortRect.Contains(mouseposition);
         }
 
-        public abstract WindowDataBase GetData();
+        //public abstract WindowDataBase GetData();
         
 
         protected void DrawArrow(Vector2 from, Vector2 to, Color color)
@@ -221,6 +217,18 @@ namespace CodeMind
                 parentRef++;
             }
 
+        }
+
+        public void SelectedDraw()
+        {
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+
+            GUILayout.Label(CanvasLayout.Layout.selected.DesContent, CanvasLayout.Layout.common.TextTitleStyle);
+            windowData.desc = GUILayout.TextArea(windowData.desc, CanvasLayout.Layout.selected.DesTextStyle, GUILayout.Height(80));
+
+            GUILayout.Space(5);
+
+            EditorGUI.EndDisabledGroup();
         }
     }
 }

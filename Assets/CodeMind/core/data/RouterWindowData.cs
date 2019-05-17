@@ -7,6 +7,11 @@ namespace CodeMind
     [Serializable]
     public class RouterWindowData : WindowDataBase
     {
+        public RouterWindowData()
+        {
+            name = "Router Name";
+        }
+
         public List<RouterWindowConditionData> conditions = new List<RouterWindowConditionData>();
 
         public override NodeType type
@@ -61,23 +66,23 @@ namespace CodeMind
     [Serializable]
     public class RouterWindowConditionData
     {
-        public string ID;
-        public string name;
+        public string name = "Condition Name";
 
-        public string className;
+        public RouterCondition className;
         public string nextWindowId = null;
 
         private RouterCondition condition;
         public bool excute(SharedData sdata)
         {
-            if (condition == null)
-            {
-                Type type = Type.GetType(className);
+            //if (condition == null)
+            //{
+            //    Type type = Type.GetType(className);
 
-                condition = Activator.CreateInstance(type, sdata) as RouterCondition;
-            }
+            //    condition = Activator.CreateInstance(type, sdata) as RouterCondition;
+            //}
 
-            return condition.justify();
+            //return condition.justify();
+            return true;
         }
     }
 }

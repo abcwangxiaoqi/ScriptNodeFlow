@@ -9,6 +9,11 @@ namespace CodeMind
     [Serializable]
     public class CanvasWindowData : WindowDataBase
     {
+        public CanvasWindowData()
+        {
+            name = "SubCanvas Name";
+        }
+
         public SubCanvasData canvasData = null;
 
         public override NodeType type

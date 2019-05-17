@@ -28,9 +28,11 @@ namespace CodeMind
             }
         }
 
-        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+        StartWindowData startData;
+        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList, CodeMindData _mindData)
+            : base(itemData, _windowList, _mindData)
         {
+            startData = itemData;
         }
 
         public void SetNext(BaseWindow entity)
@@ -45,21 +47,27 @@ namespace CodeMind
             if (entity != null)
             {
                 entity.SetParent(this);
-            }
-        }
 
-        public override WindowDataBase GetData()
-        {
-            StartWindowData dataEntity = new StartWindowData();
-            dataEntity.position = position;
-            dataEntity.ID = Id;
-            if (next != null)
+                startData.nextWindowId = entity.Id;
+            }
+            else
             {
-                dataEntity.nextWindowId = next.Id;
+                startData.nextWindowId = null;
             }
-
-            return dataEntity;
         }
+
+        //public override WindowDataBase GetData()
+        //{
+        //    StartWindowData dataEntity = new StartWindowData();
+        //    dataEntity.position = position;
+        //    dataEntity.ID = Id;
+        //    if (next != null)
+        //    {
+        //        dataEntity.nextWindowId = next.Id;
+        //    }
+
+        //    return dataEntity;
+        //}
 
         private bool connectFlag = false;
         Event curEvent;

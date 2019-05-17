@@ -1,18 +1,19 @@
 ﻿
 using System;
+using UnityEngine;
 
 namespace CodeMind
 {
-    public abstract class Node
+    public abstract class Node : ScriptableObject
     {
         public bool finished { get; private set; }
         public string errorMessage { get; private set; }
-        
+
         protected SharedData shareData;
-        public Node(SharedData data)
-        {
-            shareData = data;
-        }
+        //public Node(SharedData data)
+        //{
+        //    shareData = data;
+        //}
 
         public abstract void Play();
 
@@ -20,7 +21,7 @@ namespace CodeMind
 
         //be called when destroy canvas
         public virtual void OnDestroy() { }
-        
+
 
         //you must call this when you're sure the execute method is finished completely,
         //then the current node move to the next one

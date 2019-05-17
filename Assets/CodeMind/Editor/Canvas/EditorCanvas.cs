@@ -100,8 +100,8 @@ namespace CodeMind
 
         // the key of the asset's path
         // need be saved when compiling
-        string nodeAssetPath = "NODEASSETPATH";  
-        
+        string nodeAssetPath = "NODEASSETPATH";
+
 
         bool clickArea = false;
 
@@ -152,7 +152,8 @@ namespace CodeMind
                 RightMouseSelect();
             }
             else if (curEvent.button == 0 && curEvent.isMouse
-                     && rightArea.Contains(curEvent.mousePosition))
+                     && rightArea.Contains(curEvent.mousePosition) 
+                     && GUIUtility.hotControl <= 0)
             {
                 //a window is whether selected
                 if (curEvent.type == EventType.MouseDown)
@@ -255,26 +256,54 @@ namespace CodeMind
 
                 if (curSelect != null)
                 {
-                    curSelect.rightMouseClick(mousePosition);
+                    if (curSelect.windowType == NodeType.Start)
+                        return;
+
+                    GenericMenu menu = new GenericMenu();
+
+                    menu.AddItem(CanvasLayout.Layout.canvas.DelWindowsContent, false, () =>
+                    {
+                        curSelect.deleteWindow();
+
+                        if (curSelect.windowType == NodeType.Node)
+                        {
+                            codeMindData.nodelist.Remove(curSelect.windowData as NodeWindowData);
+                        }
+                        else if (curSelect.windowType == NodeType.Router)
+                        {
+                            codeMindData.routerlist.Remove(curSelect.windowData as RouterWindowData);
+                        }
+                        else if (curSelect.windowType == NodeType.SubCanvas)
+                        {
+                            codeMindData.subCanvaslist.Remove(curSelect.windowData as CanvasWindowData);
+                        }
+
+                        windowList.Remove(curSelect);
+                    });
+
+                    menu.ShowAsContext();
                 }
                 else
                 {
                     GenericMenu menu = new GenericMenu();
                     menu.AddItem(addNode, false, () =>
                     {
-                        windowList.Add(new NodeWindow(mousePosition, windowList, codeMindData.ID));
+                        var node = codeMindData.AddNode(mousePosition);
+                        windowList.Add(new NodeWindow(node, windowList,codeMindData));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
-                        windowList.Add(new RouterWindow(mousePosition, windowList, codeMindData.ID));
+                        var router = codeMindData.AddRouter(mousePosition);
+                        windowList.Add(new RouterWindow(router, windowList, codeMindData));
                     });
 
                     if (canvasType == CanvasType.Main)
                     {
                         menu.AddItem(addCanvas, false, () =>
                         {
-                            windowList.Add(new SubCanvasWindow(mousePosition, windowList, codeMindData));
+                            var sub = codeMindData.AddSubCanvas(mousePosition);
+                            windowList.Add(new SubCanvasWindow(sub, windowList, codeMindData));
                         });
                     }
 
@@ -310,57 +339,61 @@ namespace CodeMind
 
         void saveMain()
         {
-            codeMindData.nodelist.Clear();
-            codeMindData.routerlist.Clear();
-            codeMindData.subCanvaslist.Clear();
-
-            codeMindData.shareData = infoDataWindow.shareData;
-
-            for (int i = 0; i < windowList.Count; i++)
-            {
-                if (windowList[i].windowType == NodeType.Node)
-                {
-                    codeMindData.nodelist.Add((NodeWindowData)windowList[i].GetData());
-                }
-                else if (windowList[i].windowType == NodeType.Router)
-                {
-                    codeMindData.routerlist.Add((RouterWindowData)windowList[i].GetData());
-                }
-                else if (windowList[i].windowType == NodeType.SubCanvas)
-                {
-                    codeMindData.subCanvaslist.Add((CanvasWindowData)windowList[i].GetData());
-                }
-                else if (windowList[i].windowType == NodeType.Start)
-                {
-                    codeMindData.start = (StartWindowData)windowList[i].GetData();
-                }
-            }
-
             EditorUtility.SetDirty(codeMindData);
+            //return;
+            //codeMindData.nodelist.Clear();
+            //codeMindData.routerlist.Clear();
+            //codeMindData.subCanvaslist.Clear();
+
+            //codeMindData.shareData = infoDataWindow.shareData;
+
+            //for (int i = 0; i < windowList.Count; i++)
+            //{
+            //    if (windowList[i].windowType == NodeType.Node)
+            //    {
+            //        codeMindData.nodelist.Add((NodeWindowData)windowList[i].GetData());
+            //    }
+            //    else if (windowList[i].windowType == NodeType.Router)
+            //    {
+            //        codeMindData.routerlist.Add((RouterWindowData)windowList[i].GetData());
+            //    }
+            //    else if (windowList[i].windowType == NodeType.SubCanvas)
+            //    {
+            //        codeMindData.subCanvaslist.Add((CanvasWindowData)windowList[i].GetData());
+            //    }
+            //    else if (windowList[i].windowType == NodeType.Start)
+            //    {
+            //        codeMindData.start = (StartWindowData)windowList[i].GetData();
+            //    }
+            //}
+
+            //EditorUtility.SetDirty(codeMindData);
         }
 
         void saveSub()
         {
-            subCanvasData.nodelist.Clear();
-            subCanvasData.routerlist.Clear();
-
-            for (int i = 0; i < windowList.Count; i++)
-            {
-                if (windowList[i].windowType == NodeType.Node)
-                {
-                    subCanvasData.nodelist.Add((NodeWindowData)windowList[i].GetData());
-                }
-                else if (windowList[i].windowType == NodeType.Router)
-                {
-                    subCanvasData.routerlist.Add((RouterWindowData)windowList[i].GetData());
-                }
-                else if (windowList[i].windowType == NodeType.Start)
-                {
-                    subCanvasData.start = (StartWindowData)windowList[i].GetData();
-                }
-            }
-
             EditorUtility.SetDirty(codeMindData);
+
+            //subCanvasData.nodelist.Clear();
+            //subCanvasData.routerlist.Clear();
+
+            //for (int i = 0; i < windowList.Count; i++)
+            //{
+            //    if (windowList[i].windowType == NodeType.Node)
+            //    {
+            //        subCanvasData.nodelist.Add((NodeWindowData)windowList[i].GetData());
+            //    }
+            //    else if (windowList[i].windowType == NodeType.Router)
+            //    {
+            //        subCanvasData.routerlist.Add((RouterWindowData)windowList[i].GetData());
+            //    }
+            //    else if (windowList[i].windowType == NodeType.Start)
+            //    {
+            //        subCanvasData.start = (StartWindowData)windowList[i].GetData();
+            //    }
+            //}
+
+            //EditorUtility.SetDirty(codeMindData);
         }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -10,22 +7,23 @@ namespace CodeMind
 {
     public class InfoDataWindow
     {
-        public SharedData shareData { get; private set; }
-
         string ID;
 
         MonoScript monoScript;
         Editor editor;
+        CodeMindData mindData;
 
-        public InfoDataWindow(string id,SharedData shareDataName)
+        public InfoDataWindow(string id, CodeMindData codeMindData)
         {
             ID = id;
+            mindData = codeMindData;
 
-            shareData = shareDataName;
+            if (mindData.shareData != null)
+            {
+                monoScript = MonoScript.FromScriptableObject(mindData.shareData);
 
-            monoScript = MonoScript.FromScriptableObject(shareData);
-
-            editor = Editor.CreateEditor(shareData);
+                editor = Editor.CreateEditor(mindData.shareData);
+            }
         }
 
         Vector2 scroll = Vector2.zero;
@@ -40,36 +38,46 @@ namespace CodeMind
 
             if (tempScript != null)
             {
-                if(monoScript != tempScript)
+                if (monoScript != tempScript)
                 {
                     Type t = tempScript.GetClass();
 
-                    if (t!=null && t.IsSubclassOf(typeof(SharedData))
+                    if (t != null && t.IsSubclassOf(typeof(SharedData))
                     && !t.IsAbstract
                     && !t.IsInterface)
                     {
                         monoScript = tempScript;
 
-                        shareData = ScriptableObject.CreateInstance(t) as SharedData;
+                        var data = ScriptableObject.CreateInstance(t);
+                        data.name = "ShareData";
 
-                        editor = Editor.CreateEditor(shareData);
+                        AssetDatabase.AddObjectToAsset(data, mindData);
+                        mindData.shareData = data as SharedData;
+
+                        editor = Editor.CreateEditor(mindData.shareData);
                     }
                     else
                     {
                         monoScript = null;
-                        shareData = null;
+
+                        Object.DestroyImmediate(mindData.shareData, true);
+
+                        mindData.shareData = null;
                     }
                 }
             }
             else
             {
                 monoScript = null;
-                shareData = null;
+
+                Object.DestroyImmediate(mindData.shareData, true);
+
+                mindData.shareData = null;
             }
 
             scroll = GUILayout.BeginScrollView(scroll);
 
-            if (shareData != null)
+            if (mindData.shareData != null)
             {
                 editor.OnInspectorGUI();
             }

@@ -7,8 +7,8 @@ namespace CodeMind
 {
     public class SubStartWindow : StartWindow
     {
-        public SubStartWindow(StartWindowData itemData, List<BaseWindow> _windowList)
-            : base(itemData, _windowList)
+        public SubStartWindow(StartWindowData itemData, List<BaseWindow> _windowList, CodeMindData _mindData)
+            : base(itemData, _windowList, _mindData)
         {
         }
     }

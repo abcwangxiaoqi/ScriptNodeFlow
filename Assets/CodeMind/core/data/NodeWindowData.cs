@@ -5,7 +5,12 @@ namespace CodeMind
     [Serializable]
     public class NodeWindowData : WindowDataBase
     {
-        public string className;
+        public NodeWindowData()
+        {
+            name = "Node Name";
+        }
+
+        public Node node;
 
         public override NodeType type
         {
@@ -17,23 +22,23 @@ namespace CodeMind
 
         #region runtime
 
-        private Node node;
+       // private Node node;
 
         public override void play(params object[] objs)
         {
             try
             {
-                SharedData sdata = objs[0] as SharedData;
+                //SharedData sdata = objs[0] as SharedData;
 
-                runtimeState = RuntimeState.Running;
+                //runtimeState = RuntimeState.Running;
 
-                if (null == node)
-                {
-                    Type type = Type.GetType(className);
-                    node = Activator.CreateInstance(type, sdata) as Node;
-                }
+                //if (null == node)
+                //{
+                //    Type type = Type.GetType(node);
+                //    node = Activator.CreateInstance(type, sdata) as Node;
+                //}
 
-                node.Play();
+                //node.Play();
             }
             catch (Exception e)
             {
