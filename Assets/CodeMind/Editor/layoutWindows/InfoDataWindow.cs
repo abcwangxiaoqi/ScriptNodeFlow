@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -7,19 +8,24 @@ namespace CodeMind
 {
     public class InfoDataWindow
     {
-        string ID;
-
         MonoScript monoScript;
         Editor editor;
         CodeMindData mindData;
 
-        public InfoDataWindow(string id, CodeMindData codeMindData)
+        AnimBool scriptFadeGroup;
+
+        public InfoDataWindow(CodeMindData codeMindData)
         {
-            ID = id;
+            scriptFadeGroup = new AnimBool(true);
+
             mindData = codeMindData;
+
+
 
             if (mindData.shareData != null)
             {
+                Debug.Log(">>>>>" + mindData.shareData.name);
+                
                 monoScript = MonoScript.FromScriptableObject(mindData.shareData);
 
                 editor = Editor.CreateEditor(mindData.shareData);
@@ -34,21 +40,29 @@ namespace CodeMind
 
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
-            var tempScript = EditorGUILayout.ObjectField("script", monoScript, typeof(MonoScript), false) as MonoScript;
+            var tempScript = EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false) as MonoScript;
 
-            if (tempScript != null)
+            if(tempScript == null && tempScript != monoScript)
             {
-                if (monoScript != tempScript)
+                monoScript = tempScript;                
+                Object.DestroyImmediate(mindData.shareData,true);
+                mindData.shareData = null;
+                editor = null;
+            }
+            else
+            {
+                if (tempScript != monoScript)
                 {
-                    Type t = tempScript.GetClass();
+                    monoScript = tempScript;
 
-                    if (t != null && t.IsSubclassOf(typeof(SharedData))
-                    && !t.IsAbstract
-                    && !t.IsInterface)
+                    var type = monoScript.GetClass();
+
+                    if (type != null
+                        && type.IsSubclassOf(typeof(SharedData))
+                        && !type.IsAbstract
+                        && !type.IsInterface)
                     {
-                        monoScript = tempScript;
-
-                        var data = ScriptableObject.CreateInstance(t);
+                        var data = ScriptableObject.CreateInstance(type);
                         data.name = "ShareData";
 
                         AssetDatabase.AddObjectToAsset(data, mindData);
@@ -56,35 +70,30 @@ namespace CodeMind
 
                         editor = Editor.CreateEditor(mindData.shareData);
                     }
-                    else
-                    {
-                        monoScript = null;
-
-                        Object.DestroyImmediate(mindData.shareData, true);
-
-                        mindData.shareData = null;
-                    }
                 }
-            }
-            else
+            }     
+
+            //scroll = GUILayout.BeginScrollView(scroll);
+
+            if (editor != null)
             {
-                monoScript = null;
+                scriptFadeGroup.target = EditorGUILayout.Foldout(scriptFadeGroup.target, "Parameters");
 
-                Object.DestroyImmediate(mindData.shareData, true);
+                if (EditorGUILayout.BeginFadeGroup(scriptFadeGroup.faded))
+                {
+                    EditorGUI.indentLevel++;
 
-                mindData.shareData = null;
+                    editor.OnInspectorGUI();
+
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndFadeGroup();
             }
 
-            scroll = GUILayout.BeginScrollView(scroll);
-
-            if (mindData.shareData != null)
-            {
-                editor.OnInspectorGUI();
-            }
-
-            GUILayout.EndScrollView();
+            //GUILayout.EndScrollView();
 
             GUILayout.EndArea();
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 namespace CodeMind
@@ -23,8 +24,6 @@ namespace CodeMind
 
         //whether be selected
         public bool selected { get; protected set; }
-
-        public string describe;
 
         protected Rect windowRect;
 
@@ -78,13 +77,18 @@ namespace CodeMind
 
         protected CodeMindData mindData { get; private set; }
 
+        protected AnimBool desFadeGroup { get; private set; }
+
+        protected float desHeight = 50;
+
         public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList, CodeMindData _mindData)
         {
+            desFadeGroup = new AnimBool(false);
+
             mindData = _mindData;
             windowData = _data;
             position = _data.position;
             windowList = _windowList;
-            describe = _data.desc;
             Id = _data.ID;
             Name = _data.name;
         }
@@ -113,7 +117,7 @@ namespace CodeMind
             drawBefore();
 
             windowRect.position = position;
-            windowRect.size = size;
+            //windowRect.size = size;
 
             if (Application.isPlaying)
             {
@@ -128,7 +132,7 @@ namespace CodeMind
                 }
             }
 
-            GUIContent c = new GUIContent(windowType.ToString(), describe);                 
+            GUIContent c = new GUIContent(windowType.ToString(), windowData.desc);                 
 
             if(selected)
             {
@@ -143,7 +147,16 @@ namespace CodeMind
 
             drawWindowContent();
 
+
+            var rrect = GUILayoutUtility.GetLastRect();
+            if (rrect.position != Vector2.zero)
+            {
+                //Debug.Log(rect.position);
+                windowRect.size = new Vector2(size.x, rrect.position.y + 5 + 30);
+            }
+
             GUILayout.EndArea();
+
 
             drawAfter();
         }
@@ -152,6 +165,21 @@ namespace CodeMind
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             windowData.name = GUILayout.TextField(windowData.name, CanvasLayout.Layout.canvas.windowNameTextStyle);
+
+            desFadeGroup.target = EditorGUILayout.Foldout(desFadeGroup.target, "Describe");
+
+            if (EditorGUILayout.BeginFadeGroup(desFadeGroup.faded))
+            {
+                EditorGUI.indentLevel++;
+
+                windowData.desc = EditorGUILayout.TextArea(windowData.desc, CanvasLayout.Layout.selected.DesTextStyle, GUILayout.Height(desHeight));
+
+                EditorGUI.indentLevel--;
+            }
+            EditorGUILayout.EndFadeGroup();
+
+            GUILayout.Space(5);
+
             EditorGUI.EndDisabledGroup();
         }
 

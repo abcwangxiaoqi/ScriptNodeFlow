@@ -58,7 +58,7 @@ namespace CodeMind
 
             foreach (var item in data.nodelist)
             {
-                handleNode(item, data.ID);
+                handleNode(item);
             }
 
             List<RouterWindowData> routers = data.routerlist;
@@ -66,13 +66,13 @@ namespace CodeMind
             {
                 foreach (var condItem in item.conditions)
                 {
-                    handleCondition(condItem, data.ID,item.ID);
+                    handleCondition(condItem,item.ID);
                 }
             }
 
             foreach (var item in data.subCanvaslist)
             {
-                handleSubCfg(item,data.ID);
+                handleSubCfg(item);
             }
             
             EditorUtility.SetDirty(data);
@@ -83,7 +83,7 @@ namespace CodeMind
         /// </summary>
         /// <param name="sub"></param>
         /// <param name="ID"></param>
-        static void handleSubCfg(CanvasWindowData sub,string ID)
+        static void handleSubCfg(CanvasWindowData sub)
         {
             if (sub.canvasData == null)
                 return;
@@ -91,7 +91,7 @@ namespace CodeMind
             var data = sub.canvasData;
             foreach (var item in data.nodelist)
             {
-                handleNode(item,ID);
+               // handleNode();
             }
 
             List<RouterWindowData> routers = data.routerlist;
@@ -99,7 +99,7 @@ namespace CodeMind
             {
                 foreach (var condItem in item.conditions)
                 {
-                    handleCondition(condItem,ID,item.ID);
+                    handleCondition(condItem,item.ID);
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace CodeMind
         /// </summary>
         /// <param name="node"></param>
         /// <param name="ID"></param>
-        static void handleNode(NodeWindowData node,string ID)
+        static void handleNode(NodeWindowData node)
         {
             //node.node = string.Empty;
 
@@ -136,7 +136,7 @@ namespace CodeMind
         /// <param name="condition"></param>
         /// <param name="ID"></param>
         /// <param name="routerID"></param>
-        static void handleCondition(RouterWindowConditionData condition,string ID,string routerID)
+        static void handleCondition(RouterWindowConditionData condition,string routerID)
         {
             //condition.className = string.Empty;
 
@@ -156,6 +156,8 @@ namespace CodeMind
             //        }
             //    }
             //}
+
+
         }
 
         /// <summary>
@@ -177,7 +179,7 @@ namespace CodeMind
                 }
                 else
                 {
-                    object[] bindings = t.GetCustomAttributes(typeof(ShareDataBinding), false);
+                    /*object[] bindings = t.GetCustomAttributes(typeof(ShareDataBinding), false);
                     if (bindings == null
                        || bindings.Length == 0
                        || (bindings[0] as ShareDataBinding).CanvasID != data.ID)
@@ -189,13 +191,13 @@ namespace CodeMind
                     {
                         //matched
                         return;
-                    }
+                    }*/
                 }
             }
 
             foreach (var item in types)
             {
-                if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
+               /* if (item.IsSubclassOf(typeof(SharedData)) && !item.IsInterface && !item.IsAbstract)
                 {
                     object[] bindings = item.GetCustomAttributes(typeof(ShareDataBinding), false);
                     if (bindings != null
@@ -206,7 +208,7 @@ namespace CodeMind
                         data.shareData = SharedData.CreateInstance(item.FullName) as SharedData;
                         break;
                     }
-                }
+                }*/
             }
         }
     }

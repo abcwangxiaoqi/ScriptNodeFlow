@@ -4,14 +4,28 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using System;
+using Object = UnityEngine.Object;
+using UnityEditor.AnimatedValues;
 
 namespace CodeMind
 {
     public class RouterWindowCondition
     {
-        public RouterWindowCondition(RouterWindowConditionData data)
+        CodeMindData mindData;
+        
+        public RouterWindowCondition(RouterWindowConditionData data,CodeMindData _mindData)
         {
+            mindData = _mindData;
+
+            scriptFadeGroup = new AnimBool(true);
+
             conditionData = data;
+
+            if(data.routerCondition!=null)
+            {
+                monoScript = MonoScript.FromScriptableObject(data.routerCondition);
+                scriptEditor = Editor.CreateEditor(data.routerCondition);
+            }
         }
 
         public RouterWindowConditionData conditionData { get; private set; }
@@ -23,26 +37,25 @@ namespace CodeMind
         const float ConditionH = 22;
         const float expandConditionH = 66;
 
+        AnimBool scriptFadeGroup;
         MonoScript monoScript;
-
+        Editor scriptEditor;
+        string error;
         public void draw(List<RouterWindowCondition> conditions, RouterWindowData routerData, Vector2 position, float connectPortSize, float connectPortOffset)
         {
             GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
 
-            if(expand)
-            {
-                conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
-
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("Script");
 
-                monoScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
-                GUILayout.EndHorizontal();
-            }
-            else
-            {
+                if (GUILayout.Button(CanvasLayout.Layout.canvas.DelConditionContent,
+                                     CanvasLayout.Layout.canvas.DelConditionStyle,GUILayout.Width(16),GUILayout.Height(16)))
+                {
+                    routerData.conditions.Remove(this.conditionData);
+                    conditions.Remove(this);
+                }
+                
                 GUIContent nameContent = new GUIContent(conditionData.name);
-                if (conditionData.className == null)
+            if (conditionData.routerCondition == null)
                 {
                     nameContent.tooltip = "script ref is none";
                     GUILayout.Label(nameContent
@@ -53,6 +66,76 @@ namespace CodeMind
                     GUILayout.Label(nameContent
                         , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
                 }
+
+                if (GUILayout.Button(CanvasLayout.Layout.canvas.ConditionExpandBtContent, 
+                                     expand ? CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle : CanvasLayout.Layout.canvas.ConditionExpandBtStyle,GUILayout.Width(16), GUILayout.Height(16)))
+                {
+                    expand = !expand;
+                }
+
+                GUILayout.EndHorizontal();
+
+            if (expand)
+            {
+                GUILayout.Space(3);
+                conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
+                var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
+
+                if (tempScript == null && tempScript != monoScript)
+                {
+                    monoScript = tempScript;
+                    Object.DestroyImmediate(conditionData.routerCondition,true);
+                    conditionData.routerCondition = null;
+                    scriptEditor = null;
+                }
+                else
+                {
+                    if (tempScript != monoScript)
+                    {
+                        monoScript = tempScript;
+
+                        var type = monoScript.GetClass();
+
+                        if (type != null
+                            && type.IsSubclassOf(typeof(RouterCondition))
+                            && !type.IsAbstract
+                            && !type.IsInterface)
+                        {
+                            var data = ScriptableObject.CreateInstance(type);
+                            data.name = conditionData.ID;
+
+                            AssetDatabase.AddObjectToAsset(data, mindData);
+                            conditionData.routerCondition = data as RouterCondition;
+
+                            scriptEditor = Editor.CreateEditor(conditionData.routerCondition);
+                            error = null;
+                        }
+                        else
+                        {
+                            error = "script is invalid";
+                        }
+                    }
+
+                    if (scriptEditor == null)
+                    {
+                        GUILayout.Label(error);
+                    }
+                    else
+                    {
+                        scriptFadeGroup.target = EditorGUILayout.Foldout(scriptFadeGroup.target, "Parameters");
+
+                        if (EditorGUILayout.BeginFadeGroup(scriptFadeGroup.faded))
+                        {
+                            EditorGUI.indentLevel++;
+
+                            scriptEditor.OnInspectorGUI();
+
+                            EditorGUI.indentLevel--;
+                        }
+                        EditorGUILayout.EndFadeGroup();
+                    }
+                }
+
             }
 
             GUILayout.EndVertical();
@@ -159,7 +242,7 @@ namespace CodeMind
                     rectScript.position = r.position + new Vector2(20, 5);
                     rectScript.size = new Vector2(r.size.x - 40, r.size.y - 10);
 
-                    GUIContent nameContent = new GUIContent(conditionData.name);
+                    /*GUIContent nameContent = new GUIContent(conditionData.name);
                     if (conditionData.className == null)
                     {
                         nameContent.tooltip = "script ref is none";
@@ -170,7 +253,7 @@ namespace CodeMind
                     {
                         EditorGUI.LabelField(rectScript, nameContent
                             , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
-                    }
+                    }*/
 
 
                     Rect rectBt = new Rect();
@@ -473,13 +556,12 @@ namespace CodeMind
 
             EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
 
-            GUILayout.Space(5);
             GUI.color = Color.green;
             if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
                 RouterWindowConditionData con = new RouterWindowConditionData();
                 routerData.conditions.Add(con);
-                conditions.Add(new RouterWindowCondition(con));
+                conditions.Add(new RouterWindowCondition(con,mindData));
             }
             GUI.color = Color.white;
             EditorGUI.EndDisabledGroup();

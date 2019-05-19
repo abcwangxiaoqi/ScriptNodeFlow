@@ -21,7 +21,7 @@ namespace CodeMind
 
     public abstract class WindowDataBase
     {
-        public string ID = DateTime.Now.ToString("yyMMddHHmmssff");
+        public string ID = Guid.NewGuid().ToString();
         public string name;
         public Vector2 position;
         public string nextWindowId = null;

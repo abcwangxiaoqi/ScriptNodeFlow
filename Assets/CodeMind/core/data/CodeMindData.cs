@@ -7,8 +7,6 @@ namespace CodeMind
     [Serializable]
     public class CodeMindData : ScriptableObject
     {
-        public string ID = DateTime.UtcNow.ToString("yyMMddHHmmssff");
-        
         public SharedData shareData;
 
         public StartWindowData start = new StartWindowData();
@@ -67,7 +65,7 @@ namespace CodeMind
         public CodeMindController Instantiate()
         {
             GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
-            GameObject.DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
             CodeMindController controller = gameObject.GetComponent<CodeMindController>();
             controller.nodeFlowData = this;
             return controller;

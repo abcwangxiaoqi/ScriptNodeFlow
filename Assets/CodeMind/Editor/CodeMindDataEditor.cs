@@ -19,7 +19,7 @@ namespace CodeMind
             base.OnInspectorGUI();
             
             //EditorGUILayout.LabelField("ID", data.GetInstanceID().ToString());
-            EditorGUILayout.LabelField("ID", data.ID.ToString());
+            //EditorGUILayout.LabelField("ID", data.ID.ToString());
             //EditorGUILayout.LabelField("ID", data.GetHashCode().ToString());
             //data.GetHashCode
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -37,6 +38,8 @@ namespace CodeMind
 
         Editor scriptEditor;
 
+        AnimBool scriptFadeGroup;
+
         public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList,CodeMindData _mindData)
             : base(itemData, _windowList, _mindData)
         {
@@ -45,7 +48,9 @@ namespace CodeMind
             {
                 monoScript = MonoScript.FromScriptableObject(nodeData.node);
                 scriptEditor = Editor.CreateEditor(nodeData.node);
-            }            
+            }
+
+            scriptFadeGroup = new AnimBool(true);
         }
 
         public void SetNext(BaseWindow entity)
@@ -151,7 +156,7 @@ namespace CodeMind
             if(tempScript == null && tempScript != monoScript)
             {
                 monoScript = tempScript;                
-                Object.DestroyImmediate(nodeData.node);
+                Object.DestroyImmediate(nodeData.node,true);
                 nodeData.node = null;
                 scriptEditor = null;
             }
@@ -184,11 +189,23 @@ namespace CodeMind
                 }
             }            
 
-            GUILayout.Label(error);
-
-            if(scriptEditor!=null)
+            if(scriptEditor == null)
             {
-                scriptEditor.OnInspectorGUI();              
+                GUILayout.Label(error);
+            }
+            else
+            {
+                scriptFadeGroup.target = EditorGUILayout.Foldout(scriptFadeGroup.target, "Parameters");
+
+                if (EditorGUILayout.BeginFadeGroup(scriptFadeGroup.faded))
+                {
+                    EditorGUI.indentLevel++;
+
+                        scriptEditor.OnInspectorGUI();
+
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUILayout.EndFadeGroup();
             }
         }
 

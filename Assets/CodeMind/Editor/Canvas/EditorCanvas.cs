@@ -234,7 +234,7 @@ namespace CodeMind
         {
             if (!initilizeSuccess)
                 return;
-
+            
             base.OnDestroy();
 
             save();

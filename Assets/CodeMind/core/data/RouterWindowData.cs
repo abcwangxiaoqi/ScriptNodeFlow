@@ -66,9 +66,11 @@ namespace CodeMind
     [Serializable]
     public class RouterWindowConditionData
     {
+        public string ID = Guid.NewGuid().ToString();
+        
         public string name = "Condition Name";
 
-        public RouterCondition className;
+        public RouterCondition routerCondition;
         public string nextWindowId = null;
 
         private RouterCondition condition;

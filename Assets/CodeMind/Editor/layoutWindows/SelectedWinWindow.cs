@@ -9,10 +9,8 @@ namespace CodeMind
         AnimBool fadeAnim;
 
         GUILayoutOption width = GUILayout.Width(50);
-        string CanvasID;
-        public SelectedWinWindow(string canvasid)
+        public SelectedWinWindow()
         {
-            CanvasID = canvasid;
 
             fadeAnim = new AnimBool(true);
         }

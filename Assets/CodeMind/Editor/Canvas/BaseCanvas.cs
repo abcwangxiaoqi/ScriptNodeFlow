@@ -202,9 +202,9 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
 
         protected void generateLeftArea()
         {
-            infoDataWindow = new InfoDataWindow(codeMindData.ID, codeMindData);
+            infoDataWindow = new InfoDataWindow(codeMindData);
             subCanvasListWindow = new SubCanvasListWindow(codeMindData);
-            selectedWinWindow = new SelectedWinWindow(codeMindData.ID);
+            selectedWinWindow = new SelectedWinWindow();
         }
 
         protected void generateMainData()
@@ -258,7 +258,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                     List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
                     foreach (var con in edata.conditions)
                     {
-                        RouterWindowCondition rcon = new RouterWindowCondition(con);
+                        RouterWindowCondition rcon = new RouterWindowCondition(con,codeMindData);
                         rcon.nextWindow = FindWindow(con.nextWindowId);
                         conditions.Add(rcon);
                     }
@@ -335,7 +335,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                     List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
                     foreach (var con in edata.conditions)
                     {
-                        RouterWindowCondition rcon = new RouterWindowCondition(con);
+                        RouterWindowCondition rcon = new RouterWindowCondition(con,codeMindData);
                         rcon.nextWindow = FindWindow(con.nextWindowId);
                         conditions.Add(rcon);
                     }
