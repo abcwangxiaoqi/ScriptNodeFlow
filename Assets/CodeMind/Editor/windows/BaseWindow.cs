@@ -18,9 +18,18 @@ namespace CodeMind
     {
         protected static float connectPortSize = 12;
         protected static float connectPortOffset = 4;
-        
+
+        protected virtual float windowWidth
+        {
+            get
+            {
+                return 150f;
+            }
+        }
+
         public Vector2 position { get; set; }
-        protected abstract Vector2 size { get; }
+
+        Vector2 size;
 
         //whether be selected
         public bool selected { get; protected set; }
@@ -81,16 +90,20 @@ namespace CodeMind
 
         protected float desHeight = 50;
 
-        public BaseWindow(WindowDataBase _data, List<BaseWindow> _windowList, CodeMindData _mindData)
-        {
-            desFadeGroup = new AnimBool(false);
+        protected BaseCanvas MainCanvas;
 
-            mindData = _mindData;
+        public BaseWindow(WindowDataBase _data, BaseCanvas canvas)
+        {
+            MainCanvas = canvas;
+
+            desFadeGroup = new AnimBool(false);
+            desFadeGroup.valueChanged.AddListener(MainCanvas.Repaint);
+
+            mindData = canvas.codeMindData;
             windowData = _data;
             position = _data.position;
-            windowList = _windowList;
+            windowList = canvas.windowList;
             Id = _data.ID;
-            Name = _data.name;
         }
 
         public Rect selectRect
@@ -117,7 +130,7 @@ namespace CodeMind
             drawBefore();
 
             windowRect.position = position;
-            //windowRect.size = size;
+            windowRect.size = size;
 
             if (Application.isPlaying)
             {
@@ -142,8 +155,8 @@ namespace CodeMind
             {
                 GUI.Box(selectRect, "", CanvasLayout.Layout.canvas.BaseWindowsStyle);
             }
-             
-            GUILayout.BeginArea(windowRect, c, CanvasLayout.Layout.canvas.WindowStyle);    
+
+            GUILayout.BeginArea(windowRect, c, CanvasLayout.Layout.canvas.WindowStyle); 
 
             drawWindowContent();
 
@@ -151,8 +164,7 @@ namespace CodeMind
             var rrect = GUILayoutUtility.GetLastRect();
             if (rrect.position != Vector2.zero)
             {
-                //Debug.Log(rect.position);
-                windowRect.size = new Vector2(size.x, rrect.position.y + 5 + 30);
+                size = new Vector2(windowWidth, rrect.position.y + 5 + 30);
             }
 
             GUILayout.EndArea();

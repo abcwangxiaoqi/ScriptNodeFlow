@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using EditorTools;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -7,19 +8,37 @@ namespace CodeMind
 {
     public class RuntimeCanvas : BaseCanvas
     {
-        static CodeMindController target;
-        public static void Open(CodeMindController obj)
+        static Dictionary<string, RuntimeCanvas> windowMap = new Dictionary<string, RuntimeCanvas>();
+
+        public static void Open(CodeMindData data)
         {
-            if (obj == null)
-                return;
+            string path = AssetDatabase.GetAssetPath(data);
 
-            if (window != null)
-                window.Close();
+            RuntimeCanvas window = null;
 
-            window = null;
+            Rect windowRect = new Rect(defaultPos, defualtSize);
 
-            target = obj;
-            window = GetWindow<RuntimeCanvas>(string.Format("{0}({1})", obj.name, obj.nodeFlowData.name));
+            if (!windowMap.ContainsKey(path))
+            {
+                window = CreateInstance<RuntimeCanvas>();
+                window.titleContent = new GUIContent(data.name);
+                window.initilize(data);
+                windowMap.Add(path, window);
+            }
+            else if (windowMap[path] == null)
+            {
+                window = CreateInstance<RuntimeCanvas>();
+                window.titleContent = new GUIContent(data.name);
+                window.initilize(data);
+                windowMap[path] = window;
+            }
+            else
+            {
+                windowRect = windowMap[path].position;
+            }
+
+            windowMap[path].ShowUtility();
+            windowMap[path].position = windowRect;
         }
 
         protected override void Awake()
@@ -28,12 +47,13 @@ namespace CodeMind
 
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
+        }
 
-            codeMindData = target.nodeFlowData;
+        public override void initilize(CodeMindData mindData)
+        {
+            base.initilize(mindData);
 
-            generateLeftArea();
-
-            generateMainData();
+            generateData();
         }
 
         // close the window when playModeStateChanged
@@ -41,14 +61,15 @@ namespace CodeMind
         {
             if (obj == PlayModeStateChange.ExitingPlayMode)
             {
-                window.Close();
+                Close();
             }
         }
 
         Event curEvent;
         Vector2 mousePosition;
         bool clickArea;
-        protected override void OnGUI()
+
+        protected override void BeforeDraw()
         {
             if (EditorApplication.isCompiling)
             {
@@ -127,32 +148,12 @@ namespace CodeMind
                 }
                 Repaint();
             }
-            base.OnGUI();
-        }
-
-        protected override void OpenMainCanvas(object[] objs)
-        {
-            save();
-            base.OpenMainCanvas(objs);
-        }
-
-        protected override void OpenSubCanvas(object[] objs)
-        {
-            save();
-
-            base.OpenSubCanvas(objs);
         }
 
         private void save()
         {
-            if (canvasType == CanvasType.Main)
-            {
-                saveMain();
-            }
-            else
-            {
-                saveSub();
-            }
+
+            saveMain();
         }
 
         void saveMain()
@@ -177,7 +178,7 @@ namespace CodeMind
                     continue;
                 }
 
-                var sub = codeMindData.subCanvaslist.Find((w) => { return win.Id == w.ID; });
+                var sub = codeMindData.subCodeMindlist.Find((w) => { return win.Id == w.ID; });
 
                 if (sub != null)
                 {
@@ -189,36 +190,6 @@ namespace CodeMind
                 if (win.windowType == NodeType.Start)
                 {
                     codeMindData.start.position = win.position;
-                }
-            }
-        }
-
-        void saveSub()
-        {
-            for (int i = 0; i < windowList.Count; i++)
-            {
-                BaseWindow win = windowList[i];
-
-                var cur = subCanvasData.nodelist.Find((w) => { return win.Id == w.ID; });
-
-                if (cur != null)
-                {
-                    cur.position = win.position;
-                    continue;
-                }
-
-                var router = subCanvasData.routerlist.Find((w) => { return win.Id == w.ID; });
-
-                if (router != null)
-                {
-                    router.position = win.position;
-                    continue;
-                }
-
-                //set start windows position
-                if (win.windowType == NodeType.Start)
-                {
-                    subCanvasData.start.position = win.position;
                 }
             }
         }

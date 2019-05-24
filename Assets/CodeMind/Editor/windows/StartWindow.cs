@@ -10,12 +10,11 @@ namespace CodeMind
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 60);
-        protected override Vector2 size
+        protected override float windowWidth
         {
             get
             {
-                return _size;
+                return 150f;
             }
         }
 
@@ -29,8 +28,8 @@ namespace CodeMind
         }
 
         StartWindowData startData;
-        public StartWindow(StartWindowData itemData, List<BaseWindow> _windowList, CodeMindData _mindData)
-            : base(itemData, _windowList, _mindData)
+        public StartWindow(StartWindowData itemData, BaseCanvas canvas)
+            : base(itemData, canvas)
         {
             startData = itemData;
         }
@@ -55,19 +54,6 @@ namespace CodeMind
                 startData.nextWindowId = null;
             }
         }
-
-        //public override WindowDataBase GetData()
-        //{
-        //    StartWindowData dataEntity = new StartWindowData();
-        //    dataEntity.position = position;
-        //    dataEntity.ID = Id;
-        //    if (next != null)
-        //    {
-        //        dataEntity.nextWindowId = next.Id;
-        //    }
-
-        //    return dataEntity;
-        //}
 
         private bool connectFlag = false;
         Event curEvent;

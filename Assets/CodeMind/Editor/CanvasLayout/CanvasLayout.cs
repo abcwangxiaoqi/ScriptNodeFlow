@@ -21,9 +21,9 @@ public class CanvasLayout : ScriptableObject
     public Rect GetNodeCanvasRect(Vector2 mainSize)
     {
         float h = mainSize.y
-            - 10
-            - 10;
-        float w = mainSize.x - 5 - 300 - 10;
+            - 5
+            - 5;
+        float w = mainSize.x - 5 - 5;
 
         canvas.rect.size = new Vector2(w, h);
 
@@ -37,8 +37,16 @@ public class CanvasLayout : ScriptableObject
         {
             if (layout == null)
             {
-                layout = AssetDatabase.LoadAssetAtPath<CanvasLayout>
-                    ("Assets/CodeMind/Editor/CanvasLayout/CanvasLayout.asset");
+                if(EditorGUIUtility.isProSkin)
+                {
+                    layout = AssetDatabase.LoadAssetAtPath<CanvasLayout>
+    ("Assets/CodeMind/Editor/CanvasLayout/CanvasLayout.asset");
+                }
+                else
+                {
+                    layout = AssetDatabase.LoadAssetAtPath<CanvasLayout>
+("Assets/CodeMind/Editor/CanvasLayout/CanvasLayout_Light.asset");
+                }
             }
             return layout;
         }

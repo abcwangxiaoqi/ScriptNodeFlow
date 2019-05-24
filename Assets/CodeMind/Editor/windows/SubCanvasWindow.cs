@@ -14,17 +14,14 @@ namespace CodeMind
         {
         }
 
-        protected SubCanvasData canvas { get; private set; }
-
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        Vector2 _size = new Vector2(150, 80);
-        protected override Vector2 size
+        protected override float windowWidth
         {
             get
             {
-                return _size;
+                return 200f;
             }
         }
 
@@ -33,39 +30,15 @@ namespace CodeMind
         {
             get
             {
-                return NodeType.SubCanvas;
-            }
-        }
-
-        List<SubCanvasData> subCanvasList= new List<SubCanvasData>();
-        List<string> subCanvasNameList = new List<string>();
-        void refreshSublist(object[] objs)
-        {
-            subCanvasList.Clear();
-            subCanvasNameList.Clear();
-
-            Object[] subs = AssetDatabase.LoadAllAssetRepresentationsAtPath(AssetDatabase.GetAssetPath(mindData));
-            foreach (var item in subs)
-            {
-                if (item is SubCanvasData)
-                {
-                    subCanvasList.Add(item as SubCanvasData);
-                    subCanvasNameList.Add(item.name);
-                }
+                return NodeType.SubCodeMind;
             }
         }
         
-        CanvasWindowData canvasData;
-        public SubCanvasWindow(CanvasWindowData itemData, List<BaseWindow> _windowList, CodeMindData _orginData)
-            : base(itemData, _windowList, _orginData)
+        CodeMindWindowData codeMindWindowData;
+        public SubCanvasWindow(CodeMindWindowData itemData, BaseCanvas canvas)
+            : base(itemData, canvas)
         {
-            canvasData = itemData;
-
-            canvas = itemData.canvasData;
-            refreshSublist(null);
-
-            DelegateManager.Instance.RemoveListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
-            DelegateManager.Instance.AddListener(DelegateCommand.REFRESHSUBLIST, refreshSublist);
+            codeMindWindowData = itemData;
         }
 
         public void SetNext(BaseWindow entity)
@@ -80,31 +53,13 @@ namespace CodeMind
             if (entity != null)
             {
                 entity.SetParent(entity);
-                canvasData.nextWindowId = entity.Id;
+                codeMindWindowData.nextWindowId = entity.Id;
             }            
             else
             {
-                canvasData.nextWindowId = null;
+                codeMindWindowData.nextWindowId = null;
             }
         }
-
-        //public override WindowDataBase GetData()
-        //{
-        //    CanvasWindowData dataEntity = new CanvasWindowData();
-        //    dataEntity.position = position;
-        //    dataEntity.name = Name;
-        //    dataEntity.ID = Id;
-        //    dataEntity.desc = describe;
-
-        //    dataEntity.canvasData = canvas;
-
-        //    if (next != null)
-        //    {
-        //        dataEntity.nextWindowId = next.Id;
-        //    }
-
-        //    return dataEntity;
-        //}
 
         private bool connectFlag = false;
 
@@ -177,8 +132,7 @@ namespace CodeMind
 
             connectFlag = false;
         }
-
-        private Object obj;
+        
         private SubCanvasData tempCanvas;
         protected override void drawWindowContent()
         {
@@ -186,24 +140,7 @@ namespace CodeMind
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
-            GUILayout.Space(4);
-
-            int index = subCanvasList.IndexOf(canvas);
-            index = EditorGUILayout.Popup(index, subCanvasNameList.ToArray(),CanvasLayout.Layout.canvas.SubCanvasPopupStyle);
-            if (index>=0 
-                && canvas!=subCanvasList[index])
-            {
-                canvas = subCanvasList[index];
-
-                canvasData.canvasData = canvas;
-            }
-
-            GUILayout.FlexibleSpace();
-
-            if(canvas == null)
-            {
-                GUILayout.Label(CanvasLayout.Layout.canvas.SubCanvasNoneContent, CanvasLayout.Layout.canvas.SubCanvasErrorLabel);
-            }
+            codeMindWindowData.canvasData = (CodeMindData)EditorGUILayout.ObjectField(codeMindWindowData.canvasData, typeof(CodeMindData), false);
 
             EditorGUI.EndDisabledGroup();
         }
@@ -218,12 +155,21 @@ namespace CodeMind
 
         public override void leftMouseDoubleClick()
         {
-            if(canvas==null)
+            if (codeMindWindowData.canvasData == null)
                 return;
 
-            
-            DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
-                canvas);
+
+            if(Application.isPlaying)
+            {
+                RuntimeCanvas.Open(codeMindWindowData.canvasData);
+            }
+            else
+            {
+                EditorCanvas.Open(codeMindWindowData.canvasData);
+            }
+
+            //DelegateManager.Instance.Dispatch(DelegateCommand.OPENSUBCANVAS,
+            //    canvas);
             GUIUtility.ExitGUI();
         }
     }

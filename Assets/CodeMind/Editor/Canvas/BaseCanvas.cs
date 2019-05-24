@@ -4,91 +4,63 @@ using UnityEngine;
 
 namespace CodeMind
 {
-    public enum CanvasType
-    {
-        Main,
-        Sub
-    }
-
     public abstract class BaseCanvas : EditorWindow
     {
-        protected static EditorWindow window;
+        protected static Vector2 defaultPos = new Vector2(100, 100);
+        protected static Vector2 defualtSize = new Vector2(1000, 800);
 
-        protected CodeMindData codeMindData;
-
-        protected SubCanvasData subCanvasData;
+        internal CodeMindData codeMindData;
 
         //全部
-        protected List<BaseWindow> windowList = null;
+        internal List<BaseWindow> windowList = null;
 
         protected InfoDataWindow infoDataWindow;
-        protected SubCanvasListWindow subCanvasListWindow;
-        protected SelectedWinWindow selectedWinWindow;
-
-        protected CanvasType canvasType = CanvasType.Main;
 
         protected BaseWindow curSelect = null;
 
         protected BaseWindow connectWin = null;
 
+        protected bool initilizeFlag = false;
+
+        public virtual void initilize(CodeMindData mindData)
+        {
+            codeMindData = mindData;
+            initilizeFlag = true;
+        }
+
         protected virtual void Awake()
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.OPENMAINCANVAS, OpenMainCanvas);
-            DelegateManager.Instance.AddListener(DelegateCommand.OPENMAINCANVAS, OpenMainCanvas);
-
-            DelegateManager.Instance.RemoveListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
-            DelegateManager.Instance.AddListener(DelegateCommand.OPENSUBCANVAS, OpenSubCanvas);
-        }
-
-        protected virtual void OpenMainCanvas(object[] objs)
-        {
-            Focus();
-            canvasType = CanvasType.Main;
-            generateMainData();
-            Repaint();
-        }
-
-        protected virtual void OpenSubCanvas(object[] objs)
-        {
-            Focus();
-            subCanvasData = objs[0] as SubCanvasData;
-            canvasType = CanvasType.Sub;
-            generateSubData();
-            Repaint();
-        }
-            
-        protected virtual void Update()
-        {
-
         }
 
         private const float border = 5;
-        
+
         protected Rect rightArea;
 
-        protected virtual void OnGUI()
-        {   
-            if(Event.current.type != EventType.Ignore)
+        protected virtual void BeforeDraw()
+        { }
+
+        void Draw()
+        {
+            if (Event.current.type != EventType.Ignore)
             {
                 Rect rect = new Rect(Vector2.zero, position.size);
-                GUILayout.BeginArea(rect,CanvasLayout.Layout.common.CanvasBgStyle);
+                //GUILayout.BeginArea(rect, CanvasLayout.Layout.common.CanvasBgStyle);
 
                 drawRight();
 
-                drawLeft();
+                infoDataWindow.draw();
 
-                GUILayout.EndArea();
+                //GUILayout.EndArea();
             }
         }
 
-        void drawLeft()
+        void OnGUI()
         {
-            infoDataWindow.draw();
-            
-            //have to remain sort subCanvasListWindow->selectWinWindow
-            //whether something is wrong
-            subCanvasListWindow.draw(position.height);            
-            selectedWinWindow.draw(curSelect);   
+            if (!initilizeFlag)
+                return;
+
+            BeforeDraw();
+            Draw();
         }
 
         void drawRight()
@@ -109,15 +81,6 @@ namespace CodeMind
 
             GUILayout.FlexibleSpace();
 
-            EditorGUI.BeginDisabledGroup(canvasType == CanvasType.Main);
-
-            if (GUILayout.Button(CanvasLayout.Layout.canvas.BackBtContent, CanvasLayout.Layout.canvas.NavigationBtStyle))
-            {
-                DelegateManager.Instance.Dispatch(DelegateCommand.SELECTMAINCANVAS);
-            }
-
-            EditorGUI.EndDisabledGroup();
-            
             if (GUILayout.Button(CanvasLayout.Layout.canvas.FocusBtContent, CanvasLayout.Layout.canvas.NavigationBtStyle))
             {
                 toolbarFocus();
@@ -126,15 +89,13 @@ namespace CodeMind
 
             EditorGUILayout.EndHorizontal();
 
-            GUILayout.Label(canvasType == CanvasType.Main ? codeMindData.name : subCanvasData.name,
-CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
+            GUILayout.Label(codeMindData.name, CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         }
 
         void drawRightNodesArea()
         {
             if (windowList != null)
             {
-
                 foreach (var item in windowList)
                 {
                     if (item.windowType != NodeType.Start)
@@ -145,7 +106,7 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                 //must keep subcanvas not lastest
                 foreach (var item in windowList)
                 {
-                    if (item.windowType != NodeType.SubCanvas)
+                    if (item.windowType != NodeType.SubCodeMind)
                         continue;
                     item.draw();
                 }
@@ -200,32 +161,27 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
             return res;
         }
 
-        protected void generateLeftArea()
+        protected void generateData()
         {
-            infoDataWindow = new InfoDataWindow(codeMindData);
-            subCanvasListWindow = new SubCanvasListWindow(codeMindData);
-            selectedWinWindow = new SelectedWinWindow();
-        }
+            infoDataWindow = new InfoDataWindow(this);
 
-        protected void generateMainData()
-        {
             windowList = new List<BaseWindow>();
 
-            windowList.Add(new StartWindow( codeMindData.start, windowList,codeMindData));
+            windowList.Add(new StartWindow(codeMindData.start, this));
 
             foreach (var item in codeMindData.nodelist)
             {
-                windowList.Add(new NodeWindow(item, windowList,codeMindData));
+                windowList.Add(new NodeWindow(item, this));
             }
 
             foreach (var item in codeMindData.routerlist)
             {
-                windowList.Add(new RouterWindow(item, windowList, codeMindData));
+                windowList.Add(new RouterWindow(item, this));
             }
 
-            foreach (var item in codeMindData.subCanvaslist)
+            foreach (var item in codeMindData.subCodeMindlist)
             {
-                windowList.Add(new SubCanvasWindow(item, windowList, codeMindData));
+                windowList.Add(new SubCanvasWindow(item, this));
             }
 
             //set next Node
@@ -258,15 +214,15 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                     List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
                     foreach (var con in edata.conditions)
                     {
-                        RouterWindowCondition rcon = new RouterWindowCondition(con,codeMindData);
+                        RouterWindowCondition rcon = new RouterWindowCondition(con, this);
                         rcon.nextWindow = FindWindow(con.nextWindowId);
                         conditions.Add(rcon);
                     }
                     win.SetConditions(conditions);
                 }
-                else if (item.windowType == NodeType.SubCanvas)
+                else if (item.windowType == NodeType.SubCodeMind)
                 {
-                    CanvasWindowData edata = codeMindData.subCanvaslist.Find(data => { return data.ID == item.Id; });
+                    CodeMindWindowData edata = codeMindData.subCodeMindlist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -278,72 +234,6 @@ CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
                 else if (item.windowType == NodeType.Start)
                 {
                     StartWindowData edata = codeMindData.start;
-
-                    if (!string.IsNullOrEmpty(edata.nextWindowId))
-                    {
-                        BaseWindow next = FindWindow(edata.nextWindowId);
-
-                        (item as StartWindow).SetNext(next);
-                    }
-                }
-            }
-        }
-
-        protected void generateSubData()
-        {
-            windowList = new List<BaseWindow>();
-
-            windowList.Add(new SubStartWindow(subCanvasData.start, windowList,codeMindData));
-
-            foreach (var item in subCanvasData.nodelist)
-            {
-                windowList.Add(new SubNodeWindow(item, windowList,codeMindData));
-            }
-
-            foreach (var item in subCanvasData.routerlist)
-            {
-                windowList.Add(new SubRouterWindow(item, windowList, codeMindData));
-            }
-
-            //set next Node
-            foreach (var item in windowList)
-            {
-                if (item.windowType == NodeType.Node)
-                {
-                    NodeWindowData edata = subCanvasData.nodelist.Find(data => { return data.ID == item.Id; });
-
-                    if (!string.IsNullOrEmpty(edata.nextWindowId))
-                    {
-                        BaseWindow next = FindWindow(edata.nextWindowId);
-
-                        (item as NodeWindow).SetNext(next);
-                    }
-                }
-                else if (item.windowType == NodeType.Router)
-                {
-                    RouterWindowData edata = subCanvasData.routerlist.Find(data => { return data.ID == item.Id; });
-                    RouterWindow win = item as RouterWindow;
-
-                    //set default
-                    if (!string.IsNullOrEmpty(edata.nextWindowId))
-                    {
-                        BaseWindow def = FindWindow(edata.nextWindowId);
-                        win.SetDefault(def);
-                    }
-
-                    //set conditions
-                    List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
-                    foreach (var con in edata.conditions)
-                    {
-                        RouterWindowCondition rcon = new RouterWindowCondition(con,codeMindData);
-                        rcon.nextWindow = FindWindow(con.nextWindowId);
-                        conditions.Add(rcon);
-                    }
-                    win.SetConditions(conditions);
-                }
-                else if (item.windowType == NodeType.Start)
-                {
-                    StartWindowData edata = subCanvasData.start;
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {

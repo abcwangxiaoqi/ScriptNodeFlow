@@ -12,16 +12,17 @@ namespace CodeMind
     public class RouterWindowCondition
     {
         CodeMindData mindData;
-        
-        public RouterWindowCondition(RouterWindowConditionData data,CodeMindData _mindData)
+
+        public RouterWindowCondition(RouterWindowConditionData data, BaseCanvas canvas)
         {
-            mindData = _mindData;
+            mindData = canvas.codeMindData;
 
             scriptFadeGroup = new AnimBool(true);
+            scriptFadeGroup.valueChanged.AddListener(canvas.Repaint);
 
             conditionData = data;
 
-            if(data.routerCondition!=null)
+            if (data.routerCondition != null)
             {
                 monoScript = MonoScript.FromScriptableObject(data.routerCondition);
                 scriptEditor = Editor.CreateEditor(data.routerCondition);
@@ -45,35 +46,35 @@ namespace CodeMind
         {
             GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
 
-                GUILayout.BeginHorizontal();
+            GUILayout.BeginHorizontal();
 
-                if (GUILayout.Button(CanvasLayout.Layout.canvas.DelConditionContent,
-                                     CanvasLayout.Layout.canvas.DelConditionStyle,GUILayout.Width(16),GUILayout.Height(16)))
-                {
-                    routerData.conditions.Remove(this.conditionData);
-                    conditions.Remove(this);
-                }
-                
-                GUIContent nameContent = new GUIContent(conditionData.name);
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.DelConditionContent,
+                                 CanvasLayout.Layout.canvas.DelConditionStyle, GUILayout.Width(16), GUILayout.Height(16)))
+            {
+                routerData.conditions.Remove(this.conditionData);
+                conditions.Remove(this);
+            }
+
+            GUIContent nameContent = new GUIContent(conditionData.name);
             if (conditionData.routerCondition == null)
-                {
-                    nameContent.tooltip = "script ref is none";
-                    GUILayout.Label(nameContent
-                        , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
-                }
-                else
-                {
-                    GUILayout.Label(nameContent
-                        , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
-                }
+            {
+                nameContent.tooltip = "script ref is none";
+                GUILayout.Label(nameContent
+                    , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
+            }
+            else
+            {
+                GUILayout.Label(nameContent
+                    , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
+            }
 
-                if (GUILayout.Button(CanvasLayout.Layout.canvas.ConditionExpandBtContent, 
-                                     expand ? CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle : CanvasLayout.Layout.canvas.ConditionExpandBtStyle,GUILayout.Width(16), GUILayout.Height(16)))
-                {
-                    expand = !expand;
-                }
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.ConditionExpandBtContent,
+                                 expand ? CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle : CanvasLayout.Layout.canvas.ConditionExpandBtStyle, GUILayout.Width(16), GUILayout.Height(16)))
+            {
+                expand = !expand;
+            }
 
-                GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal();
 
             if (expand)
             {
@@ -84,7 +85,7 @@ namespace CodeMind
                 if (tempScript == null && tempScript != monoScript)
                 {
                     monoScript = tempScript;
-                    Object.DestroyImmediate(conditionData.routerCondition,true);
+                    Object.DestroyImmediate(conditionData.routerCondition, true);
                     conditionData.routerCondition = null;
                     scriptEditor = null;
                 }
@@ -141,132 +142,10 @@ namespace CodeMind
             GUILayout.EndVertical();
 
             Rect rect = GUILayoutUtility.GetLastRect();
-            if(rect.position!=Vector2.zero)
+            if (rect.position != Vector2.zero)
             {
-                    connectRect.position = position + rect.position + new Vector2(rect.size.x + 2, -connectPortOffset + rect.size.y / 2);
-                    connectRect.size = new Vector2(connectPortSize, connectPortSize);
-            }
-
-            return;
-            if (expand)
-            {
-                GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
-
-                conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
-
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("Script");
-                
-                monoScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
-                GUILayout.EndHorizontal();
-
-                GUILayout.EndVertical();
-
-                //connectRect.position = position + r.position + new Vector2(r.size.x + 2, -connectPortOffset + r.size.y / 2);
-                //connectRect.size = new Vector2(connectPortSize, connectPortSize);
-
-                //GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle, GUILayout.Height(expandConditionH), GUILayout.ExpandWidth(true));
-                //Rect r = GUILayoutUtility.GetLastRect();
-                //if (r.position != Vector2.zero)
-                //{
-                //    Rect rectBtDelete = new Rect();
-                //    rectBtDelete.position = r.position + new Vector2(2, (r.size.y / 2) - 8);
-                //    rectBtDelete.size = new Vector2(16, 16);
-
-                //    if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent, CanvasLayout.Layout.canvas.DelConditionStyle))
-                //    {
-                //        routerData.conditions.Remove(this.conditionData);
-                //        conditions.Remove(this);
-                //        return;
-                //    }
-
-                //    Rect rectNameText = new Rect();
-                //    rectNameText.position = r.position + new Vector2(20, 5);
-                //    rectNameText.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
-                //    conditionData.name = EditorGUI.TextField(rectNameText, conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
-
-                //    Rect rectBt = new Rect();
-                //    rectBt.position = r.position + new Vector2(20 + rectNameText.size.x + 2, 5);
-                //    rectBt.size = new Vector2(16, 16);
-                //    if (GUI.Button(rectBt, CanvasLayout.Layout.canvas.ConditionUnexpandBtContent, CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle))
-                //    {
-                //        expand = false;
-                //    }
-
-                //    Rect rectID = new Rect();
-                //    rectID.position = r.position + new Vector2(20, 5 + rectNameText.size.y + 5);
-                //    rectID.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
-
-                //    //monoScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript),false);
-                //    //EditorGUI.LabelField(rectID, string.Format("ID: {0}", ID), CanvasLayout.Layout.canvas.IDLabelStyle);
-
-                //    Rect rectCyBt = new Rect();
-                //    rectCyBt.position = r.position + new Vector2(20 + rectID.size.x + 2, 5 + rectNameText.size.y + 5 + 2);
-                //    rectCyBt.size = new Vector2(16, 16);
-
-                //    Rect rectScript = new Rect();
-                //    rectScript.position = r.position + new Vector2(20, 5 + rectID.size.y + 5 + rectID.size.y + 5);
-                //    rectScript.size = new Vector2(r.size.x - 40, (r.size.y - 20) / 3);
-
-                //    if (conditionData.className == null)
-                //    {
-                //        EditorGUI.LabelField(rectScript, CanvasLayout.Layout.common.scriptRefNone, CanvasLayout.Layout.canvas.ConditionErrorLabelStyle);
-                //    }
-                //    else
-                //    {
-                //        EditorGUI.LabelField(rectScript, string.Format("Ref: {0}", conditionData.className.name), CanvasLayout.Layout.canvas.ConditionLabelStyle);
-                //    }
-
-                //    connectRect.position = position + r.position + new Vector2(r.size.x + 2, -connectPortOffset + r.size.y / 2);
-                //    connectRect.size = new Vector2(connectPortSize, connectPortSize);
-                //}
-            }
-            else
-            {
-                GUILayout.Box("", CanvasLayout.Layout.canvas.ConditionBoxStyle, GUILayout.Height(ConditionH), GUILayout.ExpandWidth(true));
-                Rect r = GUILayoutUtility.GetLastRect();
-                if (r.position != Vector2.zero)
-                {
-                    Rect rectBtDelete = new Rect();
-                    rectBtDelete.position = r.position + new Vector2(2, (r.size.y / 2) - 8);
-                    rectBtDelete.size = new Vector2(16, 16);
-                    if (GUI.Button(rectBtDelete, CanvasLayout.Layout.canvas.DelConditionContent
-                        , CanvasLayout.Layout.canvas.DelConditionStyle))
-                    {
-                        routerData.conditions.Remove(this.conditionData);
-                        conditions.Remove(this);
-                        return;
-                    }
-
-                    Rect rectScript = new Rect();
-                    rectScript.position = r.position + new Vector2(20, 5);
-                    rectScript.size = new Vector2(r.size.x - 40, r.size.y - 10);
-
-                    /*GUIContent nameContent = new GUIContent(conditionData.name);
-                    if (conditionData.className == null)
-                    {
-                        nameContent.tooltip = "script ref is none";
-                        EditorGUI.LabelField(rectScript, nameContent
-                            , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
-                    }
-                    else
-                    {
-                        EditorGUI.LabelField(rectScript, nameContent
-                            , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
-                    }*/
-
-
-                    Rect rectBt = new Rect();
-                    rectBt.position = r.position + new Vector2(20 + rectScript.size.x + 2, 5);
-                    rectBt.size = new Vector2(16, 16);
-                    if (GUI.Button(rectBt, CanvasLayout.Layout.canvas.ConditionExpandBtContent, CanvasLayout.Layout.canvas.ConditionExpandBtStyle))
-                    {
-                        expand = true;
-                    }
-
-                    connectRect.position = position + r.position + new Vector2(r.size.x + 2, -connectPortOffset + r.size.y / 2);
-                    connectRect.size = new Vector2(connectPortSize, connectPortSize);
-                }
+                connectRect.position = position + rect.position + new Vector2(rect.size.x + 2, -connectPortOffset + rect.size.y / 2);
+                connectRect.size = new Vector2(connectPortSize, connectPortSize);
             }
         }
     }
@@ -290,13 +169,12 @@ namespace CodeMind
 
         const float lineSpace = 5;
         const float defaultWindowHeigth = 110;
-        // protected Vector2 _size = new Vector2(200, defaultWindowHeigth);
-        protected Vector2 _size = new Vector2(300, defaultWindowHeigth);
-        protected override Vector2 size
+
+        protected override float windowWidth
         {
             get
             {
-                return _size;
+                return 350f;
             }
         }
 
@@ -305,8 +183,8 @@ namespace CodeMind
         protected bool defaultConnectFlag = false;
 
         RouterWindowData routerData;
-        public RouterWindow(RouterWindowData itemData, List<BaseWindow> _windowList, CodeMindData _mindData)
-            : base(itemData, _windowList, _mindData)
+        public RouterWindow(RouterWindowData itemData, BaseCanvas canvas)
+            : base(itemData, canvas)
         {
             routerData = itemData;
         }
@@ -391,8 +269,6 @@ namespace CodeMind
                     h += ConditionH + lineSpace;
                 }
             }
-
-            _size.y = defaultWindowHeigth + h;
         }
 
         protected override void drawAfter()
@@ -561,7 +437,7 @@ namespace CodeMind
             {
                 RouterWindowConditionData con = new RouterWindowConditionData();
                 routerData.conditions.Add(con);
-                conditions.Add(new RouterWindowCondition(con,mindData));
+                conditions.Add(new RouterWindowCondition(con, MainCanvas));
             }
             GUI.color = Color.white;
             EditorGUI.EndDisabledGroup();

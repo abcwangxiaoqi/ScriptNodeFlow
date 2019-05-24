@@ -70,7 +70,7 @@ namespace CodeMind
                 }
             }
 
-            foreach (var item in data.subCanvaslist)
+            foreach (var item in data.subCodeMindlist)
             {
                 handleSubCfg(item);
             }
@@ -83,7 +83,7 @@ namespace CodeMind
         /// </summary>
         /// <param name="sub"></param>
         /// <param name="ID"></param>
-        static void handleSubCfg(CanvasWindowData sub)
+        static void handleSubCfg(CodeMindWindowData sub)
         {
             if (sub.canvasData == null)
                 return;

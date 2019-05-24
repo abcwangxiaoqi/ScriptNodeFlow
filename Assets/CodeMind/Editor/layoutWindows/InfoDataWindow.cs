@@ -14,29 +14,35 @@ namespace CodeMind
 
         AnimBool scriptFadeGroup;
 
-        public InfoDataWindow(CodeMindData codeMindData)
+        Rect rect;
+
+        BaseCanvas MainCanvas;
+        public InfoDataWindow(BaseCanvas canvas)
         {
+            MainCanvas = canvas;
             scriptFadeGroup = new AnimBool(true);
+            scriptFadeGroup.valueChanged.AddListener(canvas.Repaint);
 
-            mindData = codeMindData;
-
-
+            mindData = MainCanvas.codeMindData;
 
             if (mindData.shareData != null)
-            {
-                Debug.Log(">>>>>" + mindData.shareData.name);
-                
+            {                
                 monoScript = MonoScript.FromScriptableObject(mindData.shareData);
 
                 editor = Editor.CreateEditor(mindData.shareData);
             }
+
+            rect = CanvasLayout.Layout.info.rect;
         }
 
         Vector2 scroll = Vector2.zero;
 
         public void draw()
         {
-            GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
+            //  EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground");
+            //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
+            //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground"));
+            GUILayout.BeginArea(rect, EditorStyles.helpBox);
 
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
@@ -92,8 +98,18 @@ namespace CodeMind
 
             //GUILayout.EndScrollView();
 
-            GUILayout.EndArea();
+            var lastrect =  GUILayoutUtility.GetLastRect();
 
+            if(lastrect.position!= Vector2.zero)
+            {
+                rect.size = new Vector2
+                    (
+                    CanvasLayout.Layout.info.rect.size.x,
+                    lastrect.position.y+30
+                    );
+            }
+
+            GUILayout.EndArea();
         }
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
-public class BuildInSkinEditor 
+[CustomEditor(typeof(BuildInSkin))]
+public class BuildInSkinEditor:Editor
 {
-
     [MenuItem("Assets/BuildInSkin/Get GameSkin Icon", false, priority = 46)]
     static void Game()
     {
@@ -41,5 +42,52 @@ public class BuildInSkinEditor
         }
 
         AssetDatabase.Refresh();
+    }
+
+    static void createSkin(GUISkin skin,string fold)
+    {
+        List<Texture2D> textureList = GUISkinTool.GetAllTexture(skin);
+        
+        if (string.IsNullOrEmpty(fold))
+            return;
+
+        foreach (var item in textureList)
+        {
+            GUISkinTool.saveIcon2PNG(item, fold);
+        }
+
+       // AssetDatabase.Refresh();
+    }
+
+    BuildInSkin buildInSkin;
+
+    string gameSkinFold;
+    string sceneSkinFold;
+    string inspectorFold;
+    private void Awake()
+    {
+        buildInSkin = target as BuildInSkin;
+
+        
+        string root = AssetDatabase.GetAssetPath(buildInSkin);
+        root = Path.GetDirectoryName(root);
+        gameSkinFold = root + "/gameSkinIcon";
+        sceneSkinFold = root + "/sceneSkinIcon";
+        inspectorFold = root + "/inspectorIcon";
+    }
+
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+
+        GUILayout.Space(10);
+
+        if(GUILayout.Button("Get Icons"))
+        {
+            createSkin(buildInSkin.gameSkin, gameSkinFold);
+            createSkin(buildInSkin.sceneSkin, sceneSkinFold);
+            createSkin(buildInSkin.inspectorSkin, inspectorFold);
+            AssetDatabase.Refresh();
+        }
     }
 }

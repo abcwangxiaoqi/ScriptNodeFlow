@@ -13,16 +13,13 @@ namespace CodeMind
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        //Vector2 _size = new Vector2(150, 80);
-        Vector2 _size = new Vector2(350, 200);
-        protected override Vector2 size
+        protected override float windowWidth
         {
             get
             {
-                return _size;
+                return 350f;
             }
         }
-
 
         public override NodeType windowType
         {
@@ -40,8 +37,8 @@ namespace CodeMind
 
         AnimBool scriptFadeGroup;
 
-        public NodeWindow(NodeWindowData itemData, List<BaseWindow> _windowList,CodeMindData _mindData)
-            : base(itemData, _windowList, _mindData)
+        public NodeWindow(NodeWindowData itemData, BaseCanvas canvas)
+            : base(itemData, canvas)
         {
             nodeData = itemData;
             if(nodeData.node!= null)
@@ -51,6 +48,7 @@ namespace CodeMind
             }
 
             scriptFadeGroup = new AnimBool(true);
+            scriptFadeGroup.valueChanged.AddListener(canvas.Repaint);
         }
 
         public void SetNext(BaseWindow entity)

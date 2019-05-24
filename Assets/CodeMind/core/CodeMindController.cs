@@ -77,7 +77,7 @@ namespace CodeMind
             {
                 current.play(shareData);
             }
-            else if (current.type == NodeType.SubCanvas)
+            else if (current.type == NodeType.SubCodeMind)
             {
                 current.play(transform, shareData);
             }

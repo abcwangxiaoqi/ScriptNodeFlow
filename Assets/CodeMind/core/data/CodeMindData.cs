@@ -12,7 +12,7 @@ namespace CodeMind
         public StartWindowData start = new StartWindowData();
         public List<NodeWindowData> nodelist = new List<NodeWindowData>();
         public List<RouterWindowData> routerlist = new List<RouterWindowData>();
-        public List<CanvasWindowData> subCanvaslist = new List<CanvasWindowData>();
+        public List<CodeMindWindowData> subCodeMindlist = new List<CodeMindWindowData>();
 
         public string desc;
 
@@ -28,7 +28,7 @@ namespace CodeMind
             if (data != null)
                 return data;
 
-            data = subCanvaslist.Find(windowData => { return windowData.ID == id; });
+            data = subCodeMindlist.Find(windowData => { return windowData.ID == id; });
 
             return data;
         }
@@ -49,11 +49,11 @@ namespace CodeMind
             return router;
         }
 
-        public CanvasWindowData AddSubCanvas(Vector2 position)
+        public CodeMindWindowData AddSubCanvas(Vector2 position)
         {
-            CanvasWindowData subCanvas = new CanvasWindowData();
+            CodeMindWindowData subCanvas = new CodeMindWindowData();
             subCanvas.position = position;
-            subCanvaslist.Add(subCanvas);
+            subCodeMindlist.Add(subCanvas);
             return subCanvas;
         }
 

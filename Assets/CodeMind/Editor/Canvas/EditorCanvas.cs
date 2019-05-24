@@ -1,4 +1,5 @@
 ﻿using EditorTools;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -7,26 +8,22 @@ namespace CodeMind
 {
     public class EditorCanvas : BaseCanvas
     {
+        static Dictionary<string, EditorCanvas> windowMap = new Dictionary<string, EditorCanvas>();
+
         [MenuItem("Assets/Code Mind/Edit", true)]
         static bool ValidateSelection()
         {
             Object asset = Selection.activeObject;
 
-            return (asset is CodeMindData);
+            return (asset is CodeMindData) && !Application.isPlaying;
         }
 
         [MenuItem("Assets/Code Mind/Edit", false, priority = 49)]
         static void Edit()
         {
-            if (window != null)
-                window.Close();
-
-            window = null;
-
-
             Object asset = Selection.activeObject;
-            scriptable = new ScriptableItem(AssetDatabase.GetAssetPath(asset));
-            window = GetWindow<EditorCanvas>(asset.name);
+
+            Open(asset as CodeMindData);
         }
 
         [MenuItem("Assets/Code Mind/Create", false, priority = 49)]
@@ -35,48 +32,71 @@ namespace CodeMind
             EditorUtil.CreatAssetCurPath<CodeMindData>("New CodeMind Canvas");
         }
 
-        public static void Open(Object obj)
+        public static void Open(CodeMindData data)
         {
-            if (window != null)
-                window.Close();
+            string path = AssetDatabase.GetAssetPath(data);
 
-            window = null;
+            EditorCanvas window = null;
 
-            scriptable = new ScriptableItem(AssetDatabase.GetAssetPath(obj));
-            window = GetWindow<EditorCanvas>(obj.name);
+            Rect windowRect = new Rect(defaultPos, defualtSize);
+
+            if (!windowMap.ContainsKey(path))
+            {
+                window = CreateInstance<EditorCanvas>();
+                window.titleContent = new GUIContent(data.name);
+                window.initilize(data);
+                windowMap.Add(path, window);
+            }
+            else if(windowMap[path] == null)
+            {
+                window = CreateInstance<EditorCanvas>();
+                window.titleContent = new GUIContent(data.name);
+                window.initilize(data);
+                windowMap[path] = window;
+            }
+            else
+            {
+                windowRect = windowMap[path].position;
+            }
+
+            windowMap[path].ShowUtility();
+            windowMap[path].position = windowRect;
         }
-
-        static ScriptableItem scriptable;
 
         static GUIContent addNode = new GUIContent("Add Node");
         static GUIContent addRouter = new GUIContent("Add Router");
         static GUIContent addCanvas = new GUIContent("Add Canvas");
         static GUIContent comiling = new GUIContent("...Comiling...");
+        
 
-        bool initilizeSuccess = true;
-
+        string codeMindAssePath;
         protected override void Awake()
         {
             base.Awake();
 
             EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
+        }
+
+        public override void initilize(CodeMindData mindData)
+        {
+            base.initilize(mindData);
 
             try
             {
                 // quit unity editor when this window is active
                 // reopen unity have to close this error window
 
-                codeMindData = scriptable.Load<CodeMindData>();
+                codeMindAssePath = AssetDatabase.GetAssetPath(codeMindData);
 
-                generateLeftArea();
-
-                generateMainData();
+                assetKey = string.Format("NODEASSETPATH_{0}", codeMindData.GetInstanceID());
+                
+                generateData();
             }
             catch (System.Exception ex)
             {
                 Debug.LogWarning(ex.Message);
-                initilizeSuccess = false;
+                initilizeFlag = false;
                 Close();
             }
         }
@@ -87,10 +107,7 @@ namespace CodeMind
             if (obj == PlayModeStateChange.ExitingEditMode ||
                 obj == PlayModeStateChange.EnteredPlayMode)
             {
-                if (window != null)
-                {
-                    window.Close();
-                }
+                Close();
             }
         }
 
@@ -100,22 +117,20 @@ namespace CodeMind
 
         // the key of the asset's path
         // need be saved when compiling
-        string nodeAssetPath = "NODEASSETPATH";
+        string assetKey = "NODEASSETPATH";
 
 
         bool clickArea = false;
 
-        protected override void OnGUI()
+        protected override void BeforeDraw()
         {
             if (EditorApplication.isCompiling)
             {
                 ShowNotification(comiling);
 
-                if (!EditorPrefs.HasKey(nodeAssetPath))
+                if (!EditorPrefs.HasKey(assetKey))
                 {
-                    EditorPrefs.SetString(nodeAssetPath, scriptable.path);
-
-                    DelegateManager.Instance.Dispatch(DelegateCommand.OPENMAINCANVAS);
+                    EditorPrefs.SetString(assetKey, codeMindAssePath);
 
                     OnDestroy();
                 }
@@ -123,15 +138,13 @@ namespace CodeMind
                 return;
             }
 
-            if (EditorPrefs.HasKey(nodeAssetPath))
+            if (EditorPrefs.HasKey(assetKey))
             {
                 // once compiled
-                string path = EditorPrefs.GetString(nodeAssetPath);
-                EditorPrefs.DeleteKey(nodeAssetPath);
+                string path = EditorPrefs.GetString(assetKey);
+                EditorPrefs.DeleteKey(assetKey);
 
-                scriptable = new ScriptableItem(path);
-
-                window = this;
+                codeMindData = AssetDatabase.LoadAssetAtPath<CodeMindData>(path);
 
                 Awake();
 
@@ -152,7 +165,7 @@ namespace CodeMind
                 RightMouseSelect();
             }
             else if (curEvent.button == 0 && curEvent.isMouse
-                     && rightArea.Contains(curEvent.mousePosition) 
+                     && rightArea.Contains(curEvent.mousePosition)
                      && GUIUtility.hotControl <= 0)
             {
                 //a window is whether selected
@@ -226,18 +239,13 @@ namespace CodeMind
             }
 
             Repaint();
-
-            base.OnGUI();
         }
 
         protected override void OnDestroy()
         {
-            if (!initilizeSuccess)
-                return;
-            
             base.OnDestroy();
 
-            save();
+            EditorUtility.SetDirty(codeMindData);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -273,9 +281,9 @@ namespace CodeMind
                         {
                             codeMindData.routerlist.Remove(curSelect.windowData as RouterWindowData);
                         }
-                        else if (curSelect.windowType == NodeType.SubCanvas)
+                        else if (curSelect.windowType == NodeType.SubCodeMind)
                         {
-                            codeMindData.subCanvaslist.Remove(curSelect.windowData as CanvasWindowData);
+                            codeMindData.subCodeMindlist.Remove(curSelect.windowData as CodeMindWindowData);
                         }
 
                         windowList.Remove(curSelect);
@@ -289,111 +297,25 @@ namespace CodeMind
                     menu.AddItem(addNode, false, () =>
                     {
                         var node = codeMindData.AddNode(mousePosition);
-                        windowList.Add(new NodeWindow(node, windowList,codeMindData));
+                        windowList.Add(new NodeWindow(node, this));
                     });
 
                     menu.AddItem(addRouter, false, () =>
                     {
                         var router = codeMindData.AddRouter(mousePosition);
-                        windowList.Add(new RouterWindow(router, windowList, codeMindData));
+                        windowList.Add(new RouterWindow(router, this));
                     });
 
-                    if (canvasType == CanvasType.Main)
+
+                    menu.AddItem(addCanvas, false, () =>
                     {
-                        menu.AddItem(addCanvas, false, () =>
-                        {
-                            var sub = codeMindData.AddSubCanvas(mousePosition);
-                            windowList.Add(new SubCanvasWindow(sub, windowList, codeMindData));
-                        });
-                    }
+                        var sub = codeMindData.AddSubCanvas(mousePosition);
+                        windowList.Add(new SubCanvasWindow(sub, this));
+                    });
 
                     menu.ShowAsContext();
                 }
             }
-        }
-
-        protected override void OpenMainCanvas(object[] objs)
-        {
-            save();
-            base.OpenMainCanvas(objs);
-        }
-
-        protected override void OpenSubCanvas(object[] objs)
-        {
-            save();
-
-            base.OpenSubCanvas(objs);
-        }
-
-        private void save()
-        {
-            if (canvasType == CanvasType.Main)
-            {
-                saveMain();
-            }
-            else
-            {
-                saveSub();
-            }
-        }
-
-        void saveMain()
-        {
-            EditorUtility.SetDirty(codeMindData);
-            //return;
-            //codeMindData.nodelist.Clear();
-            //codeMindData.routerlist.Clear();
-            //codeMindData.subCanvaslist.Clear();
-
-            //codeMindData.shareData = infoDataWindow.shareData;
-
-            //for (int i = 0; i < windowList.Count; i++)
-            //{
-            //    if (windowList[i].windowType == NodeType.Node)
-            //    {
-            //        codeMindData.nodelist.Add((NodeWindowData)windowList[i].GetData());
-            //    }
-            //    else if (windowList[i].windowType == NodeType.Router)
-            //    {
-            //        codeMindData.routerlist.Add((RouterWindowData)windowList[i].GetData());
-            //    }
-            //    else if (windowList[i].windowType == NodeType.SubCanvas)
-            //    {
-            //        codeMindData.subCanvaslist.Add((CanvasWindowData)windowList[i].GetData());
-            //    }
-            //    else if (windowList[i].windowType == NodeType.Start)
-            //    {
-            //        codeMindData.start = (StartWindowData)windowList[i].GetData();
-            //    }
-            //}
-
-            //EditorUtility.SetDirty(codeMindData);
-        }
-
-        void saveSub()
-        {
-            EditorUtility.SetDirty(codeMindData);
-
-            //subCanvasData.nodelist.Clear();
-            //subCanvasData.routerlist.Clear();
-
-            //for (int i = 0; i < windowList.Count; i++)
-            //{
-            //    if (windowList[i].windowType == NodeType.Node)
-            //    {
-            //        subCanvasData.nodelist.Add((NodeWindowData)windowList[i].GetData());
-            //    }
-            //    else if (windowList[i].windowType == NodeType.Router)
-            //    {
-            //        subCanvasData.routerlist.Add((RouterWindowData)windowList[i].GetData());
-            //    }
-            //    else if (windowList[i].windowType == NodeType.Start)
-            //    {
-            //        subCanvasData.start = (StartWindowData)windowList[i].GetData();
-            //    }
-            //}
-
-            //EditorUtility.SetDirty(codeMindData);
         }
     }
 }

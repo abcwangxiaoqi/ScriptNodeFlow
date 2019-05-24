@@ -16,7 +16,7 @@ namespace CodeMind
         Node,
         Router,
         Start,
-        SubCanvas
+        SubCodeMind,
     }
 
     public abstract class WindowDataBase
