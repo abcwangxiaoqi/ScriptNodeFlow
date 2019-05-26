@@ -4,9 +4,17 @@ using UnityEngine;
 
 namespace CodeMind
 {
+    public enum PlayMode
+    {
+        Once,
+        Loop
+    }
+    
     [Serializable]
     public class CodeMindData : ScriptableObject
     {
+        public PlayMode mode = PlayMode.Once;
+
         public SharedData shareData;
 
         public StartWindowData start = new StartWindowData();
@@ -62,13 +70,34 @@ namespace CodeMind
         /// Instantiate this instance.
         /// </summary>
         /// <returns>The instantiate.</returns>
-        public CodeMindController Instantiate()
+        public CodeMindController Instantiate(Transform root = null)
         {
             GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
+            gameObject.transform.SetParent(root);
             DontDestroyOnLoad(gameObject);
             CodeMindController controller = gameObject.GetComponent<CodeMindController>();
-            controller.nodeFlowData = this;
+            controller.mindData = this;
             return controller;
+        }
+
+        public void Reset()
+        {
+            start.reset();
+
+            foreach (var item in nodelist)
+            {
+                item.reset();
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.reset();
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.reset();
+            }
         }
     }
 }

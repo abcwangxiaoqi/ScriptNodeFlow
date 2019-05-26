@@ -45,7 +45,7 @@ namespace CodeMind
         {
             base.Awake();
 
-            EditorApplication.playModeStateChanged -= playModeStateChanged;
+   
             EditorApplication.playModeStateChanged += playModeStateChanged;
         }
 
@@ -56,12 +56,17 @@ namespace CodeMind
             generateData();
         }
 
+        protected override void OnDestroy()
+        {
+            EditorApplication.playModeStateChanged -= playModeStateChanged;
+        }
+
         // close the window when playModeStateChanged
         private void playModeStateChanged(PlayModeStateChange obj)
         {
             if (obj == PlayModeStateChange.ExitingPlayMode)
             {
-                Close();
+                this.Close();
             }
         }
 

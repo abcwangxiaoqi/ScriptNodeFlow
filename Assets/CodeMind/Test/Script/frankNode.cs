@@ -10,13 +10,10 @@ public class frankNode : Node
     [Range(0,10)]
     public int index;
 
-    //public frankNode(SharedData sd):base(sd)
-    //{
-
-    //}
-
-    public override void Play()
+    public override void Play(SharedData sharedData)
     {
-        throw new System.NotImplementedException();
+        Debug.Log(">>>>" + str);
+
+        finish();
     }
 }

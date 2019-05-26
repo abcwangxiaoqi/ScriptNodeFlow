@@ -4,12 +4,6 @@ namespace CodeMind
 {
     public abstract class RouterCondition : ScriptableObject
     {
-        protected SharedData shareData;
-        /*public RouterCondition(SharedData data)
-        {
-            shareData = data;
-        }*/
-
-        public abstract bool justify();
+        public abstract bool justify(SharedData shareData);
     }
 }

@@ -15,31 +15,18 @@ namespace CodeMind
 
         public event Action<SharedData> onSharedDataInitialize;
 
-        public CodeMindData nodeFlowData;
+        public CodeMindData mindData { get; internal set; }
 
         SharedData shareData = null;
         // Use this for initialization
         void Start()
         {
-            //if (!string.IsNullOrEmpty(nodeFlowData.shareData))
-            //{
-            //    shareData = Activator.CreateInstance(Type.GetType(nodeFlowData.shareData)) as SharedData;
-
-            //    if (onSharedDataInitialize != null)
-            //    {
-            //        onSharedDataInitialize(shareData);
-            //    }
-            //}
-
-            if (nodeFlowData.shareData!=null)
+            if (mindData.shareData!=null && onSharedDataInitialize != null)
             {
-                if (onSharedDataInitialize != null)
-                {
-                    onSharedDataInitialize(nodeFlowData.shareData);
-                }
+                onSharedDataInitialize(mindData.shareData);
             }
 
-            current = nodeFlowData.start;
+            current = mindData.start;
         }
 
         public bool finished { get; private set; }
@@ -59,7 +46,7 @@ namespace CodeMind
 
             if (current.runtimeState == RuntimeState.Running)
             {
-                current.update();
+                current.update(this);
             }
 
             #endregion
@@ -68,19 +55,21 @@ namespace CodeMind
             if (current.runtimeState != RuntimeState.Idle)
                 return;
 
-            if (current.type == NodeType.Start)
+            current.play(this);
+
+            /*if (current.type == NodeType.Start)
             {
-                current.play();
+                current.play(mindData);
             }
             else if (current.type == NodeType.Node ||
                 current.type == NodeType.Router)
             {
-                current.play(shareData);
+                current.play(mindData);
             }
             else if (current.type == NodeType.SubCodeMind)
             {
-                current.play(transform, shareData);
-            }
+                current.play(mindData);
+            }*/
         }
 
         private void LateUpdate()
@@ -97,25 +86,32 @@ namespace CodeMind
                 //get next
                 if (current.type == NodeType.Router)
                 {
-                    current = nodeFlowData.Get((current as RouterWindowData).runtimeNextId);
+                    current = mindData.Get((current as RouterWindowData).runtimeNextId);
                 }
                 else
                 {
-                    current = nodeFlowData.Get(current.nextWindowId);
+                    current = mindData.Get(current.nextWindowId);
                 }
 
                 if (current == null)
                 {
-                    finished = true;
-                    if (onFinish != null)
+                    if(mindData.mode == PlayMode.Loop)
                     {
-                        onFinish.Invoke(true);
+                        reset();
+                    }
+                    else
+                    {
+                        finished = true;
+                        if (onFinish != null)
+                        {
+                            onFinish.Invoke(true);
+                        }
                     }
                 }
-                else if (current.runtimeState == RuntimeState.Finished)
+                /*else if (current.runtimeState == RuntimeState.Finished)
                 {
                     current.reset();
-                }
+                }*/
             }
             else if (current.runtimeState == RuntimeState.Error)
             {
@@ -127,19 +123,22 @@ namespace CodeMind
             }
         }
 
-
-        private void OnDestroy()
+        public void reset()
         {
-            shareData.Dispose();
-            shareData = null;
+            mindData.Reset();
 
-            if (finished)
-                return;
+            finished = false;
 
-            if (current != null)
-            {
-                current.stop();
-            }
+            current = mindData.start;
+        }
+
+        public void Destroy()
+        {
+            Destroy(this);
+        }
+
+        void OnDestroy()
+        {
         }
     }
 }

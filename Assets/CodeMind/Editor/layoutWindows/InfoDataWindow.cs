@@ -46,6 +46,15 @@ namespace CodeMind
 
             GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
 
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Mode",GUILayout.Width(60));
+            mindData.mode = (PlayMode)EditorGUILayout.EnumPopup(mindData.mode,GUILayout.ExpandWidth(true));
+            GUILayout.EndHorizontal();
+
+           
+
+            GUILayout.Space(3);
+
             var tempScript = EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false) as MonoScript;
 
             if(tempScript == null && tempScript != monoScript)

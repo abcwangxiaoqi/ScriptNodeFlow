@@ -26,17 +26,15 @@ namespace CodeMind
 
         [NonSerialized] public string runtimeNextId = null;
 
-        public override void play(params object[] objs)
+        public override void play(CodeMindController mindController)
         {
             try
             {
-                SharedData sdata = objs[0] as SharedData;
-
                 runtimeState = RuntimeState.Running;
                 bool condFlag = false;
                 for (int i = 0; i < conditions.Count; i++)
                 {
-                    if (conditions[i].excute(sdata))
+                    if (conditions[i].excute(mindController.mindData.shareData))
                     {
                         condFlag = true;
                         runtimeNextId = conditions[i].nextWindowId;
@@ -71,20 +69,12 @@ namespace CodeMind
         public string name = "Condition Name";
 
         public RouterCondition routerCondition;
+
         public string nextWindowId = null;
 
-        private RouterCondition condition;
         public bool excute(SharedData sdata)
         {
-            //if (condition == null)
-            //{
-            //    Type type = Type.GetType(className);
-
-            //    condition = Activator.CreateInstance(type, sdata) as RouterCondition;
-            //}
-
-            //return condition.justify();
-            return true;
+            return routerCondition.justify(sdata);
         }
     }
 }

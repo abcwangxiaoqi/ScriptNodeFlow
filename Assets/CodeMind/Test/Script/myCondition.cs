@@ -8,7 +8,7 @@ public class myCondition : RouterCondition
     public string str;
     public int intValue;
     
-    public override bool justify()
+    public override bool justify(SharedData sharedData)
     {
         throw new System.NotImplementedException();
     }

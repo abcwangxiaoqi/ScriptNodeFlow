@@ -161,10 +161,10 @@ namespace CodeMind
             drawWindowContent();
 
 
-            var rrect = GUILayoutUtility.GetLastRect();
-            if (rrect.position != Vector2.zero)
+            var lrect = GUILayoutUtility.GetLastRect();
+            if (lrect.position != Vector2.zero)
             {
-                size = new Vector2(windowWidth, rrect.position.y + 5 + 30);
+                size = new Vector2(windowWidth, lrect.position.y + 5 + 30);
             }
 
             GUILayout.EndArea();
@@ -223,15 +223,12 @@ namespace CodeMind
         public bool isClick(Vector2 mouseposition)
         {
             return selectRect.Contains(mouseposition);
-            //return windowRect.Contains(mouseposition);
         }
 
         public bool isClickInPort(Vector2 mouseposition)
         {
             return InPortRect.Contains(mouseposition);
         }
-
-        //public abstract WindowDataBase GetData();
         
 
         protected void DrawArrow(Vector2 from, Vector2 to, Color color)

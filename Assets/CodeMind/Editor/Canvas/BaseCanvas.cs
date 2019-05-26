@@ -43,14 +43,9 @@ namespace CodeMind
         {
             if (Event.current.type != EventType.Ignore)
             {
-                Rect rect = new Rect(Vector2.zero, position.size);
-                //GUILayout.BeginArea(rect, CanvasLayout.Layout.common.CanvasBgStyle);
-
                 drawRight();
 
                 infoDataWindow.draw();
-
-                //GUILayout.EndArea();
             }
         }
 

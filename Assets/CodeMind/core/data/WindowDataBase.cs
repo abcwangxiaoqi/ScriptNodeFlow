@@ -44,12 +44,9 @@ namespace CodeMind
         [NonSerialized]
         public string runtimeError;
 
-        public virtual void play(params object[] objs) { }
+        public abstract void play(CodeMindController mindController);
 
-        public virtual void update() { }
-
-        public virtual void stop()
-        { }
+        public virtual void update(CodeMindController mindController) { }
 
         public virtual void reset()
         {

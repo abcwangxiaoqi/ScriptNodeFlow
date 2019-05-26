@@ -7,8 +7,12 @@ public class NNode : Node
 {
     public string sss;
 
-    public override void Play()
+    public override void Play(SharedData sharedData)
     {
-        throw new System.NotImplementedException();
+    }
+
+    public override void ProcessUpdate(SharedData sharedData)
+    {
+        base.ProcessUpdate(sharedData);
     }
 }

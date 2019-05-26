@@ -22,23 +22,14 @@ namespace CodeMind
 
         #region runtime
 
-       // private Node node;
 
-        public override void play(params object[] objs)
+        public override void play(CodeMindController mindController)
         {
             try
             {
-                //SharedData sdata = objs[0] as SharedData;
+                runtimeState = RuntimeState.Running;
 
-                //runtimeState = RuntimeState.Running;
-
-                //if (null == node)
-                //{
-                //    Type type = Type.GetType(node);
-                //    node = Activator.CreateInstance(type, sdata) as Node;
-                //}
-
-                //node.Play();
+                node.Play(mindController.mindData.shareData);
             }
             catch (Exception e)
             {
@@ -48,7 +39,7 @@ namespace CodeMind
             }
         }
 
-        public override void update()
+        public override void update(CodeMindController mindController)
         {            
             if(node.finished)
             {
@@ -64,16 +55,9 @@ namespace CodeMind
                 return;
             }
 
-            node.Update();
+            node.ProcessUpdate(mindController.mindData.shareData);
         }
 
-        public override void stop()
-        {
-            if (node == null)
-                return;
-
-            node.OnDestroy();
-        }
         #endregion
     }
 }

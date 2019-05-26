@@ -9,18 +9,9 @@ namespace CodeMind
         public bool finished { get; private set; }
         public string errorMessage { get; private set; }
 
-        protected SharedData shareData;
-        //public Node(SharedData data)
-        //{
-        //    shareData = data;
-        //}
+        public abstract void Play(SharedData sharedData);
 
-        public abstract void Play();
-
-        public virtual void Update() { }
-
-        //be called when destroy canvas
-        public virtual void OnDestroy() { }
+        public virtual void ProcessUpdate(SharedData sharedData) { }
 
 
         //you must call this when you're sure the execute method is finished completely,

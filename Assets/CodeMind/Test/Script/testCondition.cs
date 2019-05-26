@@ -8,14 +8,14 @@ public class Condition1 : RouterCondition
 {
     //public Condition1(SharedData data) : base(data) { }
 
-    public override bool justify()
+    public override bool justify(SharedData sharedData)
     {
         Debug.Log("Condition1");
 
         //get shared data
-        testShareData data = shareData as testShareData;
-        
-        return data.state == 1;
+        // testShareData data = shareData as testShareData;
+
+        return true;
     }
 }
 
@@ -24,9 +24,9 @@ public class Condition2 : RouterCondition
 {
     //public Condition2(SharedData data) : base(data) { }
 
-    public override bool justify()
+    public override bool justify(SharedData sharedData)
     {
         Debug.Log("Condition2");
-        return (shareData as testShareData).state == 2;
+        return true;
     }
 }
