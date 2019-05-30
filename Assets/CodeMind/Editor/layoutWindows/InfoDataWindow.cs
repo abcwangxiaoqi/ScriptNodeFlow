@@ -33,12 +33,14 @@ namespace CodeMind
             }
 
             rect = CanvasLayout.Layout.info.rect;
+          
         }
 
         Vector2 scroll = Vector2.zero;
 
         public void draw()
         {
+            rect.x = MainCanvas.position.size.x - 15 - rect.size.x;
             //  EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground");
             //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
             //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground"));

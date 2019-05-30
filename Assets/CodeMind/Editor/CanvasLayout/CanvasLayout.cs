@@ -215,6 +215,7 @@ public class CanvasCfg
 
     public GUIContent AddConditionContent = new GUIContent("", "add a new condition");
     public GUIStyle AddConditionBtStyle = new GUIStyle();
+    public Color AddConditionBtColor = Color.green;
 
     public GUIStyle ConditionBoxStyle = new GUIStyle();
 

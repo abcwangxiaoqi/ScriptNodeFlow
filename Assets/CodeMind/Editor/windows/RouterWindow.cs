@@ -432,7 +432,7 @@ namespace CodeMind
 
             EditorGUI.BeginDisabledGroup(conditions.Count == MaxCondition);
 
-            GUI.color = Color.green;
+            GUI.color = CanvasLayout.Layout.canvas.AddConditionBtColor;
             if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
                 RouterWindowConditionData con = new RouterWindowConditionData();
