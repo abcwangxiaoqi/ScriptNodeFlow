@@ -144,7 +144,6 @@ namespace CodeMind
         }
 
         private bool connectFlag = false;
-        string error;
         protected override void drawWindowContent()
         {
             base.drawWindowContent();
@@ -172,24 +171,20 @@ namespace CodeMind
                         && !type.IsInterface)
                     {
                         var data = ScriptableObject.CreateInstance(type);
-                        data.name = "Node_" + Id;
+                        data.name = Id;
 
                         AssetDatabase.AddObjectToAsset(data, mindData);
                         nodeData.node = data as Node;
 
                         scriptEditor = Editor.CreateEditor(nodeData.node);
-                        error = null;
-                    }
-                    else
-                    {
-                        error = "script is invalid";
+
                     }
                 }
-            }            
+            }       
 
             if(scriptEditor == null)
             {
-                GUILayout.Label(error);
+                GUILayout.Label(CanvasLayout.Layout.canvas.NodeScriptErrorContent, CanvasLayout.Layout.canvas.NodeScriptErrorStyle);
             }
             else
             {

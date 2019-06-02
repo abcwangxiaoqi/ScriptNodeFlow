@@ -41,14 +41,22 @@ namespace CodeMind
         [NonSerialized]
         public RuntimeState runtimeState = RuntimeState.Idle;
 
-        [NonSerialized]
-        public string runtimeError;
+        public string runtimeError { get; protected set; }
 
-        public abstract void play(CodeMindController mindController);
+        public virtual void OnCreate(SharedData sharedData)
+        {
+            
+        }
 
-        public virtual void update(CodeMindController mindController) { }
+        public virtual void OnDelete(SharedData sharedData)
+        {
+        }
 
-        public virtual void reset()
+        public abstract void OnPlay(CodeMindController mindController);
+
+        public virtual void OnUpdate(CodeMindController mindController) { }
+
+        public virtual void OnReset()
         {
             runtimeState = RuntimeState.Idle;
         }

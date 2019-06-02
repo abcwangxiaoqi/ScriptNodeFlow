@@ -84,7 +84,7 @@ namespace CodeMind
 
             EditorGUILayout.EndHorizontal();
 
-            GUILayout.Label(codeMindData.name, CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
+           // GUILayout.Label(codeMindData.name, CanvasLayout.Layout.canvas.CanvasNamelabelStyle);
         }
 
         void drawRightNodesArea()

@@ -38,15 +38,12 @@ namespace CodeMind
 
         Vector2 scroll = Vector2.zero;
 
+
         public void draw()
         {
             rect.x = MainCanvas.position.size.x - 15 - rect.size.x;
-            //  EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground");
-            //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, CanvasLayout.Layout.common.window);
-            //GUILayout.BeginArea(CanvasLayout.Layout.info.rect, EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).FindStyle("WindowBackground"));
-            GUILayout.BeginArea(rect, EditorStyles.helpBox);
 
-            GUILayout.Label(CanvasLayout.Layout.info.TitleContent, CanvasLayout.Layout.common.WindowTitleStyle);
+            GUILayout.BeginArea(rect, CanvasLayout.Layout.info.TitleContent,CanvasLayout.Layout.info.windowStyle);
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Mode",GUILayout.Width(60));
@@ -90,35 +87,44 @@ namespace CodeMind
                 }
             }     
 
-            //scroll = GUILayout.BeginScrollView(scroll);
+
 
             if (editor != null)
             {
+                
                 scriptFadeGroup.target = EditorGUILayout.Foldout(scriptFadeGroup.target, "Parameters");
 
                 if (EditorGUILayout.BeginFadeGroup(scriptFadeGroup.faded))
                 {
+                    //scroll = GUILayout.BeginScrollView(scroll, false, rect.size.y > 1000);
+
                     EditorGUI.indentLevel++;
 
                     editor.OnInspectorGUI();
 
                     EditorGUI.indentLevel--;
+
+                    //GUILayout.EndScrollView();
                 }
                 EditorGUILayout.EndFadeGroup();
+              
             }
-
-            //GUILayout.EndScrollView();
-
-            var lastrect =  GUILayoutUtility.GetLastRect();
-
-            if(lastrect.position!= Vector2.zero)
+            else
             {
-                rect.size = new Vector2
-                    (
-                    CanvasLayout.Layout.info.rect.size.x,
-                    lastrect.position.y+30
-                    );
+                EditorGUILayout.LabelField(CanvasLayout.Layout.info.SharedScriptMessageContent, CanvasLayout.Layout.info.SharedScriptMessageStyle);
             }
+
+
+                var lastrect = GUILayoutUtility.GetLastRect();
+
+                if (lastrect.position != Vector2.zero)
+                {
+                    rect.size = new Vector2
+                        (
+                        CanvasLayout.Layout.info.rect.size.x,
+                        lastrect.position.y + 30
+                        );
+                }
 
             GUILayout.EndArea();
         }

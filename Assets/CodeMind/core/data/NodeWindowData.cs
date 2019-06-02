@@ -22,8 +22,22 @@ namespace CodeMind
 
         #region runtime
 
+        public override void OnCreate(SharedData sharedData)
+        {
+            base.OnCreate(sharedData);
 
-        public override void play(CodeMindController mindController)
+            node.OnCreate(sharedData);
+        }
+
+        public override void OnDelete(SharedData sharedData)
+        {
+            base.OnDelete(sharedData);
+
+            node.OnDelete(sharedData);
+        }
+
+
+        public override void OnPlay(CodeMindController mindController)
         {
             try
             {
@@ -39,7 +53,7 @@ namespace CodeMind
             }
         }
 
-        public override void update(CodeMindController mindController)
+        public override void OnUpdate(CodeMindController mindController)
         {            
             if(node.finished)
             {

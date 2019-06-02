@@ -27,35 +27,39 @@ namespace CodeMind
         #region runtime
 
         CodeMindController controller;
+        GameObject gameObject;
 
-        public override void play(CodeMindController mindController)
+        public override void OnPlay(CodeMindController mindController)
         {
             runtimeState = RuntimeState.Running;
 
             if(controller == null)
             {
-                controller = canvasData.Instantiate(mindController.transform);
+                gameObject = canvasData.Instantiate(out controller,mindController.transform);
                 controller.onFinish += subFinish;
             }
         }
 
-        void subFinish(bool success)
+        public override void OnUpdate(CodeMindController mindController)
         {
-            if(success)
-            {
-                runtimeState = RuntimeState.Finished;
-            }
-            else
+            base.OnUpdate(mindController);
+
+            if(controller.hasError)
             {
                 runtimeState = RuntimeState.Error;
             }
         }
 
-        public override void reset()
+        void subFinish()
         {
-            base.reset();
+             runtimeState = RuntimeState.Finished;
+        }
 
-            controller.reset();
+        public override void OnReset()
+        {
+            base.OnReset();
+
+            controller.Reset();
         }
 
         #endregion

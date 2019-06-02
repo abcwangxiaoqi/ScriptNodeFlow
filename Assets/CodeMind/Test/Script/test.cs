@@ -12,15 +12,17 @@ public class test:MonoBehaviour
     public TestS testS;
 
     CodeMindController controller;
+    GameObject controllerGamobject;
     private void Awake()
     {
-        controller = mindData.Instantiate();
+        controllerGamobject = mindData.Instantiate(out controller);
         controller.onFinish += Test_onFinish;
     }
 
-    private void Test_onFinish(bool obj)
+    private void Test_onFinish()
     {
-        Debug.Log("Finish => success:" + obj);
+        Debug.Log("Finish => success");
+        Destroy(controllerGamobject);
     }
 
 }

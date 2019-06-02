@@ -24,7 +24,7 @@ namespace CodeMind
 
         public string desc;
 
-        public WindowDataBase Get(string id)
+        internal WindowDataBase Get(string id)
         {
             WindowDataBase data = null;
 
@@ -70,33 +70,69 @@ namespace CodeMind
         /// Instantiate this instance.
         /// </summary>
         /// <returns>The instantiate.</returns>
-        public CodeMindController Instantiate(Transform root = null)
+        public GameObject Instantiate(out CodeMindController controller,Transform root = null)
         {
             GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
             gameObject.transform.SetParent(root);
             DontDestroyOnLoad(gameObject);
-            CodeMindController controller = gameObject.GetComponent<CodeMindController>();
+            controller = gameObject.GetComponent<CodeMindController>();
             controller.mindData = this;
-            return controller;
+            return gameObject;
         }
 
-        public void Reset()
+        internal void OnReset()
         {
-            start.reset();
+            start.OnReset();
 
             foreach (var item in nodelist)
             {
-                item.reset();
+                item.OnReset();
             }
 
             foreach (var item in routerlist)
             {
-                item.reset();
+                item.OnReset();
             }
 
             foreach (var item in subCodeMindlist)
             {
-                item.reset();
+                item.OnReset();
+            }
+        }
+
+        internal void OnCreate()
+        {
+            foreach (var item in nodelist)
+            {
+                item.OnCreate(shareData);
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.OnCreate(shareData);
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.OnCreate(shareData);
+            }
+        }
+
+        internal void OnDelete()
+        {
+            foreach (var item in nodelist)
+            {
+                item.OnDelete(shareData);
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.OnDelete(shareData);
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.OnDelete(shareData);
             }
         }
     }

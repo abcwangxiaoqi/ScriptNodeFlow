@@ -26,7 +26,27 @@ namespace CodeMind
 
         [NonSerialized] public string runtimeNextId = null;
 
-        public override void play(CodeMindController mindController)
+        public override void OnCreate(SharedData sharedData)
+        {
+            base.OnCreate(sharedData);
+
+            foreach (var item in conditions)
+            {
+                item.awake(sharedData);
+            }
+        }
+
+        public override void OnDelete(SharedData sharedData)
+        {
+            base.OnDelete(sharedData);
+
+            foreach (var item in conditions)
+            {
+                item.destroy(sharedData);
+            }
+        }
+
+        public override void OnPlay(CodeMindController mindController)
         {
             try
             {
@@ -72,9 +92,19 @@ namespace CodeMind
 
         public string nextWindowId = null;
 
+        public void awake(SharedData sdata)
+        {
+            routerCondition.OnCreate(sdata);
+        }
+
+        public void destroy(SharedData sdata)
+        {
+            routerCondition.OnDelete(sdata);
+        }
+
         public bool excute(SharedData sdata)
         {
-            return routerCondition.justify(sdata);
+            return routerCondition.Justify(sdata);
         }
     }
 }

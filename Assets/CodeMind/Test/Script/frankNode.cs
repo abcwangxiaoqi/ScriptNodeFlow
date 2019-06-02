@@ -16,4 +16,15 @@ public class frankNode : Node
 
         finish();
     }
+
+
+    public override void OnCreate(SharedData sharedData)
+    {
+        Debug.Log(">>>frankNode OnCreate");
+    }
+
+    public override void OnDelete(SharedData sharedData)
+    {
+        Debug.Log(">>>frankNode OnDelete");
+    }
 }

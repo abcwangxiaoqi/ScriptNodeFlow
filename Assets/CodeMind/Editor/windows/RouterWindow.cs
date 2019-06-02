@@ -41,7 +41,7 @@ namespace CodeMind
         AnimBool scriptFadeGroup;
         MonoScript monoScript;
         Editor scriptEditor;
-        string error;
+
         public void draw(List<RouterWindowCondition> conditions, RouterWindowData routerData, Vector2 position, float connectPortSize, float connectPortOffset)
         {
             GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
@@ -58,7 +58,7 @@ namespace CodeMind
             GUIContent nameContent = new GUIContent(conditionData.name);
             if (conditionData.routerCondition == null)
             {
-                nameContent.tooltip = "script ref is none";
+                nameContent.tooltip = "script is invalid";
                 GUILayout.Label(nameContent
                     , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
             }
@@ -109,17 +109,12 @@ namespace CodeMind
                             conditionData.routerCondition = data as RouterCondition;
 
                             scriptEditor = Editor.CreateEditor(conditionData.routerCondition);
-                            error = null;
-                        }
-                        else
-                        {
-                            error = "script is invalid";
                         }
                     }
 
                     if (scriptEditor == null)
                     {
-                        GUILayout.Label(error);
+                        GUILayout.Label(CanvasLayout.Layout.canvas.RouterScriptErrorContent,CanvasLayout.Layout.canvas.RouterScriptErrorStyle);
                     }
                     else
                     {
@@ -482,7 +477,7 @@ namespace CodeMind
             Rect rect = GUILayoutUtility.GetRect(0, 0);
             if (rect.position != Vector2.zero)
             {
-                rect.position += position + new Vector2(0, connectPortOffset);
+                rect.position += position + new Vector2(connectPortOffset, connectPortOffset);
                 rect.size = new Vector2(connectPortSize, connectPortSize);
 
                 defaultConnectRect = rect;

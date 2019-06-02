@@ -17,7 +17,7 @@ namespace CodeMind
     public abstract class BaseWindow
     {
         protected static float connectPortSize = 12;
-        protected static float connectPortOffset = 4;
+        protected static float connectPortOffset = 2;
 
         protected virtual float windowWidth
         {
@@ -111,7 +111,7 @@ namespace CodeMind
             get
             {
                 Rect rect = windowRect;
-                rect.size += new Vector2(10, 10);
+                rect.size += new Vector2(11, 11);
                 rect.position -= new Vector2(5, 5);
                 return rect;
             }
@@ -184,7 +184,7 @@ namespace CodeMind
             {
                 EditorGUI.indentLevel++;
 
-                windowData.desc = EditorGUILayout.TextArea(windowData.desc, CanvasLayout.Layout.selected.DesTextStyle, GUILayout.Height(desHeight));
+                windowData.desc = EditorGUILayout.TextArea(windowData.desc, CanvasLayout.Layout.canvas.DesTextStyle, GUILayout.Height(desHeight));
 
                 EditorGUI.indentLevel--;
             }
@@ -256,7 +256,7 @@ namespace CodeMind
 
         }
 
-        public void SelectedDraw()
+        /*public void SelectedDraw()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
@@ -266,7 +266,7 @@ namespace CodeMind
             GUILayout.Space(5);
 
             EditorGUI.EndDisabledGroup();
-        }
+        }*/
     }
 }
 

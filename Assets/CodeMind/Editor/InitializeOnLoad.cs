@@ -54,6 +54,26 @@ namespace CodeMind
         /// <param name="data"></param>
         static void handleCfg(CodeMindData data)
         {
+            var path = AssetDatabase.GetAssetPath(data);
+            var allAssets = AssetDatabase.LoadAllAssetsAtPath(path);
+
+            foreach (var item in allAssets)
+            {
+                if(item == null)
+                {
+                 //   EditorUtility.SetDirty(data);
+                   // UnityEngine.Object.DestroyImmediate(item,true);
+                }
+                else
+                {
+                    if (AssetDatabase.IsMainAsset(item))
+                        continue;
+                    
+                  //  Debug.Log(item.name + ">>>" + item.GetType().FullName);
+                }
+            }
+
+            /*
             handleShareData(data);
 
             foreach (var item in data.nodelist)
@@ -75,7 +95,7 @@ namespace CodeMind
                 handleSubCfg(item);
             }
             
-            EditorUtility.SetDirty(data);
+            EditorUtility.SetDirty(data);*/
         }
 
         /// <summary>

@@ -11,16 +11,19 @@ namespace CodeMind
     [DisallowMultipleComponent]
     public class CodeMindController : MonoBehaviour
     {
-        public event Action<bool> onFinish;
+        public event Action onFinish;
 
         public event Action<SharedData> onSharedDataInitialize;
 
         public CodeMindData mindData { get; internal set; }
 
         SharedData shareData = null;
+
         // Use this for initialization
         void Start()
         {
+            mindData.OnCreate();
+            
             if (mindData.shareData!=null && onSharedDataInitialize != null)
             {
                 onSharedDataInitialize(mindData.shareData);
@@ -42,34 +45,15 @@ namespace CodeMind
             if (current == null)
                 return;
 
-            #region Node Update
 
             if (current.runtimeState == RuntimeState.Running)
             {
-                current.update(this);
+                current.OnUpdate(this);
             }
-
-            #endregion
-
-
-            if (current.runtimeState != RuntimeState.Idle)
-                return;
-
-            current.play(this);
-
-            /*if (current.type == NodeType.Start)
+            else if(current.runtimeState == RuntimeState.Idle)
             {
-                current.play(mindData);
+                current.OnPlay(this);
             }
-            else if (current.type == NodeType.Node ||
-                current.type == NodeType.Router)
-            {
-                current.play(mindData);
-            }
-            else if (current.type == NodeType.SubCodeMind)
-            {
-                current.play(mindData);
-            }*/
         }
 
         private void LateUpdate()
@@ -95,50 +79,53 @@ namespace CodeMind
 
                 if (current == null)
                 {
-                    if(mindData.mode == PlayMode.Loop)
-                    {
-                        reset();
-                    }
-                    else
-                    {
-                        finished = true;
-                        if (onFinish != null)
-                        {
-                            onFinish.Invoke(true);
-                        }
-                    }
+                    lastAdjust();
                 }
-                /*else if (current.runtimeState == RuntimeState.Finished)
+                else if(current != null && current.runtimeState == RuntimeState.Finished)
                 {
-                    current.reset();
-                }*/
+                    Debug.LogWarningFormat("Node \"{0}\" current state is Finished , but you still try to run ", current.name);
+                    lastAdjust();
+                }
             }
             else if (current.runtimeState == RuntimeState.Error)
             {
                 finished = true;
-                if (onFinish != null)
+
+                hasError = true;
+            }
+        }
+
+        public bool hasError { get; private set; }
+
+        void lastAdjust()
+        {
+            if (mindData.mode == PlayMode.Loop)
+            {
+                Reset();
+            }
+            else
+            {
+                finished = true;
+
+                if(onFinish!=null)
                 {
-                    onFinish.Invoke(false);
+                    onFinish.Invoke();
                 }
             }
         }
 
-        public void reset()
+        public void Reset()
         {
-            mindData.Reset();
+            mindData.OnReset();
 
             finished = false;
 
             current = mindData.start;
         }
 
-        public void Destroy()
+        private void OnDestroy()
         {
-            Destroy(this);
-        }
-
-        void OnDestroy()
-        {
+            mindData.OnDelete();
         }
     }
 }

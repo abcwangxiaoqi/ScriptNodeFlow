@@ -24,5 +24,11 @@ namespace CodeMind
             finished = true;
             errorMessage = error;
         }
+
+        public virtual void OnCreate(SharedData sharedData)
+        {}
+
+        public virtual void OnDelete(SharedData sharedData)
+        {}
     }
 }

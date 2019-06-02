@@ -143,6 +143,11 @@ namespace CodeMind
             codeMindWindowData.canvasData = (CodeMindData)EditorGUILayout.ObjectField(codeMindWindowData.canvasData, typeof(CodeMindData), false);
 
             EditorGUI.EndDisabledGroup();
+
+            if(codeMindWindowData.canvasData == null)
+            {
+                EditorGUILayout.LabelField(CanvasLayout.Layout.canvas.SubCanvasErrorContent, CanvasLayout.Layout.canvas.SubCanvasErrorStyle);
+            }
         }
 
         public override void deleteWindow()
