@@ -8,11 +8,11 @@ public class StepOneEnity : Node
 {
     //public StepOneEnity(SharedData data) : base(data) { }
 
-    public override void Play(SharedData sharedData)
+    public override void OnPlay(SharedData sharedData)
     {
         Debug.Log("Step One");
 
-        finish();
+        moveNext();
     }
 
     public override void ProcessUpdate(SharedData sharedData)

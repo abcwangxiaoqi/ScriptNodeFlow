@@ -29,11 +29,11 @@ namespace CodeMind
             node.OnCreate(sharedData);
         }
 
-        public override void OnDelete(SharedData sharedData)
+        public override void OnObjectDestroy(SharedData sharedData)
         {
-            base.OnDelete(sharedData);
+            base.OnObjectDestroy(sharedData);
 
-            node.OnDelete(sharedData);
+            node.OnObjectDestroy(sharedData);
         }
 
 
@@ -43,7 +43,7 @@ namespace CodeMind
             {
                 runtimeState = RuntimeState.Running;
 
-                node.Play(mindController.mindData.shareData);
+                node.OnPlay(mindController.mindData.shareData);
             }
             catch (Exception e)
             {

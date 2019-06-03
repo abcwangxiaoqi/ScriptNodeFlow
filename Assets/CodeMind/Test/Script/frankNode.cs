@@ -10,11 +10,11 @@ public class frankNode : Node
     [Range(0,10)]
     public int index;
 
-    public override void Play(SharedData sharedData)
+    public override void OnPlay(SharedData sharedData)
     {
         Debug.Log(">>>>" + str);
 
-        finish();
+        moveNext();
     }
 
 
@@ -23,7 +23,7 @@ public class frankNode : Node
         Debug.Log(">>>frankNode OnCreate");
     }
 
-    public override void OnDelete(SharedData sharedData)
+    public override void OnObjectDestroy(SharedData sharedData)
     {
         Debug.Log(">>>frankNode OnDelete");
     }

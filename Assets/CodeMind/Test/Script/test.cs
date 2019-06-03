@@ -7,10 +7,6 @@ public class test:MonoBehaviour
 {
     public CodeMindData mindData;
 
-    public TestC GetC;
-
-    public TestS testS;
-
     CodeMindController controller;
     GameObject controllerGamobject;
     private void Awake()
@@ -21,20 +17,7 @@ public class test:MonoBehaviour
 
     private void Test_onFinish()
     {
-        Debug.Log("Finish => success");
-        Destroy(controllerGamobject);
+        Debug.Log(">>>>>Finish");
     }
 
-}
-
-[System.Serializable]
-public class TestC
-{
-    public string str;
-}
-
-[System.Serializable]
-public struct TestS
-{
-    public string str;
 }

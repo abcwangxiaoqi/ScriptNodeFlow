@@ -31,6 +31,20 @@ public class testShareData : SharedData
     public float f19 = 0;
     public float f20 = 0;
     public float f21 = 0;
+
+    public override void OnCreate()
+    {
+        base.OnCreate();
+
+        Debug.Log(">>>SharedData>>OnCreate");
+    }
+
+    public override void OnObjectDestroy()
+    {
+        base.OnObjectDestroy();
+
+        Debug.Log(">>>SharedData>>OnObjectDestroy");
+    }
 }
 
 

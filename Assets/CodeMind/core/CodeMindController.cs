@@ -13,8 +13,6 @@ namespace CodeMind
     {
         public event Action onFinish;
 
-        public event Action<SharedData> onSharedDataInitialize;
-
         public CodeMindData mindData { get; internal set; }
 
         SharedData shareData = null;
@@ -23,11 +21,6 @@ namespace CodeMind
         void Start()
         {
             mindData.OnCreate();
-            
-            if (mindData.shareData!=null && onSharedDataInitialize != null)
-            {
-                onSharedDataInitialize(mindData.shareData);
-            }
 
             current = mindData.start;
         }
@@ -44,7 +37,6 @@ namespace CodeMind
 
             if (current == null)
                 return;
-
 
             if (current.runtimeState == RuntimeState.Running)
             {
@@ -125,7 +117,15 @@ namespace CodeMind
 
         private void OnDestroy()
         {
-            mindData.OnDelete();
+            if(!finished)
+            {
+                if (onFinish != null)
+                {
+                    onFinish.Invoke();
+                }
+            }
+
+            mindData.OnAssetDestroy();
         }
     }
 }

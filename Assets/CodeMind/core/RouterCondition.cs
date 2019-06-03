@@ -8,12 +8,12 @@ namespace CodeMind
         {
             
         }
-
-        public virtual void OnDelete(SharedData shareData)
-        {
-            
-        }
         
         public abstract bool Justify(SharedData shareData);
+
+        public virtual void OnObjectDestroy(SharedData shareData)
+        {
+
+        }
     }
 }

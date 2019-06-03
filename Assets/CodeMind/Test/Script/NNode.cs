@@ -7,7 +7,7 @@ public class NNode : Node
 {
     public string sss;
 
-    public override void Play(SharedData sharedData)
+    public override void OnPlay(SharedData sharedData)
     {
     }
 

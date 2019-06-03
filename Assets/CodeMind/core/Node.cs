@@ -9,7 +9,7 @@ namespace CodeMind
         public bool finished { get; private set; }
         public string errorMessage { get; private set; }
 
-        public abstract void Play(SharedData sharedData);
+        public abstract void OnPlay(SharedData sharedData);
 
         public virtual void ProcessUpdate(SharedData sharedData) { }
 
@@ -19,7 +19,7 @@ namespace CodeMind
         //
         //why be designed like this? 
         //cause maybe your execute method includes some asyn operations
-        protected void finish(string error = null)
+        protected void moveNext(string error = null)
         {
             finished = true;
             errorMessage = error;
@@ -28,7 +28,7 @@ namespace CodeMind
         public virtual void OnCreate(SharedData sharedData)
         {}
 
-        public virtual void OnDelete(SharedData sharedData)
+        public virtual void OnObjectDestroy(SharedData sharedData)
         {}
     }
 }

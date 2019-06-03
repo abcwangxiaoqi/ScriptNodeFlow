@@ -9,7 +9,7 @@ namespace CodeMind
         Once,
         Loop
     }
-    
+
     [Serializable]
     public class CodeMindData : ScriptableObject
     {
@@ -70,7 +70,7 @@ namespace CodeMind
         /// Instantiate this instance.
         /// </summary>
         /// <returns>The instantiate.</returns>
-        public GameObject Instantiate(out CodeMindController controller,Transform root = null)
+        public GameObject Instantiate(out CodeMindController controller, Transform root = null)
         {
             GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
             gameObject.transform.SetParent(root);
@@ -102,6 +102,11 @@ namespace CodeMind
 
         internal void OnCreate()
         {
+            if (shareData != null)
+            {
+                shareData.OnCreate();
+            }
+
             foreach (var item in nodelist)
             {
                 item.OnCreate(shareData);
@@ -118,21 +123,26 @@ namespace CodeMind
             }
         }
 
-        internal void OnDelete()
+        internal void OnAssetDestroy()
         {
+            if (shareData != null)
+            {
+                shareData.OnObjectDestroy();
+            }
+
             foreach (var item in nodelist)
             {
-                item.OnDelete(shareData);
+                item.OnObjectDestroy(shareData);
             }
 
             foreach (var item in routerlist)
             {
-                item.OnDelete(shareData);
+                item.OnObjectDestroy(shareData);
             }
 
             foreach (var item in subCodeMindlist)
             {
-                item.OnDelete(shareData);
+                item.OnObjectDestroy(shareData);
             }
         }
     }

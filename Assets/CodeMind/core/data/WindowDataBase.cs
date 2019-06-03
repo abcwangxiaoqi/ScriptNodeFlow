@@ -48,7 +48,7 @@ namespace CodeMind
             
         }
 
-        public virtual void OnDelete(SharedData sharedData)
+        public virtual void OnObjectDestroy(SharedData sharedData)
         {
         }
 

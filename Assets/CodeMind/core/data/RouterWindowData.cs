@@ -36,9 +36,9 @@ namespace CodeMind
             }
         }
 
-        public override void OnDelete(SharedData sharedData)
+        public override void OnObjectDestroy(SharedData sharedData)
         {
-            base.OnDelete(sharedData);
+            base.OnObjectDestroy(sharedData);
 
             foreach (var item in conditions)
             {
@@ -99,7 +99,7 @@ namespace CodeMind
 
         public void destroy(SharedData sdata)
         {
-            routerCondition.OnDelete(sdata);
+            routerCondition.OnObjectDestroy(sdata);
         }
 
         public bool excute(SharedData sdata)
