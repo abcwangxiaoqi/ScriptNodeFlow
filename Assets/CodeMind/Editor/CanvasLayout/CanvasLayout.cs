@@ -41,6 +41,10 @@ public class CanvasLayout : ScriptableObject
         }
     }
 
+    [Header("Asset Title")]
+    public GUIContent AssetTitleContent = new GUIContent("Code Mind");
+    public GUIStyle AssetTitleStyle = new GUIStyle();
+
     [Space(10)]
     [Header("Common Config")]
     public CommonCfg common = new CommonCfg();

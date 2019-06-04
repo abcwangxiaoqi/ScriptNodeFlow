@@ -18,6 +18,7 @@ public class test:MonoBehaviour
     private void Test_onFinish()
     {
         Debug.Log(">>>>>Finish");
+        Destroy(controllerGamobject);
     }
 
 }
