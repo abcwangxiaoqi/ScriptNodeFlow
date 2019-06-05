@@ -9,6 +9,10 @@ namespace CodeMind
         public GameObject prefab;
         public Vector3 position;
         public Vector3 eulerAngles;
+        public Vector4 vector444;
+        public Vector3 vector4;
+        public Vector3 vector5;
+        public Vector3 vector6;
 
         GameObject instance;
         protected override void OnNodePlay(SharedData sharedData)
