@@ -34,14 +34,14 @@ public class testShareData : SharedData
 
     protected override void OnDataCreate()
     {
-        base.OnCreate();
+        base.OnDataCreate();
 
         Debug.Log(">>>SharedData>>OnCreate");
     }
 
     protected override void OnDataDestroy()
     {
-        base.OnObjectDestroy();
+        base.OnDataDestroy();
 
         Debug.Log(">>>SharedData>>OnObjectDestroy");
     }

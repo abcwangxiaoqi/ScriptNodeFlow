@@ -139,6 +139,10 @@ namespace CodeMind
                 {
                     GUI.Label(rect, CanvasLayout.Layout.common.RunningLabelContent, CanvasLayout.Layout.common.RunningLabelStyle);
                 }
+                else if(windowData.runtimeState == RuntimeState.Finished)
+                {
+                    GUI.Label(rect, CanvasLayout.Layout.common.FinishLabelContent, CanvasLayout.Layout.common.FinishLabelStyle);
+                }
                 else if (windowData.runtimeState == RuntimeState.Error)
                 {
                     GUI.Label(rect, CanvasLayout.Layout.common.ErrorLabelContent, CanvasLayout.Layout.common.ErrorLabelStyle);

@@ -6,6 +6,7 @@ namespace CodeMind
 {
     public class WaitForSeconds : Node
     {
+
         public float time = 3;
 
         float passTime = 0f;

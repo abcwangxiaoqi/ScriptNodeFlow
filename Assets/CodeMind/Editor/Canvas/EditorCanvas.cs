@@ -146,6 +146,8 @@ namespace CodeMind
 
                 codeMindData = AssetDatabase.LoadAssetAtPath<CodeMindData>(path);
 
+                initilize(codeMindData);
+
                 Awake();
 
                 Repaint();

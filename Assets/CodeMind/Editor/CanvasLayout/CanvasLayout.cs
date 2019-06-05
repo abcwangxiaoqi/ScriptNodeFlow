@@ -67,6 +67,8 @@ public class CommonCfg
     public GUIStyle WindowTitleStyle = new GUIStyle();
     public GUIStyle window = new GUIStyle();
 
+    public GUIContent FinishLabelContent = new GUIContent("Finished");
+    public GUIStyle FinishLabelStyle = new GUIStyle();
     public GUIContent RunningLabelContent = new GUIContent("Running...");
     public GUIStyle RunningLabelStyle = new GUIStyle();
     public GUIContent ErrorLabelContent = new GUIContent("Error...");
