@@ -45,7 +45,7 @@ namespace CodeMind
         {
             base.Awake();
 
-   
+
             EditorApplication.playModeStateChanged += playModeStateChanged;
         }
 
@@ -83,81 +83,83 @@ namespace CodeMind
 
             curEvent = Event.current;
 
-            if (rightArea.Contains(curEvent.mousePosition))
+            if (curEvent.clickCount > 0)
             {
                 //must minus rightArea.position
                 mousePosition = curEvent.mousePosition - rightArea.position;
+            }
 
-                if (curEvent.button == 0 && curEvent.isMouse)
+            if (curEvent.button == 0 && curEvent.isMouse
+                     && rightArea.Contains(curEvent.mousePosition)
+                     && GUIUtility.hotControl <= 0)
+            {
+                //a window is whether selected
+                if (curEvent.type == EventType.MouseDown)
                 {
-                    //a window is whether selected
-                    if (curEvent.type == EventType.MouseDown)
+                    clickArea = true;
+
+                    curSelect = windowList.Find((BaseWindow w) =>
                     {
-                        clickArea = true;
+                        return w.isClick(mousePosition);
+                    });
 
-                        curSelect = windowList.Find((BaseWindow w) =>
+                    if (curSelect != null)
+                    {
+                        curSelect.Selected(true);
+
+                        foreach (var item in windowList)
                         {
-                            return w.isClick(mousePosition);
-                        });
+                            if (item == curSelect)
+                                continue;
 
-                        if (curSelect != null)
+                            item.Selected(false);
+                        }
+
+                        if (curEvent.clickCount == 2)
                         {
-                            curSelect.Selected(true);
+                            curSelect.leftMouseDoubleClick();
+                        }
+                    }
+                    else
+                    {
+                        GUI.FocusControl("");
 
+                        foreach (var item in windowList)
+                        {
+                            item.Selected(false);
+                        }
+                    }
+                }
+                else if (curEvent.type == EventType.MouseUp)
+                {
+                    clickArea = false;
+                }
+                else if (curEvent.type == EventType.MouseDrag
+                         && clickArea)
+                {
+                    if (curSelect != null)
+                    {
+                        curSelect.leftMouseDrag(curEvent.delta);
+                    }
+                    else
+                    {
+                        if (rightArea.Contains(curEvent.mousePosition))
+                        {
+                            //drag the panel
                             foreach (var item in windowList)
                             {
-                                if (item == curSelect)
-                                    continue;
-
-                                item.Selected(false);
-                            }
-
-                            if (curEvent.clickCount == 2)
-                            {
-                                curSelect.leftMouseDoubleClick();
-                            }
-                        }
-                        else
-                        {
-                            GUI.FocusControl("");
-
-                            foreach (var item in windowList)
-                            {
-                                item.Selected(false);
-                            }
-                        }
-
-                    }
-                    else if (curEvent.type == EventType.MouseUp)
-                    {
-                        clickArea = false;
-                    }
-                    else if (curEvent.type == EventType.MouseDrag)
-                    {
-                        if (curSelect != null)
-                        {
-                            curSelect.leftMouseDrag(curEvent.delta);
-                        }
-                        else if (clickArea)
-                        {
-                            if (rightArea.Contains(curEvent.mousePosition))
-                            {
-                                //drag the panel
-                                foreach (var item in windowList)
-                                {
-                                    item.leftMouseDrag(curEvent.delta);
-                                }
+                                item.leftMouseDrag(curEvent.delta);
                             }
                         }
                     }
                 }
-                Repaint();
             }
+
+            Repaint();
         }
 
         private void save()
         {
-
             saveMain();
         }
 
