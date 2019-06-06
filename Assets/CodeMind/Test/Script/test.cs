@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class test:MonoBehaviour
 {
+    public Vector4 vector4;
+    
     public CodeMindData mindData;
 
 
