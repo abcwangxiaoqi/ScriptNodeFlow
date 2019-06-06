@@ -20,7 +20,7 @@ namespace CodeMind
 
             GUILayout.Space(20);
 
-            base.OnInspectorGUI();
+            //base.OnInspectorGUI();
 
             EditorGUILayout.PrefixLabel("Desc");
             data.desc = GUILayout.TextArea(data.desc, GUILayout.Height(100));
