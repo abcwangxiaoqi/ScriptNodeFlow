@@ -259,18 +259,6 @@ namespace CodeMind
             }
 
         }
-
-        /*public void SelectedDraw()
-        {
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
-
-            GUILayout.Label(CanvasLayout.Layout.selected.DesContent, CanvasLayout.Layout.common.TextTitleStyle);
-            windowData.desc = GUILayout.TextArea(windowData.desc, CanvasLayout.Layout.selected.DesTextStyle, GUILayout.Height(80));
-
-            GUILayout.Space(5);
-
-            EditorGUI.EndDisabledGroup();
-        }*/
     }
 }
 

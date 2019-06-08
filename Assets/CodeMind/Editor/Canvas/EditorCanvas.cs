@@ -74,7 +74,6 @@ namespace CodeMind
         {
             base.Awake();
 
-            EditorApplication.playModeStateChanged -= playModeStateChanged;
             EditorApplication.playModeStateChanged += playModeStateChanged;
         }
 
@@ -247,10 +246,14 @@ namespace CodeMind
         {
             base.OnDestroy();
 
+            EditorApplication.playModeStateChanged -= playModeStateChanged;
+
             EditorUtility.SetDirty(codeMindData);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            codeMindData.Compile();
         }
 
         private void RightMouseSelect()

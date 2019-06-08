@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class test:MonoBehaviour
+public class testMain:MonoBehaviour
 {
-    public Vector4 vector4;
-    
     public CodeMindData mindData;
 
 

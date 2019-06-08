@@ -143,6 +143,14 @@ namespace CodeMind
                 connectRect.size = new Vector2(connectPortSize, connectPortSize);
             }
         }
+
+        internal void OnDelete()
+        {
+            if(conditionData.routerCondition !=null )
+            {
+                Object.DestroyImmediate(conditionData.routerCondition, true);
+            }
+        }
     }
 
     public class RouterWindow : BaseWindow
@@ -499,6 +507,8 @@ namespace CodeMind
                 {
                     item.nextWindow.SetParent(null);
                 }
+
+                item.OnDelete();
             }
         }
     }

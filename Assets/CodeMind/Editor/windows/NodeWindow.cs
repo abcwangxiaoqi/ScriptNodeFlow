@@ -208,6 +208,11 @@ namespace CodeMind
             {
                 next.SetParent(null);
             }
+
+            if(nodeData.node != null)
+            {
+                Object.DestroyImmediate(nodeData.node, true);
+            }
         }
     }
 }

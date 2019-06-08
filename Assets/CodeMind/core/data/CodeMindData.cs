@@ -145,5 +145,35 @@ namespace CodeMind
                 item.OnObjectDestroy(shareData);
             }
         }
+
+
+#if UNITY_EDITOR
+
+        public void Compile()
+        {
+            var path = UnityEditor.AssetDatabase.GetAssetPath(this);
+
+            foreach (var item in nodelist)
+            {
+                if (item.node != null)
+                    continue;
+
+                Debug.LogErrorFormat("{0} : Node '{1}' script is invalid", path, item.name);
+            }
+
+
+            List<RouterWindowData> routers = routerlist;
+            foreach (var item in routers)
+            {
+                foreach (var condItem in item.conditions)
+                {
+                    if (condItem.routerCondition != null)
+                        continue;
+
+                    Debug.LogErrorFormat("{0} : Condition '{1}' of Router '{2}' script is invalid", path, condItem.name, item.name);
+                }
+            }
+        }
+#endif
     }
 }
