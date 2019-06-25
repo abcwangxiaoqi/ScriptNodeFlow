@@ -62,7 +62,7 @@ namespace CodeMind
         {
             rightArea = CanvasLayout.Layout.GetNodeCanvasRect(position.size);
             GUILayout.BeginArea(rightArea, CanvasLayout.Layout.common.window);
-
+            
             drawRightNodesArea();
 
             drawRightNavigation();
@@ -252,6 +252,40 @@ namespace CodeMind
             {
                 itemWindow.position += dis;
             }
+        }
+
+        const int GRID_SIZE = 15;
+        //Draw a simple grid
+        static void DrawGrid(Rect container, Vector2 offset, float zoomFactor)
+        {
+
+            if (Event.current.type != EventType.Repaint)
+            {
+                return;
+            }
+
+            Handles.color = new Color(0, 0, 0, 0.15f);
+
+            var drawGridSize = zoomFactor > 0.5f ? GRID_SIZE : GRID_SIZE * 5;
+            var step = drawGridSize * zoomFactor;
+
+            var xDiff = offset.x % step;
+            var xStart = container.xMin + xDiff;
+            var xEnd = container.xMax;
+            for (var i = xStart; i < xEnd; i += step)
+            {
+                Handles.DrawLine(new Vector3(i, container.yMin, 0), new Vector3(i, container.yMax, 0));
+            }
+
+            var yDiff = offset.y % step;
+            var yStart = container.yMin + yDiff;
+            var yEnd = container.yMax;
+            for (var i = yStart; i < yEnd; i += step)
+            {
+                Handles.DrawLine(new Vector3(0, i, 0), new Vector3(container.xMax, i, 0));
+            }
+
+            Handles.color = Color.white;
         }
     }
 }
