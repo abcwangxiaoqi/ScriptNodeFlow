@@ -4,8 +4,34 @@ using UnityEngine;
 
 namespace CodeMind
 {
+    
     public abstract class Node : ScriptableObject
     {
+        [HideInInspector]
+        [SerializeField]
+        public Vector2 position;
+
+        [HideInInspector]
+        [SerializeField]
+        public string nextWindowId = null;
+
+        [HideInInspector]
+        [SerializeField]
+        public string ID = Guid.NewGuid().ToString();
+
+        //资源创建的时候
+        internal virtual void OnAssetCreate()
+        {
+        }
+
+        //资源删除的时候
+        internal virtual void OnAssetDelete()
+        {
+        }
+
+        /*------runtime--------*/
+
+        
         internal bool finished { get; private set; }
 
         internal string errorMessage { get; private set; }
@@ -24,6 +50,7 @@ namespace CodeMind
         {
             finished = false;
             errorMessage = string.Empty;
+
 
             OnNodePlay(sharedData);
         }
@@ -64,5 +91,7 @@ namespace CodeMind
         {
 
         }
+
+        internal virtual void OnReset(){}
     }
 }

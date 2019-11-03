@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CodeMind
 {
-    public class RuntimeCanvas : BaseCanvas
+    internal class RuntimeCanvas : BaseCanvas
     {
         static Dictionary<string, RuntimeCanvas> windowMap = new Dictionary<string, RuntimeCanvas>();
 

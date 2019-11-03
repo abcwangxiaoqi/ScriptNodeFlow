@@ -21,5 +21,8 @@ namespace CodeMind
         {
 
         }
+
+        [SerializeField]
+        string dd;
     }
 }

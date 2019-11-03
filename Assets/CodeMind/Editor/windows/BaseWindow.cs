@@ -82,7 +82,7 @@ namespace CodeMind
             }
         }
 
-        public WindowDataBase windowData { get; private set; }
+        //public WindowDataBase windowData { get; private set; }
 
         protected CodeMindData mindData { get; private set; }
 
@@ -92,7 +92,7 @@ namespace CodeMind
 
         protected BaseCanvas MainCanvas;
 
-        public BaseWindow(WindowDataBase _data, BaseCanvas canvas)
+        /*public BaseWindow(WindowDataBase _data, BaseCanvas canvas)
         {
             MainCanvas = canvas;
 
@@ -104,6 +104,26 @@ namespace CodeMind
             position = _data.position;
             windowList = canvas.windowList;
             Id = _data.ID;
+        }*/
+
+        protected string winName;
+        protected string winDes;
+
+        public BaseWindow(string _id,Vector2 _position, string name,string des,BaseCanvas canvas)
+        {
+            MainCanvas = canvas;
+
+            desFadeGroup = new AnimBool(false);
+            desFadeGroup.valueChanged.AddListener(MainCanvas.Repaint);
+
+            mindData = canvas.codeMindData;
+            //windowData = _data;
+            position = _position;
+            windowList = canvas.windowList;
+            Id = _id;
+
+            winName = name;
+            winDes = des;
         }
 
         public Rect selectRect
@@ -132,7 +152,7 @@ namespace CodeMind
             windowRect.position = position;
             windowRect.size = size;
 
-            if (Application.isPlaying)
+            /*if (Application.isPlaying)
             {
                 Rect rect = new Rect(windowRect.position + new Vector2(0, -30), new Vector2(size.x, 20));
                 if (windowData.runtimeState == RuntimeState.Running)
@@ -147,9 +167,9 @@ namespace CodeMind
                 {
                     GUI.Label(rect, CanvasLayout.Layout.common.ErrorLabelContent, CanvasLayout.Layout.common.ErrorLabelStyle);
                 }
-            }
+            }*/
 
-            GUIContent c = new GUIContent(windowType.ToString(), windowData.desc);                 
+            GUIContent c = new GUIContent(windowType.ToString(), winDes);                 
 
             if(selected)
             {
@@ -180,7 +200,8 @@ namespace CodeMind
         protected virtual void drawWindowContent()
         {
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
-            windowData.name = GUILayout.TextField(windowData.name, CanvasLayout.Layout.canvas.windowNameTextStyle);
+            //windowData.name = GUILayout.TextField(windowData.name, CanvasLayout.Layout.canvas.windowNameTextStyle);
+            winName = GUILayout.TextField(winName, CanvasLayout.Layout.canvas.windowNameTextStyle);
 
             desFadeGroup.target = EditorGUILayout.Foldout(desFadeGroup.target, "Describe");
 
@@ -188,7 +209,8 @@ namespace CodeMind
             {
                 EditorGUI.indentLevel++;
 
-                windowData.desc = EditorGUILayout.TextArea(windowData.desc, CanvasLayout.Layout.canvas.DesTextStyle, GUILayout.Height(desHeight));
+                //windowData.desc = EditorGUILayout.TextArea(windowData.desc, CanvasLayout.Layout.canvas.DesTextStyle, GUILayout.Height(desHeight));
+                winDes = EditorGUILayout.TextArea(winDes, CanvasLayout.Layout.canvas.DesTextStyle, GUILayout.Height(desHeight));
 
                 EditorGUI.indentLevel--;
             }
@@ -197,7 +219,12 @@ namespace CodeMind
             GUILayout.Space(5);
 
             EditorGUI.EndDisabledGroup();
+
+            OnDrawContent();
         }
+
+        protected virtual void OnDrawContent()
+        {}
 
         protected Vector2 GetOutPositionByPort(Rect rect)
         {
@@ -211,7 +238,7 @@ namespace CodeMind
         public virtual void leftMouseDrag(Vector2 delta)
         {
             position += delta;
-            windowData.position = position;
+            //windowData.position = position;
         }
 
         public virtual void leftMouseDoubleClick()

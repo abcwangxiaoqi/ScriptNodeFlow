@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CodeMind
 {
-    public class StartWindow : BaseWindow
+    internal class StartWindow : BaseWindow
     {
         //下一节点
         public BaseWindow next { get; protected set; }
@@ -29,7 +29,8 @@ namespace CodeMind
 
         StartWindowData startData;
         public StartWindow(StartWindowData itemData, BaseCanvas canvas)
-            : base(itemData, canvas)
+//            : base(itemData, canvas)
+            : base(itemData.ID,itemData.position,itemData.name,itemData.desc, canvas)
         {
             startData = itemData;
         }
@@ -85,10 +86,10 @@ namespace CodeMind
 
                 Color color = CanvasLayout.Layout.canvas.lineColor;
 
-                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
+                /*if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
-                }
+                }*/
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }

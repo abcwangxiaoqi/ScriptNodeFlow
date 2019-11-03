@@ -12,12 +12,19 @@ namespace CodeMind
 
         public Node node;
 
-        public override NodeType type
+        public sealed override NodeType type
         {
             get
             {
                 return NodeType.Node;
             }
+        }
+
+        public string typeName;
+
+        new public Type GetType()
+        {
+            return Type.GetType(typeName);
         }
 
         #region runtime

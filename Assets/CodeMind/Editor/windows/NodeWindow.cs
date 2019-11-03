@@ -8,12 +8,13 @@ using Object = UnityEngine.Object;
 
 namespace CodeMind
 {
-    public class NodeWindow : BaseWindow
+    
+    internal class NodeWindow : BaseWindow
     {
         //下一节点
         public BaseWindow next { get; protected set; }
 
-        protected override float windowWidth
+        protected sealed override float windowWidth
         {
             get
             {
@@ -21,7 +22,7 @@ namespace CodeMind
             }
         }
 
-        public override NodeType windowType
+        public sealed override NodeType windowType
         {
             get
             {
@@ -29,22 +30,38 @@ namespace CodeMind
             }
         }
 
-        MonoScript monoScript;
+        //public NodeWindowData nodeData;
 
-        public NodeWindowData nodeData;
+        public Node node;
 
-        Editor scriptEditor;
+        protected Editor scriptEditor;
 
-        AnimBool scriptFadeGroup;
+        protected AnimBool scriptFadeGroup;
 
-        public NodeWindow(NodeWindowData itemData, BaseCanvas canvas)
+        protected CodeMindNodeAttribute attribute;
+
+        /*public NodeWindow(CodeMindNodeAttribute attr,NodeWindowData itemData, BaseCanvas canvas)
             : base(itemData, canvas)
         {
+            attribute = attr;
             nodeData = itemData;
             if(nodeData.node!= null)
             {
-                monoScript = MonoScript.FromScriptableObject(nodeData.node);
                 scriptEditor = Editor.CreateEditor(nodeData.node);
+            }
+
+            scriptFadeGroup = new AnimBool(true);
+            scriptFadeGroup.valueChanged.AddListener(canvas.Repaint);
+        }*/
+
+        public NodeWindow(CodeMindNodeAttribute attr, Node _node, BaseCanvas canvas)
+            : base(_node.ID,_node.position,attr.showName, attr.windowDes,canvas)
+        {
+            attribute = attr;
+            node = _node;
+            if (node != null)
+            {
+                scriptEditor = Editor.CreateEditor(node);
             }
 
             scriptFadeGroup = new AnimBool(true);
@@ -63,15 +80,15 @@ namespace CodeMind
             if (entity != null)
             {
                 entity.SetParent(entity);
-                nodeData.nextWindowId = entity.Id;
+                node.nextWindowId = entity.Id;
             }     
             else
             {
-                nodeData.nextWindowId = null;
+                node.nextWindowId = null;
             }
         }
 
-        protected override void drawBefore()
+        protected sealed override void drawBefore()
         {
             base.drawBefore();
 
@@ -87,7 +104,7 @@ namespace CodeMind
 
         Event curEvent;
 
-        protected override void drawAfter()
+        protected sealed override void drawAfter()
         {
             base.drawAfter();
 
@@ -114,10 +131,10 @@ namespace CodeMind
 
                 Color color = CanvasLayout.Layout.canvas.lineColor;
 
-                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
+               /* if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
-                }
+                }*/
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
@@ -144,44 +161,8 @@ namespace CodeMind
         }
 
         private bool connectFlag = false;
-        protected override void drawWindowContent()
+        protected override void OnDrawContent()
         {
-            base.drawWindowContent();
-
-             var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
-
-            if(tempScript == null && tempScript != monoScript)
-            {
-                monoScript = tempScript;                
-                Object.DestroyImmediate(nodeData.node,true);
-                nodeData.node = null;
-                scriptEditor = null;
-            }
-            else
-            {
-                if (tempScript != monoScript)
-                {
-                    monoScript = tempScript;
-
-                    var type = monoScript.GetClass();
-
-                    if (type != null
-                        && type.IsSubclassOf(typeof(Node))
-                        && !type.IsAbstract
-                        && !type.IsInterface)
-                    {
-                        var data = ScriptableObject.CreateInstance(type);
-                        data.name = Id;
-
-                        AssetDatabase.AddObjectToAsset(data, mindData);
-                        nodeData.node = data as Node;
-
-                        scriptEditor = Editor.CreateEditor(nodeData.node);
-
-                    }
-                }
-            }       
-
             if(scriptEditor == null)
             {
                 GUILayout.Label(CanvasLayout.Layout.canvas.NodeScriptErrorContent, CanvasLayout.Layout.canvas.NodeScriptErrorStyle);
@@ -202,16 +183,16 @@ namespace CodeMind
             }
         }
 
-        public override void deleteWindow()
+        public sealed override void deleteWindow()
         {
             if (next != null)
             {
                 next.SetParent(null);
             }
 
-            if(nodeData.node != null)
+            if(node != null)
             {
-                Object.DestroyImmediate(nodeData.node, true);
+                Object.DestroyImmediate(node, true);
             }
         }
     }

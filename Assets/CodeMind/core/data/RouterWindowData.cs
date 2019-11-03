@@ -4,6 +4,21 @@ using UnityEngine;
 
 namespace CodeMind
 {
+
+    public interface IWindow
+    {
+        string ID { get; set; }
+        NodeType nodeType { get;}
+        Vector2 position { get; set; }
+        string winName{ get; set; }
+        string winDes{ get; set; }
+
+        void OnCreateAsset();
+        void OnDeleteAsset();
+    }
+
+
+
     [Serializable]
     public class RouterWindowData : WindowDataBase
     {
@@ -12,9 +27,10 @@ namespace CodeMind
             name = "Router Name";
         }
 
-        public List<RouterWindowConditionData> conditions = new List<RouterWindowConditionData>();
+        //public List<RouterWindowConditionData> conditions = new List<RouterWindowConditionData>();
+        public List<RouterCondition> conditions = new List<RouterCondition>();
 
-        public override NodeType type
+        public sealed override NodeType type
         {
             get
             {
@@ -32,7 +48,8 @@ namespace CodeMind
 
             foreach (var item in conditions)
             {
-                item.awake(sharedData);
+                //item.awake(sharedData);
+                item.OnCreate(sharedData);
             }
         }
 
@@ -42,7 +59,8 @@ namespace CodeMind
 
             foreach (var item in conditions)
             {
-                item.destroy(sharedData);
+                //item.destroy(sharedData);
+                item.OnObjectDestroy(sharedData);
             }
         }
 
@@ -54,7 +72,14 @@ namespace CodeMind
                 bool condFlag = false;
                 for (int i = 0; i < conditions.Count; i++)
                 {
-                    if (conditions[i].excute(mindController.mindData.shareData))
+                   /* if (conditions[i].excute(mindController.mindData.shareData))
+                    {
+                        condFlag = true;
+                        runtimeNextId = conditions[i].nextWindowId;
+                        break;
+                    }*/
+
+                    if (conditions[i].Justify(mindController.mindData.shareData))
                     {
                         condFlag = true;
                         runtimeNextId = conditions[i].nextWindowId;

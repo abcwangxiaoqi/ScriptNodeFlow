@@ -11,7 +11,7 @@ namespace CodeMind
 {
     public class RouterWindowCondition
     {
-        CodeMindData mindData;
+        /*CodeMindData mindData;
 
         public RouterWindowCondition(RouterWindowConditionData data, BaseCanvas canvas)
         {
@@ -150,10 +150,152 @@ namespace CodeMind
             {
                 Object.DestroyImmediate(conditionData.routerCondition, true);
             }
+        }*/
+
+
+        CodeMindData mindData;
+
+        public RouterWindowCondition(RouterCondition data, BaseCanvas canvas)
+        {
+            mindData = canvas.codeMindData;
+
+            scriptFadeGroup = new AnimBool(true);
+            scriptFadeGroup.valueChanged.AddListener(canvas.Repaint);
+
+            conditionData = data;
+
+            if (data != null)
+            {
+               // monoScript = MonoScript.FromScriptableObject(routerCondition);
+                scriptEditor = Editor.CreateEditor(conditionData);
+            }
+        }
+
+        public RouterCondition conditionData { get; private set; }
+        public BaseWindow nextWindow;
+        public Rect connectRect;
+        public bool connectFlag = false;
+        public bool expand = false;
+
+        const float ConditionH = 22;
+        const float expandConditionH = 66;
+
+        AnimBool scriptFadeGroup;
+        //MonoScript monoScript;
+        Editor scriptEditor;
+
+        public void draw(List<RouterWindowCondition> conditions, RouterWindowData routerData, Vector2 position, float connectPortSize, float connectPortOffset)
+        {
+            GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
+
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.DelConditionContent,
+                                 CanvasLayout.Layout.canvas.DelConditionStyle, GUILayout.Width(16), GUILayout.Height(16)))
+            {
+                routerData.conditions.Remove(this.conditionData);
+                conditions.Remove(this);
+            }
+
+            GUIContent nameContent = new GUIContent(conditionData.name);
+            if (conditionData == null)
+            {
+                nameContent.tooltip = "script is invalid";
+                GUILayout.Label(nameContent
+                    , CanvasLayout.Layout.canvas.ConditionUnExpandErrorLabelStyle);
+            }
+            else
+            {
+                GUILayout.Label(nameContent
+                    , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
+            }
+
+            if (GUILayout.Button(CanvasLayout.Layout.canvas.ConditionExpandBtContent,
+                                 expand ? CanvasLayout.Layout.canvas.ConditionUnexpandBtStyle : CanvasLayout.Layout.canvas.ConditionExpandBtStyle, GUILayout.Width(16), GUILayout.Height(16)))
+            {
+                expand = !expand;
+            }
+
+            GUILayout.EndHorizontal();
+
+            if (expand)
+            {
+                GUILayout.Space(3);
+                conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
+                /*var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
+
+                if (tempScript == null && tempScript != monoScript)
+                {
+                    //monoScript = tempScript;
+                    Object.DestroyImmediate(conditionData.routerCondition, true);
+                    conditionData.routerCondition = null;
+                    scriptEditor = null;
+                }
+                else
+                {*/
+                    /*if (tempScript != monoScript)
+                    {
+                        monoScript = tempScript;
+
+                        var type = monoScript.GetClass();
+
+                        if (type != null
+                            && type.IsSubclassOf(typeof(RouterCondition))
+                            && !type.IsAbstract
+                            && !type.IsInterface)
+                        {
+                            var data = ScriptableObject.CreateInstance(type);
+                            data.name = conditionData.ID;
+
+                            AssetDatabase.AddObjectToAsset(data, mindData);
+                            conditionData.routerCondition = data as RouterCondition;
+
+                            scriptEditor = Editor.CreateEditor(conditionData.routerCondition);
+                        }
+                    }*/
+
+                    if (scriptEditor == null)
+                    {
+                        GUILayout.Label(CanvasLayout.Layout.canvas.RouterScriptErrorContent, CanvasLayout.Layout.canvas.RouterScriptErrorStyle);
+                    }
+                    else
+                    {
+                        scriptFadeGroup.target = EditorGUILayout.Foldout(scriptFadeGroup.target, "Parameters");
+
+                        if (EditorGUILayout.BeginFadeGroup(scriptFadeGroup.faded))
+                        {
+                            EditorGUI.indentLevel++;
+
+                            scriptEditor.OnInspectorGUI();
+
+                            EditorGUI.indentLevel--;
+                        }
+                        EditorGUILayout.EndFadeGroup();
+                    }
+               // }
+
+            }
+
+            GUILayout.EndVertical();
+
+            Rect rect = GUILayoutUtility.GetLastRect();
+            if (rect.position != Vector2.zero)
+            {
+                connectRect.position = position + rect.position + new Vector2(rect.size.x + 2, -connectPortOffset + rect.size.y / 2);
+                connectRect.size = new Vector2(connectPortSize, connectPortSize);
+            }
+        }
+
+        internal void OnDelete()
+        {
+            if (conditionData != null)
+            {
+                Object.DestroyImmediate(conditionData, true);
+            }
         }
     }
 
-    public class RouterWindow : BaseWindow
+    internal class RouterWindow : BaseWindow
     {
         static int MaxCondition = 10;
 
@@ -187,7 +329,8 @@ namespace CodeMind
 
         RouterWindowData routerData;
         public RouterWindow(RouterWindowData itemData, BaseCanvas canvas)
-            : base(itemData, canvas)
+            //: base(itemData, canvas)
+            :base(itemData.ID,itemData.position,itemData.name,itemData.desc,canvas)
         {
             routerData = itemData;
         }
@@ -335,12 +478,12 @@ namespace CodeMind
 
                 color = CanvasLayout.Layout.canvas.lineColor;
 
-                if (Application.isPlaying
+               /* if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
                     && (windowData as RouterWindowData).runtimeNextId == condition.nextWindow.Id)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
-                }
+                }*/
 
                 DrawArrow(GetOutPositionByPort(condition.connectRect), condition.nextWindow.In, color);
             }
@@ -358,12 +501,12 @@ namespace CodeMind
 
                 color = CanvasLayout.Layout.canvas.lineColor;
 
-                if (Application.isPlaying
+               /* if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
                     && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
-                }
+                }*/
 
                 DrawArrow(GetOutPositionByPort(defaultConnectRect), defaultNextWindow.In, color);
             }
@@ -427,9 +570,8 @@ namespace CodeMind
             defaultConnectFlag = false;
         }
 
-        protected override void drawWindowContent()
+        protected override void OnDrawContent()
         {
-            base.drawWindowContent();
 
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
@@ -438,9 +580,12 @@ namespace CodeMind
             GUI.color = CanvasLayout.Layout.canvas.AddConditionBtColor;
             if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
-                RouterWindowConditionData con = new RouterWindowConditionData();
+                /*RouterWindowConditionData con = new RouterWindowConditionData();
                 routerData.conditions.Add(con);
-                conditions.Add(new RouterWindowCondition(con, MainCanvas));
+                conditions.Add(new RouterWindowCondition(con, MainCanvas));*/
+
+                //弹出所有的自定义条件
+
             }
             GUI.color = Color.white;
             EditorGUI.EndDisabledGroup();

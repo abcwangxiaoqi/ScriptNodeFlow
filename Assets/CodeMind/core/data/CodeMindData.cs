@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Reflection;
 
 namespace CodeMind
 {
@@ -18,7 +19,8 @@ namespace CodeMind
         public SharedData shareData;
 
         public StartWindowData start = new StartWindowData();
-        public List<NodeWindowData> nodelist = new List<NodeWindowData>();
+        //public List<NodeWindowData> nodelist = new List<NodeWindowData>();
+        public List<Node> nodelist = new List<Node>();
         public List<RouterWindowData> routerlist = new List<RouterWindowData>();
         public List<CodeMindWindowData> subCodeMindlist = new List<CodeMindWindowData>();
 
@@ -28,9 +30,9 @@ namespace CodeMind
         {
             WindowDataBase data = null;
 
-            data = nodelist.Find(windowData => { return windowData.ID == id; });
+            /*data = nodelist.Find(windowData => { return windowData.ID == id; });
             if (data != null)
-                return data;
+                return data;*/
 
             data = routerlist.Find(windowData => { return windowData.ID == id; });
             if (data != null)
@@ -45,8 +47,21 @@ namespace CodeMind
         {
             NodeWindowData node = new NodeWindowData();
             node.position = position;
-            nodelist.Add(node);
+            //nodelist.Add(node);
             return node;
+        }
+
+        public Node AddCustomNode(Type type,Vector2 position)
+        {
+            var data = ScriptableObject.CreateInstance(type) as Node;
+            data.name = data.ID;
+            data.position = position;
+
+            UnityEditor.AssetDatabase.AddObjectToAsset(data, this);
+
+            nodelist.Add(data);
+
+            return data;
         }
 
         public RouterWindowData AddRouter(Vector2 position)
@@ -155,7 +170,7 @@ namespace CodeMind
 
             foreach (var item in nodelist)
             {
-                if (item.node != null)
+                if (item != null)
                     continue;
 
                 Debug.LogErrorFormat("{0} : Node '{1}' script is invalid", path, item.name);
@@ -167,7 +182,10 @@ namespace CodeMind
             {
                 foreach (var condItem in item.conditions)
                 {
-                    if (condItem.routerCondition != null)
+                    /*if (condItem.routerCondition != null)
+                        continue;*/
+                    
+                    if (condItem != null)
                         continue;
 
                     Debug.LogErrorFormat("{0} : Condition '{1}' of Router '{2}' script is invalid", path, condItem.name, item.name);

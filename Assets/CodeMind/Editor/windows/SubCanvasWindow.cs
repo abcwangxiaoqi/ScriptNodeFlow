@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace CodeMind
 {
-    public class SubCanvasWindow : BaseWindow
+    internal class SubCanvasWindow : BaseWindow
     {
         static SubCanvasWindow()
         {
@@ -36,7 +36,8 @@ namespace CodeMind
         
         CodeMindWindowData codeMindWindowData;
         public SubCanvasWindow(CodeMindWindowData itemData, BaseCanvas canvas)
-            : base(itemData, canvas)
+//            : base(itemData, canvas)
+            : base(itemData.ID,itemData.position,itemData.name,itemData.desc, canvas)
         {
             codeMindWindowData = itemData;
         }
@@ -110,10 +111,10 @@ namespace CodeMind
 
                 Color color = CanvasLayout.Layout.canvas.lineColor;
 
-                if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
+               /* if (Application.isPlaying && windowData.runtimeState == RuntimeState.Finished)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
-                }
+                }*/
 
                 DrawArrow(GetOutPositionByPort(OutPortRect), next.In, color);
             }
@@ -134,10 +135,8 @@ namespace CodeMind
         }
         
         private SubCanvasData tempCanvas;
-        protected override void drawWindowContent()
+        protected override void OnDrawContent()
         {
-            base.drawWindowContent();
-
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
             codeMindWindowData.canvasData = (CodeMindData)EditorGUILayout.ObjectField(codeMindWindowData.canvasData, typeof(CodeMindData), false);

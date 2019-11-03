@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Reflection;
 using Object = UnityEngine.Object;
+using System;
 
 namespace CodeMind
 {
-    public class EditorCanvas : BaseCanvas
+    internal class EditorCanvas : BaseCanvas
     {
         static Dictionary<string, EditorCanvas> windowMap = new Dictionary<string, EditorCanvas>();
 
@@ -81,8 +83,8 @@ namespace CodeMind
         {
             base.initilize(mindData);
 
-            try
-            {
+            //try
+            //{
                 // quit unity editor when this window is active
                 // reopen unity have to close this error window
 
@@ -91,12 +93,57 @@ namespace CodeMind
                 assetKey = string.Format("NODEASSETPATH_{0}", codeMindData.GetInstanceID());
                 
                 generateData();
-            }
+
+
+
+                //初始化自定义数据
+                initilizeCumstomData();
+           /* }
             catch (System.Exception ex)
             {
                 Debug.LogWarning(ex.Message);
                 initilizeFlag = false;
                 Close();
+            }*/
+        }
+
+        struct CodeMindCustomNodeStruct
+        {
+            public Type type;
+            public CodeMindNodeAttribute attribute;
+        }
+
+        List<CodeMindCustomNodeStruct> customNodeStructs = new List<CodeMindCustomNodeStruct>();
+
+        /// <summary>
+        /// 初始化 自定义的窗口数据
+        /// </summary>
+        void initilizeCumstomData()
+        {
+            customNodeStructs.Clear();
+
+            var types = Util.EngineTypes;
+
+            foreach (var item in types)
+            {
+                if(item.IsSubclassOf(typeof(Node)))
+                {
+                    //var serialAttrs = item.GetCustomAttributes(typeof(SerializableAttribute), false);
+                    //if(serialAttrs!=null && serialAttrs[0]!=null)
+                    //{
+                        var attrs = item.GetCustomAttributes(typeof(CodeMindNodeAttribute), false);
+
+                    if (attrs != null && attrs.Length>0 && attrs[0] != null)
+                        {
+                            var attr = attrs[0] as CodeMindNodeAttribute;
+                            customNodeStructs.Add(new CodeMindCustomNodeStruct()
+                            {
+                                type = item,
+                                attribute = attr
+                            });
+                        }   
+                    //}
+                }
             }
         }
 
@@ -278,7 +325,7 @@ namespace CodeMind
                     {
                         curSelect.deleteWindow();
 
-                        if (curSelect.windowType == NodeType.Node)
+                        /*if (curSelect.windowType == NodeType.Node)
                         {
                             codeMindData.nodelist.Remove(curSelect.windowData as NodeWindowData);
                         }
@@ -289,7 +336,7 @@ namespace CodeMind
                         else if (curSelect.windowType == NodeType.SubCodeMind)
                         {
                             codeMindData.subCodeMindlist.Remove(curSelect.windowData as CodeMindWindowData);
-                        }
+                        }*/
 
                         windowList.Remove(curSelect);
                     });
@@ -299,11 +346,11 @@ namespace CodeMind
                 else
                 {
                     GenericMenu menu = new GenericMenu();
-                    menu.AddItem(addNode, false, () =>
+                    /*menu.AddItem(addNode, false, () =>
                     {
                         var node = codeMindData.AddNode(mousePosition);
                         windowList.Add(new NodeWindow(node, this));
-                    });
+                    });*/
 
                     menu.AddItem(addRouter, false, () =>
                     {
@@ -317,6 +364,30 @@ namespace CodeMind
                         var sub = codeMindData.AddSubCanvas(mousePosition);
                         windowList.Add(new SubCanvasWindow(sub, this));
                     });
+
+
+                    //增加自定义的控件选项
+                    foreach (var item in customNodeStructs)
+                    {
+                        var content = new GUIContent("Node/" + item.attribute.showName);
+                        menu.AddItem(content, false, () =>
+                        {
+                            var node = codeMindData.AddCustomNode(item.type,mousePosition);
+
+                            /*
+                            node.name = item.attribute.windowName;
+                            node.desc = item.attribute.windowDes;
+
+                            var data = ScriptableObject.CreateInstance(item.attribute.nodeType);
+                            data.name = node.ID;
+
+                            AssetDatabase.AddObjectToAsset(data, this.codeMindData);
+                            node.node = data as Node;
+                            */
+
+                            windowList.Add(new NodeWindow(item.attribute,node, this));
+                        });
+                    }
 
                     menu.ShowAsContext();
                 }

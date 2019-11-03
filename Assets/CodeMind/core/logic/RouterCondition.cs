@@ -4,6 +4,9 @@ namespace CodeMind
 {
     public abstract class RouterCondition : ScriptableObject
     {
+        public string des = "Condition Name";
+        public string nextWindowId = null;
+        
         internal void OnCreate(SharedData shareData)
         {
             OnConditionCreate(shareData);

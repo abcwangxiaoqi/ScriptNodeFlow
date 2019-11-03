@@ -166,7 +166,8 @@ namespace CodeMind
 
             foreach (var item in codeMindData.nodelist)
             {
-                windowList.Add(new NodeWindow(item, this));
+                var attr = item.GetType().GetCustomAttributes(typeof(CodeMindNodeAttribute), false)[0] as CodeMindNodeAttribute;
+                windowList.Add(new NodeWindow(attr,item, this));
             }
 
             foreach (var item in codeMindData.routerlist)
@@ -184,7 +185,7 @@ namespace CodeMind
             {
                 if (item.windowType == NodeType.Node)
                 {
-                    NodeWindowData edata = codeMindData.nodelist.Find(data => { return data.ID == item.Id; });
+                    Node edata = codeMindData.nodelist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
