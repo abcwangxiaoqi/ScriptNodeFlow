@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace CodeMind
 {
+    public interface IWindowsAsset
+    {
+        void AssetCreate();
+        void AssetDelete();
+    }
+    
     [Serializable]
     public class RouterWindowData : WindowDataBase
     {
@@ -14,12 +20,51 @@ namespace CodeMind
 
         public List<RouterWindowConditionData> conditions = new List<RouterWindowConditionData>();
 
+        public List<string> preConditionTypes { get; private set; }
         public override NodeType type
         {
             get
             {
                 return NodeType.Router;
             }
+        }
+
+        public void AssetCreate()
+        {
+            preConditionTypes = new List<string>();
+
+            OnAssetCreate();
+        }
+
+        protected virtual void OnAssetCreate()
+        {
+        }
+
+        public void AssetDelete()
+        {
+            OnAssetDelete();
+
+            //destroy all conditions
+            foreach (var item in conditions)
+            {
+                item.AssetDelete();
+            }
+
+            conditions.Clear();
+        }
+
+        protected virtual void OnAssetDelete()
+        { }
+
+        /// <summary>
+        /// Adds the condition.
+        /// </summary>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        protected void AddPreCondition<T>()
+            where T:RouterWindowConditionData
+        {
+            var tyName = typeof(T).FullName;
+            preConditionTypes.Add(tyName);
         }
 
         #region runtime
@@ -91,6 +136,30 @@ namespace CodeMind
         public RouterCondition routerCondition;
 
         public string nextWindowId = null;
+
+        public void AssetCreate()
+        {
+            OnAssetCreate();
+        }
+
+        protected virtual void OnAssetCreate()
+        {
+        }
+
+        public void AssetDelete()
+        {
+            OnAssetDelete();
+
+            if (routerCondition == null)
+                return;
+
+            UnityEngine.Object.DestroyImmediate(routerCondition,true);
+        }
+
+        protected virtual void OnAssetDelete()
+        { }
+
+        /*-----runtime---------*/
 
         public void awake(SharedData sdata)
         {

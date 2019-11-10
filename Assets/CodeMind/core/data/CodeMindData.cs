@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Reflection;
 
 namespace CodeMind
 {
@@ -49,12 +50,109 @@ namespace CodeMind
             return node;
         }
 
+        public NodeWindowData AddNode(Type type, Vector2 postion,NodeUsageAttribute attribute)
+        {
+            var nodeData = Activator.CreateInstance(type) as NodeWindowData;
+            nodeData.position = postion;
+            nodeData.name = attribute.winName;
+            nodeData.desc = attribute.winDes;
+
+            //generate the node
+            var node = ScriptableObject.CreateInstance(attribute.targetType) as Node;
+            node.name = nodeData.ID;
+            UnityEditor.AssetDatabase.AddObjectToAsset(node, this);
+
+            nodeData.node = node;
+
+            nodeData.AssetCreate();
+
+            nodelist.Add(nodeData);
+
+            return nodeData;
+        }
+
+        public void RemoveNode(NodeWindowData nodeWindow)
+        {
+            if (nodeWindow == null)
+                return;
+
+            nodeWindow.AssetDelete();
+
+            nodelist.Remove(nodeWindow);
+        }
+
         public RouterWindowData AddRouter(Vector2 position)
         {
             RouterWindowData router = new RouterWindowData();
             router.position = position;
             routerlist.Add(router);
             return router;
+        }
+
+        public RouterWindowData AddRouter(Type type,Vector2 position,RouterUsageAttribute attribute)
+        {
+            var routerData = Activator.CreateInstance(type) as RouterWindowData;
+            routerData.position = position;
+            routerData.name = attribute.winName;
+            routerData.desc = attribute.winDes;
+
+            routerData.AssetCreate();
+
+            //add pre conditions
+
+            var preTypes = routerData.preConditionTypes;
+            foreach (var tyname in preTypes)
+            {
+                var ty = Type.GetType(tyname);
+                if (ty == null)
+                    continue;
+
+                var serialAttrs = ty.GetCustomAttributes(typeof(System.SerializableAttribute), false);
+                if (serialAttrs == null || serialAttrs.Length == 0)
+                    continue;
+
+                var attrs = ty.GetCustomAttributes(typeof(ConditionUsageAttribute), false);
+                if (attrs == null || attrs.Length == 0)
+                    continue;
+
+                var attr = attrs[0] as ConditionUsageAttribute;
+
+                var condition = AddCondition(ty, attr);
+
+                routerData.conditions.Add(condition);
+            }
+
+            routerlist.Add(routerData);
+
+            return routerData;
+        }
+
+        public void RemoveRouter(RouterWindowData router)
+        {
+            router.AssetDelete();
+
+            routerlist.Remove(router);
+        }
+
+        public RouterWindowConditionData AddCondition(Type type,ConditionUsageAttribute attribute)
+        {
+            var conditionData = Activator.CreateInstance(type) as RouterWindowConditionData;
+            conditionData.name = attribute.conditionName;
+
+            var condition = ScriptableObject.CreateInstance(attribute.conditionType) as RouterCondition;
+            condition.name = conditionData.ID;
+            UnityEditor.AssetDatabase.AddObjectToAsset(condition, this);
+
+            conditionData.routerCondition = condition;
+
+            return conditionData;
+        }
+
+        public void RemoveCondition(RouterWindowData router,RouterWindowConditionData condition)
+        {
+            condition.AssetDelete();
+
+            router.conditions.Remove(condition);
         }
 
         public CodeMindWindowData AddSubCanvas(Vector2 position)

@@ -206,14 +206,32 @@ namespace CodeMind
                     }
 
                     //set conditions
-                    List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
+                  /*  List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
                     foreach (var con in edata.conditions)
                     {
                         RouterWindowCondition rcon = new RouterWindowCondition(con, this);
                         rcon.nextWindow = FindWindow(con.nextWindowId);
                         conditions.Add(rcon);
                     }
-                    win.SetConditions(conditions);
+                    win.SetConditions(conditions);*/
+
+                    foreach (var condition in win.conditions)
+                    {
+                        var nextWin = FindWindow(condition.conditionData.nextWindowId);
+                        if (nextWin == null)
+                            continue;
+
+                        condition.nextWindow = nextWin;
+
+                        if (nextWin is NodeWindow)
+                        {
+                            (nextWin as NodeWindow).SetParent(win);
+                        }
+                        else if (nextWin is SubCanvasWindow)
+                        {
+                            (nextWin as SubCanvasWindow).SetParent(win);
+                        }
+                    }
                 }
                 else if (item.windowType == NodeType.SubCodeMind)
                 {
@@ -286,6 +304,23 @@ namespace CodeMind
             }
 
             Handles.color = Color.white;
+        }
+
+
+        public List<CustomNodeStruct> customNodeStructList { get; private set; }
+        public List<CustomRouterStruct> customRouterStructList { get; private set; }
+        public List<CustomConditionStruct> customConditionStructList { get; private set; }
+        protected void updateCustoms()
+        {
+
+            List<CustomNodeStruct> _customNodeStructList;
+            List<CustomRouterStruct> _customRouterStructList;
+            List<CustomConditionStruct> _customConditionStructList;
+            Util.LoadAllCusmtom(out _customNodeStructList, out _customRouterStructList, out _customConditionStructList);
+
+            customNodeStructList = _customNodeStructList;
+            customRouterStructList = _customRouterStructList;
+            customConditionStructList = _customConditionStructList;
         }
     }
 }

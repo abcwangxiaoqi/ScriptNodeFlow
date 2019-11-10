@@ -51,8 +51,10 @@ namespace CodeMind
             if (GUILayout.Button(CanvasLayout.Layout.canvas.DelConditionContent,
                                  CanvasLayout.Layout.canvas.DelConditionStyle, GUILayout.Width(16), GUILayout.Height(16)))
             {
-                routerData.conditions.Remove(this.conditionData);
+                //routerData.conditions.Remove(this.conditionData);
+                mindData.RemoveCondition(routerData, conditionData);
                 conditions.Remove(this);
+                return;
             }
 
             GUIContent nameContent = new GUIContent(conditionData.name);
@@ -80,7 +82,7 @@ namespace CodeMind
             {
                 GUILayout.Space(3);
                 conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
-                var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
+                /*var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
 
                 if (tempScript == null && tempScript != monoScript)
                 {
@@ -90,8 +92,8 @@ namespace CodeMind
                     scriptEditor = null;
                 }
                 else
-                {
-                    if (tempScript != monoScript)
+                {*/
+                    /*if (tempScript != monoScript)
                     {
                         monoScript = tempScript;
 
@@ -110,7 +112,7 @@ namespace CodeMind
 
                             scriptEditor = Editor.CreateEditor(conditionData.routerCondition);
                         }
-                    }
+                    }*/
 
                     if (scriptEditor == null)
                     {
@@ -130,7 +132,7 @@ namespace CodeMind
                         }
                         EditorGUILayout.EndFadeGroup();
                     }
-                }
+                //}
 
             }
 
@@ -157,7 +159,7 @@ namespace CodeMind
     {
         static int MaxCondition = 10;
 
-        protected List<RouterWindowCondition> conditions = new List<RouterWindowCondition>();
+        public List<RouterWindowCondition> conditions { get; private set; }
 
         public override NodeType windowType
         {
@@ -190,6 +192,14 @@ namespace CodeMind
             : base(itemData, canvas)
         {
             routerData = itemData;
+
+            conditions = new List<RouterWindowCondition>();
+
+            foreach (var item in routerData.conditions)
+            {
+                RouterWindowCondition condition = new RouterWindowCondition(item, canvas);
+                conditions.Add(condition);
+            }
         }
 
         public void SetDefault(BaseWindow defEntity)
@@ -210,10 +220,9 @@ namespace CodeMind
             {
                 routerData.nextWindowId = null;
             }
-
         }
 
-        public void SetConditions(List<RouterWindowCondition> conditionEntities)
+        /*public void SetConditions(List<RouterWindowCondition> conditionEntities)
         {
             conditions = conditionEntities;
 
@@ -231,7 +240,7 @@ namespace CodeMind
                     }
                 }
             }
-        }
+        }*/
 
         protected Color color;
         Event curEvent;
@@ -438,9 +447,26 @@ namespace CodeMind
             GUI.color = CanvasLayout.Layout.canvas.AddConditionBtColor;
             if (GUILayout.Button(CanvasLayout.Layout.canvas.AddConditionContent, CanvasLayout.Layout.canvas.AddConditionBtStyle))
             {
-                RouterWindowConditionData con = new RouterWindowConditionData();
+                /*RouterWindowConditionData con = new RouterWindowConditionData();
                 routerData.conditions.Add(con);
-                conditions.Add(new RouterWindowCondition(con, MainCanvas));
+                conditions.Add(new RouterWindowCondition(con, MainCanvas));*/
+
+                GenericMenu menu = new GenericMenu();
+
+                foreach (var item in MainCanvas.customConditionStructList)
+                {
+                    GUIContent content = new GUIContent(item.attribute.viewText);
+                    menu.AddItem(content, false, () => 
+                    {
+                        var data = mindData.AddCondition(item.type, item.attribute);
+                        routerData.conditions.Add(data);
+
+                        RouterWindowCondition condition = new RouterWindowCondition(data, MainCanvas);
+                        conditions.Add(condition);
+                    });
+                }
+
+                menu.ShowAsContext();
             }
             GUI.color = Color.white;
             EditorGUI.EndDisabledGroup();

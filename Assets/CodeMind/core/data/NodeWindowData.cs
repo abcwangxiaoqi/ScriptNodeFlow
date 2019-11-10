@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace CodeMind
 {
@@ -19,6 +20,29 @@ namespace CodeMind
                 return NodeType.Node;
             }
         }
+
+        public void AssetCreate()
+        {
+            OnAssetCreate();
+        }
+
+        protected virtual void OnAssetCreate()
+        {
+        }
+
+        public void AssetDelete()
+        {
+            if(node!=null)
+            {
+                UnityEngine.Object.DestroyImmediate(node);
+            }
+
+            OnAssetDelete();
+        }
+
+        protected virtual void OnAssetDelete()
+        {}
+
 
         #region runtime
 

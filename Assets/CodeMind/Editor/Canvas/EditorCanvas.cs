@@ -89,8 +89,12 @@ namespace CodeMind
                 codeMindAssePath = AssetDatabase.GetAssetPath(codeMindData);
 
                 assetKey = string.Format("NODEASSETPATH_{0}", codeMindData.GetInstanceID());
-                
+
+                updateCustoms();
+
                 generateData();
+
+
             }
             catch (System.Exception ex)
             {
@@ -280,7 +284,7 @@ namespace CodeMind
 
                         if (curSelect.windowType == NodeType.Node)
                         {
-                            codeMindData.nodelist.Remove(curSelect.windowData as NodeWindowData);
+                            codeMindData.RemoveNode(curSelect.windowData as NodeWindowData);
                         }
                         else if (curSelect.windowType == NodeType.Router)
                         {
@@ -317,6 +321,26 @@ namespace CodeMind
                         var sub = codeMindData.AddSubCanvas(mousePosition);
                         windowList.Add(new SubCanvasWindow(sub, this));
                     });
+
+                    foreach (var custom in customNodeStructList)
+                    {
+                        GUIContent content = new GUIContent(string.Format("Nodes/{0}", custom.attribute.viewText));
+                            menu.AddItem(content, false, ()=>
+                            {
+                                var node = codeMindData.AddNode(custom.type, mousePosition,custom.attribute);
+                                windowList.Add(new NodeWindow(node, this));
+                            });
+                    }
+
+                    foreach (var custom in customRouterStructList)
+                    {
+                        GUIContent content = new GUIContent(string.Format("Routers/{0}", custom.attribute.viewText));
+                        menu.AddItem(content, false, () =>
+                        {
+                            var router = codeMindData.AddRouter(custom.type, mousePosition, custom.attribute);
+                            windowList.Add(new RouterWindow(router, this));
+                        });
+                    }
 
                     menu.ShowAsContext();
                 }

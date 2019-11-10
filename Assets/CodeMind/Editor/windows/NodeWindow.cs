@@ -148,7 +148,7 @@ namespace CodeMind
         {
             base.drawWindowContent();
 
-             var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
+           /*  var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
 
             if(tempScript == null && tempScript != monoScript)
             {
@@ -180,7 +180,7 @@ namespace CodeMind
 
                     }
                 }
-            }       
+            }    */   
 
             if(scriptEditor == null)
             {
