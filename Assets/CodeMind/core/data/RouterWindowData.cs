@@ -7,14 +7,28 @@ namespace CodeMind
 
     public interface IWindow
     {
-        string ID { get; set; }
+        string ID { get;  }
         NodeType nodeType { get;}
-        Vector2 position { get; set; }
-        string winName{ get; set; }
-        string winDes{ get; set; }
+        Vector2 winPos { get; }
+        string winName{ get; }
+        string winDes{ get; }
+        string nextWindowId { get;  }
 
         void OnCreateAsset();
         void OnDeleteAsset();
+
+        /*------runtime--------*/
+
+        bool isFinished { get; }
+        string errorMessage { get; }
+
+        void Init(SharedData sharedData);
+        void Play(SharedData sharedData);
+        void ProcessUpdate(SharedData sharedData);
+
+        void Destroy(SharedData sharedData);
+
+        void Reset(SharedData sharedData);
     }
 
 

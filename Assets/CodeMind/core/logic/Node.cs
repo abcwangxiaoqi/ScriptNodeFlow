@@ -5,67 +5,138 @@ using UnityEngine;
 namespace CodeMind
 {
     
-    public abstract class Node : ScriptableObject
+    public abstract class Node : ScriptableObject,IWindow
     {
         [HideInInspector]
         [SerializeField]
-        public Vector2 position;
+        string _ID = Guid.NewGuid().ToString();
+        public string ID
+        {
+            get
+            {
+                return _ID;
+            }
+        }
+
 
         [HideInInspector]
         [SerializeField]
-        public string nextWindowId = null;
+        Vector2 _winPos;
+
+        public Vector2 winPos
+        {
+            get{
+                return _winPos;
+            }
+            internal set
+            {
+                _winPos = value;
+            }
+        }
+
+        public NodeType nodeType 
+        {
+            get
+            {
+                return NodeType.Node;
+            }
+        }
+
 
         [HideInInspector]
         [SerializeField]
-        public string ID = Guid.NewGuid().ToString();
+        string _winName;
+
+        public string winName
+        {
+            get
+            {
+                return _winName;
+            }
+            internal set
+            {
+                _winName = value;
+            }
+        }
+
+        [HideInInspector]
+        [SerializeField]
+        string _winDes;
+
+        public string winDes
+        {
+            get
+            {
+                return _winDes;
+            }
+            internal set
+            {
+                _winDes = value;
+            }
+        }
+
+        [HideInInspector]
+        [SerializeField]
+        string _nextWindowId = null;
+        public string nextWindowId
+        {
+            get
+            {
+                return _nextWindowId;
+            }
+            internal set
+            {
+                _nextWindowId = value;
+            }
+        }
 
         //资源创建的时候
-        internal virtual void OnAssetCreate()
+        public virtual void OnCreateAsset()
         {
         }
 
         //资源删除的时候
-        internal virtual void OnAssetDelete()
+        public virtual void OnDeleteAsset()
         {
         }
 
         /*------runtime--------*/
 
         
-        internal bool finished { get; private set; }
+        public bool isFinished { get; private set; }
 
-        internal string errorMessage { get; private set; }
+        public string errorMessage { get; private set; }
 
-        internal void OnCreate(SharedData sharedData)
+        public void Init(SharedData sharedData)
         {
-            OnNodeCreate(sharedData);
+            OnInit(sharedData);
         }
 
-        protected virtual void OnNodeCreate(SharedData sharedData)
+        protected virtual void OnInit(SharedData sharedData)
         {
 
         }
 
-        internal void OnPlay(SharedData sharedData)
+        public void Play(SharedData sharedData)
         {
-            finished = false;
+            isFinished = false;
             errorMessage = string.Empty;
 
 
-            OnNodePlay(sharedData);
+            OnPlay(sharedData);
         }
 
-        protected virtual void OnNodePlay(SharedData sharedData)
+        protected virtual void OnPlay(SharedData sharedData)
         {
 
         }
 
-        internal void ProcessUpdate(SharedData sharedData)
+        public void ProcessUpdate(SharedData sharedData)
         {
-            OnNodeUpdate(sharedData);
+            OnProcessUpdate(sharedData);
         }
 
-        protected virtual void OnNodeUpdate(SharedData sharedData)
+        protected virtual void OnProcessUpdate(SharedData sharedData)
         {
 
         }
@@ -78,20 +149,29 @@ namespace CodeMind
         //cause maybe your execute method includes some asyn operations
         protected void moveNext(string error = null)
         {
-            finished = true;
+            isFinished = true;
             errorMessage = error;
         }
 
-        internal virtual void OnObjectDestroy(SharedData sharedData)
+        public void Destroy(SharedData sharedData)
         {
-            OnNodeDestroy(sharedData);
+            OnDestroy(sharedData);
         }
 
-        protected virtual void OnNodeDestroy(SharedData sharedData)
+        protected virtual void OnDestroy(SharedData sharedData)
         {
-
+            
         }
 
-        internal virtual void OnReset(){}
+        public void Reset(SharedData sharedData)
+        {
+            OnReset(sharedData);
+        }
+
+
+        protected virtual void OnReset(SharedData sharedData)
+        {}
+
+
     }
 }

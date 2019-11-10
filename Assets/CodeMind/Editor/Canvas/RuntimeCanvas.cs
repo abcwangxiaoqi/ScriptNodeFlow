@@ -173,7 +173,7 @@ namespace CodeMind
 
                 if (cur != null)
                 {
-                    cur.position = win.position;
+                    cur.winPos = win.position;
                     continue;
                 }
 

@@ -7,9 +7,9 @@ public class example2_ChangeColor : Node
 {
     public Color color;
 
-    protected override void OnNodePlay(SharedData sharedData)
+    protected override void OnPlay(SharedData sharedData)
     {
-        base.OnNodePlay(sharedData);
+        base.OnPlay(sharedData);
 
         try
         {

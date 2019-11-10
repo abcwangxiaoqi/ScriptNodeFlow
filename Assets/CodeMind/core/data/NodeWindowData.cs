@@ -33,14 +33,14 @@ namespace CodeMind
         {
             base.OnCreate(sharedData);
 
-            node.OnCreate(sharedData);
+           // node.OnCreate(sharedData);
         }
 
         public override void OnObjectDestroy(SharedData sharedData)
         {
             base.OnObjectDestroy(sharedData);
 
-            node.OnObjectDestroy(sharedData);
+           // node.OnObjectDestroy(sharedData);
         }
 
 
@@ -50,7 +50,7 @@ namespace CodeMind
             {
                 runtimeState = RuntimeState.Running;
 
-                node.OnPlay(mindController.mindData.shareData);
+            //    node.OnPlay(mindController.mindData.shareData);
             }
             catch (Exception e)
             {
@@ -62,7 +62,7 @@ namespace CodeMind
 
         public override void OnUpdate(CodeMindController mindController)
         {            
-            if(node.finished)
+            if(node.isFinished)
             {
                 if(string.IsNullOrEmpty(node.errorMessage))
                 {

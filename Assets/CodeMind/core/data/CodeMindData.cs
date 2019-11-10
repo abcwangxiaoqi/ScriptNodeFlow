@@ -55,7 +55,7 @@ namespace CodeMind
         {
             var data = ScriptableObject.CreateInstance(type) as Node;
             data.name = data.ID;
-            data.position = position;
+            data.winPos = position;
 
             UnityEditor.AssetDatabase.AddObjectToAsset(data, this);
 
@@ -101,7 +101,7 @@ namespace CodeMind
 
             foreach (var item in nodelist)
             {
-                item.OnReset();
+                item.Reset(shareData);
             }
 
             foreach (var item in routerlist)
@@ -124,7 +124,7 @@ namespace CodeMind
 
             foreach (var item in nodelist)
             {
-                item.OnCreate(shareData);
+                item.Init(shareData);
             }
 
             foreach (var item in routerlist)
@@ -147,7 +147,7 @@ namespace CodeMind
 
             foreach (var item in nodelist)
             {
-                item.OnObjectDestroy(shareData);
+                item.Destroy(shareData);
             }
 
             foreach (var item in routerlist)

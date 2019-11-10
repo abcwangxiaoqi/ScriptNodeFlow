@@ -16,31 +16,31 @@ public class myCustomNode:Node
     public string str3;
     public string str4;
     public string str5;
-    protected override void OnNodeCreate(SharedData sharedData)
+    protected override void OnInit(SharedData sharedData)
     {
-        base.OnNodeCreate(sharedData);
+        base.OnInit(sharedData);
 
-        Debug.Log(">>>OnNodeCreate " + debugStr);
+        Debug.Log(">>>OnInit " + debugStr);
     }
 
-    protected override void OnNodeDestroy(SharedData sharedData)
+    protected override void OnDestroy(SharedData sharedData)
     {
-        base.OnNodeDestroy(sharedData);
+        base.OnDestroy(sharedData);
 
-        Debug.Log(">>>OnNodeDestroy " + debugStr);
+        Debug.Log(">>>OnDestroy " + debugStr);
     }
 
-    protected override void OnNodePlay(SharedData sharedData)
+    protected override void OnPlay(SharedData sharedData)
     {
-        base.OnNodePlay(sharedData);
+        base.OnPlay(sharedData);
 
-        Debug.Log(">>>OnNodePlay " + debugStr);
+        Debug.Log(">>>OnPlay " + debugStr);
     }
 
-    protected override void OnNodeUpdate(SharedData sharedData)
+    protected override void OnProcessUpdate(SharedData sharedData)
     {
-        base.OnNodeUpdate(sharedData);
+        base.OnProcessUpdate(sharedData);
 
-        Debug.Log(">>>OnNodeUpdate " + debugStr);
+        Debug.Log(">>>OnProcessUpdate " + debugStr);
     }
 }
