@@ -11,17 +11,17 @@ namespace CodeMind
     }
     
     [Serializable]
-    public class RouterWindowData : WindowDataBase
+    public class RouterWindowProxy : WindowDataBase,IWindowsAsset
     {
-        public RouterWindowData()
+        public RouterWindowProxy()
         {
             name = "Router Name";
         }
 
-        public List<RouterWindowConditionData> conditions = new List<RouterWindowConditionData>();
+        public List<RouterWindowConditionProxy> conditions = new List<RouterWindowConditionProxy>();
 
         public List<string> preConditionTypes { get; private set; }
-        public override NodeType type
+        public sealed override NodeType type
         {
             get
             {
@@ -61,7 +61,7 @@ namespace CodeMind
         /// </summary>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         protected void AddPreCondition<T>()
-            where T:RouterWindowConditionData
+            where T:RouterWindowConditionProxy
         {
             var tyName = typeof(T).FullName;
             preConditionTypes.Add(tyName);
@@ -126,8 +126,10 @@ namespace CodeMind
         #endregion
     }
 
-    [Serializable]
-    public class RouterWindowConditionData
+
+
+    [Serializable] //这个类不能 是 抽象类 否则 在编译后序列化会有问题
+    public class RouterWindowConditionProxy:IWindowsAsset
     {
         public string ID = Guid.NewGuid().ToString();
         

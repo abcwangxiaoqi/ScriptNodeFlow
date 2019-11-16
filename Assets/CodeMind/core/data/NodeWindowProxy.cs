@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace CodeMind
 {
-    [Serializable]
-    public class NodeWindowData : WindowDataBase
+    [Serializable]//这个类不能 是 抽象类 否则 在编译后序列化会有问题
+    public class NodeWindowProxy : WindowDataBase,IWindowsAsset
     {
-        public NodeWindowData()
+        public NodeWindowProxy()
         {
             name = "Node Name";
         }
 
         public Node node;
 
-        public override NodeType type
+        public sealed override NodeType type
         {
             get
             {
@@ -28,6 +28,7 @@ namespace CodeMind
 
         protected virtual void OnAssetCreate()
         {
+            
         }
 
         public void AssetDelete()

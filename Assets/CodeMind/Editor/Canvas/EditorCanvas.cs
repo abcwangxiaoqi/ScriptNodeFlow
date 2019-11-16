@@ -63,11 +63,13 @@ namespace CodeMind
             windowMap[path].position = windowRect;
         }
 
-        static GUIContent addNode = new GUIContent("Add Node");
-        static GUIContent addRouter = new GUIContent("Add Router");
+       // static GUIContent addNode = new GUIContent("Add Node");
+        static GUIContent addRouter = new GUIContent("Routers/Empty");
         static GUIContent addCanvas = new GUIContent("Add Canvas");
         static GUIContent comiling = new GUIContent("...Comiling...");
         
+
+
 
         string codeMindAssePath;
         protected override void Awake()
@@ -246,6 +248,8 @@ namespace CodeMind
             Repaint();
         }
 
+
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -284,11 +288,11 @@ namespace CodeMind
 
                         if (curSelect.windowType == NodeType.Node)
                         {
-                            codeMindData.RemoveNode(curSelect.windowData as NodeWindowData);
+                            codeMindData.RemoveNode(curSelect.windowData as NodeWindowProxy);
                         }
                         else if (curSelect.windowType == NodeType.Router)
                         {
-                            codeMindData.routerlist.Remove(curSelect.windowData as RouterWindowData);
+                            codeMindData.routerlist.Remove(curSelect.windowData as RouterWindowProxy);
                         }
                         else if (curSelect.windowType == NodeType.SubCodeMind)
                         {
@@ -303,17 +307,11 @@ namespace CodeMind
                 else
                 {
                     GenericMenu menu = new GenericMenu();
-                    menu.AddItem(addNode, false, () =>
+                    /*menu.AddItem(addNode, false, () =>
                     {
                         var node = codeMindData.AddNode(mousePosition);
                         windowList.Add(new NodeWindow(node, this));
-                    });
-
-                    menu.AddItem(addRouter, false, () =>
-                    {
-                        var router = codeMindData.AddRouter(mousePosition);
-                        windowList.Add(new RouterWindow(router, this));
-                    });
+                    });*/
 
 
                     menu.AddItem(addCanvas, false, () =>
@@ -331,6 +329,12 @@ namespace CodeMind
                                 windowList.Add(new NodeWindow(node, this));
                             });
                     }
+
+                    menu.AddItem(addRouter, false, () =>
+                    {
+                        var router = codeMindData.AddRouter(mousePosition);
+                        windowList.Add(new RouterWindow(router, this));
+                    });
 
                     foreach (var custom in customRouterStructList)
                     {

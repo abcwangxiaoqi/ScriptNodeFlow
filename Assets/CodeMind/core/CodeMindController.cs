@@ -62,7 +62,7 @@ namespace CodeMind
                 //get next
                 if (current.type == NodeType.Router)
                 {
-                    current = mindData.Get((current as RouterWindowData).runtimeNextId);
+                    current = mindData.Get((current as RouterWindowProxy).runtimeNextId);
                 }
                 else
                 {

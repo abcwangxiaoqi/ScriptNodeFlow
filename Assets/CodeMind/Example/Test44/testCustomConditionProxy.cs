@@ -5,7 +5,7 @@ using CodeMind;
 
 [System.Serializable]
 [ConditionUsage(typeof(testCustomCondition1),"myConditon1","myCondition Name")]
-public class testCustomConditionProxy : RouterWindowConditionData
+public class testCustomConditionProxy : RouterWindowConditionProxy
 {
 
 

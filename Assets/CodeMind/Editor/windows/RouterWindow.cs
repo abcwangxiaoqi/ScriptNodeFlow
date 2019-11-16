@@ -13,7 +13,7 @@ namespace CodeMind
     {
         CodeMindData mindData;
 
-        public RouterWindowCondition(RouterWindowConditionData data, BaseCanvas canvas)
+        public RouterWindowCondition(RouterWindowConditionProxy data, BaseCanvas canvas)
         {
             mindData = canvas.codeMindData;
 
@@ -29,7 +29,7 @@ namespace CodeMind
             }
         }
 
-        public RouterWindowConditionData conditionData { get; private set; }
+        public RouterWindowConditionProxy conditionData { get; private set; }
         public BaseWindow nextWindow;
         public Rect connectRect;
         public bool connectFlag = false;
@@ -42,7 +42,7 @@ namespace CodeMind
         MonoScript monoScript;
         Editor scriptEditor;
 
-        public void draw(List<RouterWindowCondition> conditions, RouterWindowData routerData, Vector2 position, float connectPortSize, float connectPortOffset)
+        public void draw(List<RouterWindowCondition> conditions, RouterWindowProxy routerData, Vector2 position, float connectPortSize, float connectPortOffset)
         {
             GUILayout.BeginVertical(CanvasLayout.Layout.canvas.ConditionBoxStyle);
 
@@ -66,8 +66,15 @@ namespace CodeMind
             }
             else
             {
-                GUILayout.Label(nameContent
-                    , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
+                if(expand)
+                {
+                    conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
+                }
+                else
+                {
+                    GUILayout.Label(nameContent
+    , CanvasLayout.Layout.canvas.ConditionUnExpandLabelStyle);
+                }
             }
 
             if (GUILayout.Button(CanvasLayout.Layout.canvas.ConditionExpandBtContent,
@@ -80,8 +87,8 @@ namespace CodeMind
 
             if (expand)
             {
-                GUILayout.Space(3);
-                conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
+                //GUILayout.Space(3);
+                //conditionData.name = EditorGUILayout.TextField(conditionData.name, CanvasLayout.Layout.canvas.ConditionNameText);
                 /*var tempScript = (MonoScript)EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false);
 
                 if (tempScript == null && tempScript != monoScript)
@@ -187,8 +194,8 @@ namespace CodeMind
         protected Rect defaultConnectRect;
         protected bool defaultConnectFlag = false;
 
-        RouterWindowData routerData;
-        public RouterWindow(RouterWindowData itemData, BaseCanvas canvas)
+        RouterWindowProxy routerData;
+        public RouterWindow(RouterWindowProxy itemData, BaseCanvas canvas)
             : base(itemData, canvas)
         {
             routerData = itemData;
@@ -346,7 +353,7 @@ namespace CodeMind
 
                 if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
-                    && (windowData as RouterWindowData).runtimeNextId == condition.nextWindow.Id)
+                    && (windowData as RouterWindowProxy).runtimeNextId == condition.nextWindow.Id)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }
@@ -369,7 +376,7 @@ namespace CodeMind
 
                 if (Application.isPlaying
                     && windowData.runtimeState == RuntimeState.Finished
-                    && (windowData as RouterWindowData).runtimeNextId == defaultNextWindow.Id)
+                    && (windowData as RouterWindowProxy).runtimeNextId == defaultNextWindow.Id)
                 {
                     color = CanvasLayout.Layout.canvas.runtimelineColor;
                 }

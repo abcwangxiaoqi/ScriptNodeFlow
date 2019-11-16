@@ -39,6 +39,36 @@ namespace CodeMind
         Vector2 scroll = Vector2.zero;
 
 
+        void selectShareData()
+        {
+            var list = MainCanvas.customSharedDataStructList;
+
+            GenericMenu menu = new GenericMenu();
+
+            foreach (var item in list)
+            {
+                GUIContent content = new GUIContent(item.attribute.viewText, item.attribute.name);
+                menu.AddItem(content, false, () =>
+                {
+                    if(mindData.shareData!=null)
+                    {
+                        Object.DestroyImmediate(mindData.shareData, true);
+                        mindData.shareData = null;
+                    }
+                    
+                    var data = ScriptableObject.CreateInstance(item.type);
+                    data.name = "ShareData";
+
+                    AssetDatabase.AddObjectToAsset(data, mindData);
+                    mindData.shareData = data as SharedData;
+
+                    editor = Editor.CreateEditor(mindData.shareData);
+                });
+            }
+
+            menu.ShowAsContext();
+        }
+
         public void draw()
         {
             rect.x = MainCanvas.position.size.x - 15 - rect.size.x;
@@ -50,11 +80,16 @@ namespace CodeMind
             mindData.mode = (PlayMode)EditorGUILayout.EnumPopup(mindData.mode,GUILayout.ExpandWidth(true));
             GUILayout.EndHorizontal();
 
-           
+            GUILayout.Space(3);
+
+            if(GUILayout.Button("ShareData"))
+            {
+                selectShareData();
+            }
 
             GUILayout.Space(3);
 
-            var tempScript = EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false) as MonoScript;
+            /*var tempScript = EditorGUILayout.ObjectField(monoScript, typeof(MonoScript), false) as MonoScript;
 
             if(tempScript == null && tempScript != monoScript)
             {
@@ -85,7 +120,7 @@ namespace CodeMind
                         editor = Editor.CreateEditor(mindData.shareData);
                     }
                 }
-            }     
+            }     */
 
 
 
@@ -107,6 +142,19 @@ namespace CodeMind
                     //GUILayout.EndScrollView();
                 }
                 EditorGUILayout.EndFadeGroup();
+
+                GUILayout.Space(3);
+
+                if(GUILayout.Button("Clear"))
+                {
+                    if (mindData.shareData != null)
+                    {
+                        Object.DestroyImmediate(mindData.shareData, true);
+                        mindData.shareData = null;
+
+                        editor = null;
+                    }
+                }
               
             }
             else

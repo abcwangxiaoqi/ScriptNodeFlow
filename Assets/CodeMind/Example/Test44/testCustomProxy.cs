@@ -5,6 +5,6 @@ using CodeMind;
 
 [System.Serializable]
 [NodeUsage(typeof(testCustomNode),"my first node","mynode1","my node1 des")]
-public class testCustomProxy : NodeWindowData {
+public class testCustomProxy : NodeWindowProxy {
 
 }

@@ -184,7 +184,7 @@ namespace CodeMind
             {
                 if (item.windowType == NodeType.Node)
                 {
-                    NodeWindowData edata = codeMindData.nodelist.Find(data => { return data.ID == item.Id; });
+                    NodeWindowProxy edata = codeMindData.nodelist.Find(data => { return data.ID == item.Id; });
 
                     if (!string.IsNullOrEmpty(edata.nextWindowId))
                     {
@@ -195,7 +195,7 @@ namespace CodeMind
                 }
                 else if (item.windowType == NodeType.Router)
                 {
-                    RouterWindowData edata = codeMindData.routerlist.Find(data => { return data.ID == item.Id; });
+                    RouterWindowProxy edata = codeMindData.routerlist.Find(data => { return data.ID == item.Id; });
                     RouterWindow win = item as RouterWindow;
 
                     //set default
@@ -310,17 +310,19 @@ namespace CodeMind
         public List<CustomNodeStruct> customNodeStructList { get; private set; }
         public List<CustomRouterStruct> customRouterStructList { get; private set; }
         public List<CustomConditionStruct> customConditionStructList { get; private set; }
+        public List<CustomSharedDataStruct> customSharedDataStructList { get; private set; }
         protected void updateCustoms()
         {
-
             List<CustomNodeStruct> _customNodeStructList;
             List<CustomRouterStruct> _customRouterStructList;
             List<CustomConditionStruct> _customConditionStructList;
-            Util.LoadAllCusmtom(out _customNodeStructList, out _customRouterStructList, out _customConditionStructList);
+            List<CustomSharedDataStruct> _customSharedDataStructList;
+            Util.LoadAllCusmtom(out _customNodeStructList, out _customRouterStructList, out _customConditionStructList,out _customSharedDataStructList);
 
             customNodeStructList = _customNodeStructList;
             customRouterStructList = _customRouterStructList;
             customConditionStructList = _customConditionStructList;
+            customSharedDataStructList = _customSharedDataStructList;
         }
     }
 }

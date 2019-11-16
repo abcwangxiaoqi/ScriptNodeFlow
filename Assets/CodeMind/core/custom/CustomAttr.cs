@@ -60,3 +60,19 @@ public class ConditionUsageAttribute : Attribute
     public string conditionName { get; private set; }
     public Type conditionType { get; private set; }
 }
+
+/// <summary>
+/// be used in SharedData
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+public class SharedDataUsageAttribute : Attribute
+{
+    public SharedDataUsageAttribute(string _name, string _viewText)
+    {
+        name = _name;
+        viewText = _viewText;
+    }
+
+    public string viewText { get; private set; }
+    public string name { get; private set; }
+}

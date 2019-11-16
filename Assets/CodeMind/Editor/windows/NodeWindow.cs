@@ -31,13 +31,13 @@ namespace CodeMind
 
         MonoScript monoScript;
 
-        public NodeWindowData nodeData;
+        public NodeWindowProxy nodeData;
 
         Editor scriptEditor;
 
         AnimBool scriptFadeGroup;
 
-        public NodeWindow(NodeWindowData itemData, BaseCanvas canvas)
+        public NodeWindow(NodeWindowProxy itemData, BaseCanvas canvas)
             : base(itemData, canvas)
         {
             nodeData = itemData;

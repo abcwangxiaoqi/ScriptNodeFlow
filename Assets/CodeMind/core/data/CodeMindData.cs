@@ -19,8 +19,8 @@ namespace CodeMind
         public SharedData shareData;
 
         public StartWindowData start = new StartWindowData();
-        public List<NodeWindowData> nodelist = new List<NodeWindowData>();
-        public List<RouterWindowData> routerlist = new List<RouterWindowData>();
+        public List<NodeWindowProxy> nodelist = new List<NodeWindowProxy>();
+        public List<RouterWindowProxy> routerlist = new List<RouterWindowProxy>();
         public List<CodeMindWindowData> subCodeMindlist = new List<CodeMindWindowData>();
 
         public string desc;
@@ -42,17 +42,17 @@ namespace CodeMind
             return data;
         }
 
-        public NodeWindowData AddNode(Vector2 position)
+        /*public NodeWindowData AddNode(Vector2 position)
         {
             NodeWindowData node = new NodeWindowData();
             node.position = position;
             nodelist.Add(node);
             return node;
-        }
+        }*/
 
-        public NodeWindowData AddNode(Type type, Vector2 postion,NodeUsageAttribute attribute)
+        public NodeWindowProxy AddNode(Type type, Vector2 postion,NodeUsageAttribute attribute)
         {
-            var nodeData = Activator.CreateInstance(type) as NodeWindowData;
+            var nodeData = Activator.CreateInstance(type) as NodeWindowProxy;
             nodeData.position = postion;
             nodeData.name = attribute.winName;
             nodeData.desc = attribute.winDes;
@@ -71,7 +71,7 @@ namespace CodeMind
             return nodeData;
         }
 
-        public void RemoveNode(NodeWindowData nodeWindow)
+        public void RemoveNode(NodeWindowProxy nodeWindow)
         {
             if (nodeWindow == null)
                 return;
@@ -81,22 +81,20 @@ namespace CodeMind
             nodelist.Remove(nodeWindow);
         }
 
-        public RouterWindowData AddRouter(Vector2 position)
+        public RouterWindowProxy AddRouter(Vector2 position)
         {
-            RouterWindowData router = new RouterWindowData();
+            RouterWindowProxy router = new RouterWindowProxy();
             router.position = position;
             routerlist.Add(router);
             return router;
         }
 
-        public RouterWindowData AddRouter(Type type,Vector2 position,RouterUsageAttribute attribute)
+        public RouterWindowProxy AddRouter(Type type,Vector2 position,RouterUsageAttribute attribute)
         {
-            var routerData = Activator.CreateInstance(type) as RouterWindowData;
+            var routerData = Activator.CreateInstance(type) as RouterWindowProxy;
             routerData.position = position;
             routerData.name = attribute.winName;
             routerData.desc = attribute.winDes;
-
-            routerData.AssetCreate();
 
             //add pre conditions
 
@@ -124,19 +122,21 @@ namespace CodeMind
 
             routerlist.Add(routerData);
 
+            routerData.AssetCreate();
+
             return routerData;
         }
 
-        public void RemoveRouter(RouterWindowData router)
+        public void RemoveRouter(RouterWindowProxy router)
         {
             router.AssetDelete();
 
             routerlist.Remove(router);
         }
 
-        public RouterWindowConditionData AddCondition(Type type,ConditionUsageAttribute attribute)
+        public RouterWindowConditionProxy AddCondition(Type type,ConditionUsageAttribute attribute)
         {
-            var conditionData = Activator.CreateInstance(type) as RouterWindowConditionData;
+            var conditionData = Activator.CreateInstance(type) as RouterWindowConditionProxy;
             conditionData.name = attribute.conditionName;
 
             var condition = ScriptableObject.CreateInstance(attribute.conditionType) as RouterCondition;
@@ -145,10 +145,12 @@ namespace CodeMind
 
             conditionData.routerCondition = condition;
 
+            conditionData.AssetCreate();
+
             return conditionData;
         }
 
-        public void RemoveCondition(RouterWindowData router,RouterWindowConditionData condition)
+        public void RemoveCondition(RouterWindowProxy router,RouterWindowConditionProxy condition)
         {
             condition.AssetDelete();
 
@@ -260,7 +262,7 @@ namespace CodeMind
             }
 
 
-            List<RouterWindowData> routers = routerlist;
+            List<RouterWindowProxy> routers = routerlist;
             foreach (var item in routers)
             {
                 foreach (var condItem in item.conditions)

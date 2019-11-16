@@ -8,8 +8,8 @@ namespace CodeMind
     public class SubCanvasData : ScriptableObject
     {
         public StartWindowData start = new StartWindowData();
-        public List<NodeWindowData> nodelist = new List<NodeWindowData>();
-        public List<RouterWindowData> routerlist = new List<RouterWindowData>();
+        public List<NodeWindowProxy> nodelist = new List<NodeWindowProxy>();
+        public List<RouterWindowProxy> routerlist = new List<RouterWindowProxy>();
 
         public string desc;
 
