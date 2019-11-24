@@ -13,14 +13,25 @@ namespace CodeMind
     {
         public event Action onFinish;
 
-        public CodeMindData mindData { get; internal set; }
+        public CodeMindData mindData { get; private set; }
 
         SharedData shareData = null;
+
+        private void Awake()
+        {
+        }
+
+        internal void Init(CodeMindData data)
+        {
+            mindData = data;
+
+            mindData.OnAwake();
+        }
 
         // Use this for initialization
         void Start()
         {
-            mindData.OnCreate();
+            mindData.OnStart();
 
             current = mindData.start;
         }
@@ -35,16 +46,18 @@ namespace CodeMind
             if (finished)
                 return;
 
+
+            
             if (current == null)
                 return;
 
             if (current.runtimeState == RuntimeState.Running)
             {
-                current.OnUpdate(this);
+                current.ProcessUpdate();
             }
             else if(current.runtimeState == RuntimeState.Idle)
             {
-                current.OnPlay(this);
+                current.Enter(this);
             }
         }
 
@@ -59,6 +72,8 @@ namespace CodeMind
         
             if (current.runtimeState == RuntimeState.Finished)
             {
+                current.Exist();
+
                 //get next
                 if (current.type == NodeType.Router)
                 {
@@ -84,6 +99,11 @@ namespace CodeMind
                 finished = true;
 
                 hasError = true;
+            }
+            else
+            {
+                //late update
+                current.ProcessLateUpdate();
             }
         }
 
@@ -125,7 +145,7 @@ namespace CodeMind
                 }
             }
 
-            mindData.OnAssetDestroy();
+            mindData.OnDestroy();
         }
     }
 }

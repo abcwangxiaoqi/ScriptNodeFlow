@@ -42,6 +42,132 @@ namespace CodeMind
             return data;
         }
 
+        /// <summary>
+        /// Instantiate this instance.
+        /// </summary>
+        /// <returns>The instantiate.</returns>
+        public GameObject Instantiate(out CodeMindController controller, Transform root = null)
+        {
+            GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
+            gameObject.transform.SetParent(root);
+            DontDestroyOnLoad(gameObject);
+            controller = gameObject.GetComponent<CodeMindController>();
+            controller.Init(this);
+            return gameObject;
+        }
+
+        internal void OnReset()
+        {
+            start.Reset();
+
+            foreach (var item in nodelist)
+            {
+                item.Reset();
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.Reset();
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.Reset();
+            }
+        }
+
+        internal void OnAwake()
+        {
+            if (shareData != null)
+            {
+                shareData.Awake();
+            }
+
+
+            foreach (var item in nodelist)
+            {
+                item.InitData(shareData);
+                item.Awake();
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.InitData(shareData);
+                item.Awake();
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.InitData(shareData);
+                item.Awake();
+            }
+        }
+
+        internal void OnStart()
+        {
+            if (shareData != null)
+            {
+                shareData.Start();
+            }
+
+            foreach (var item in nodelist)
+            {
+                item.Start();
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.Start();
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.Start();
+            }
+        }
+
+        internal void OnUpdate()
+        {
+            if (shareData != null)
+            {
+                shareData.Update();
+            }
+        }
+
+        internal void OnLateUpdate()
+        {
+            if (shareData != null)
+            {
+                shareData.LateUpdate();
+            }
+        }
+
+        internal void OnDestroy()
+        {
+            foreach (var item in nodelist)
+            {
+                item.Destroy();
+            }
+
+            foreach (var item in routerlist)
+            {
+                item.Destroy();
+            }
+
+            foreach (var item in subCodeMindlist)
+            {
+                item.Destroy();
+            }
+
+            if (shareData != null)
+            {
+                shareData.Destroy();
+            }
+        }
+
+
+#if UNITY_EDITOR
+
         /*public NodeWindowData AddNode(Vector2 position)
         {
             NodeWindowData node = new NodeWindowData();
@@ -50,7 +176,7 @@ namespace CodeMind
             return node;
         }*/
 
-        public NodeWindowProxy AddNode(Type type, Vector2 postion,NodeUsageAttribute attribute)
+        public NodeWindowProxy AddNode(Type type, Vector2 postion, NodeUsageAttribute attribute)
         {
             var nodeData = Activator.CreateInstance(type) as NodeWindowProxy;
             nodeData.position = postion;
@@ -89,7 +215,7 @@ namespace CodeMind
             return router;
         }
 
-        public RouterWindowProxy AddRouter(Type type,Vector2 position,RouterUsageAttribute attribute)
+        public RouterWindowProxy AddRouter(Type type, Vector2 position, RouterUsageAttribute attribute)
         {
             var routerData = Activator.CreateInstance(type) as RouterWindowProxy;
             routerData.position = position;
@@ -134,7 +260,7 @@ namespace CodeMind
             routerlist.Remove(router);
         }
 
-        public RouterWindowConditionProxy AddCondition(Type type,ConditionUsageAttribute attribute)
+        public RouterWindowConditionProxy AddCondition(Type type, ConditionUsageAttribute attribute)
         {
             var conditionData = Activator.CreateInstance(type) as RouterWindowConditionProxy;
             conditionData.name = attribute.conditionName;
@@ -150,7 +276,7 @@ namespace CodeMind
             return conditionData;
         }
 
-        public void RemoveCondition(RouterWindowProxy router,RouterWindowConditionProxy condition)
+        public void RemoveCondition(RouterWindowProxy router, RouterWindowConditionProxy condition)
         {
             condition.AssetDelete();
 
@@ -164,90 +290,6 @@ namespace CodeMind
             subCodeMindlist.Add(subCanvas);
             return subCanvas;
         }
-
-
-        /// <summary>
-        /// Instantiate this instance.
-        /// </summary>
-        /// <returns>The instantiate.</returns>
-        public GameObject Instantiate(out CodeMindController controller, Transform root = null)
-        {
-            GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
-            gameObject.transform.SetParent(root);
-            DontDestroyOnLoad(gameObject);
-            controller = gameObject.GetComponent<CodeMindController>();
-            controller.mindData = this;
-            return gameObject;
-        }
-
-        internal void OnReset()
-        {
-            start.OnReset();
-
-            foreach (var item in nodelist)
-            {
-                item.OnReset();
-            }
-
-            foreach (var item in routerlist)
-            {
-                item.OnReset();
-            }
-
-            foreach (var item in subCodeMindlist)
-            {
-                item.OnReset();
-            }
-        }
-
-        internal void OnCreate()
-        {
-            if (shareData != null)
-            {
-                shareData.OnCreate();
-            }
-
-            foreach (var item in nodelist)
-            {
-                item.OnCreate(shareData);
-            }
-
-            foreach (var item in routerlist)
-            {
-                item.OnCreate(shareData);
-            }
-
-            foreach (var item in subCodeMindlist)
-            {
-                item.OnCreate(shareData);
-            }
-        }
-
-        internal void OnAssetDestroy()
-        {
-            if (shareData != null)
-            {
-                shareData.OnObjectDestroy();
-            }
-
-            foreach (var item in nodelist)
-            {
-                item.OnObjectDestroy(shareData);
-            }
-
-            foreach (var item in routerlist)
-            {
-                item.OnObjectDestroy(shareData);
-            }
-
-            foreach (var item in subCodeMindlist)
-            {
-                item.OnObjectDestroy(shareData);
-            }
-        }
-
-
-#if UNITY_EDITOR
 
         public void Compile()
         {

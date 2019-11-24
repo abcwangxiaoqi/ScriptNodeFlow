@@ -20,22 +20,46 @@ namespace CodeMind
 
         /*runtime method*/
 
-        internal void OnCreate()
+        public void Awake()
         {
-            OnDataCreate();
+            OnAwake();
         }
 
-        protected virtual void OnDataCreate()
+        protected virtual void OnAwake()
         { }
 
-        internal void OnObjectDestroy()
+        public void Destroy()
         {
-            OnDataDestroy();
+            OnDestroy();
         }
 
-        protected virtual void OnDataDestroy()
+        protected virtual void OnDestroy()
         {
 
         }
+
+        public void Start()
+        {
+            OnStart();
+        }
+
+        protected virtual void OnStart()
+        { }
+
+        public void Update()
+        {
+            OnUpdate();
+        }
+
+        protected virtual void OnUpdate()
+        { }
+
+        public void LateUpdate()
+        {
+            OnLateUpdate();
+        }
+
+        protected virtual void OnLateUpdate()
+        { }
     }
 }

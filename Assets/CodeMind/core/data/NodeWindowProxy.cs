@@ -47,28 +47,26 @@ namespace CodeMind
 
         #region runtime
 
-        public override void OnCreate(SharedData sharedData)
+        protected override void OnAwake()
         {
-            base.OnCreate(sharedData);
+            node.Init(m_SharedData);
 
-            node.OnCreate(sharedData);
+            node.OnCreate();
         }
 
-        public override void OnObjectDestroy(SharedData sharedData)
+        protected override void OnDestroy()
         {
-            base.OnObjectDestroy(sharedData);
-
-            node.OnObjectDestroy(sharedData);
+            node.OnObjectDestroy();
         }
 
 
-        public override void OnPlay(CodeMindController mindController)
+        protected override void OnEnter(CodeMindController mindController)
         {
             try
             {
                 runtimeState = RuntimeState.Running;
 
-                node.OnPlay(mindController.mindData.shareData);
+                node.Enter();
             }
             catch (Exception e)
             {
@@ -78,7 +76,15 @@ namespace CodeMind
             }
         }
 
-        public override void OnUpdate(CodeMindController mindController)
+        protected override void OnExist()
+        {
+            if (node == null)
+                return;
+            
+            node.Exist();
+        }
+
+        protected override void OnProcessUpdate()
         {            
             if(node.finished)
             {
@@ -94,7 +100,15 @@ namespace CodeMind
                 return;
             }
 
-            node.ProcessUpdate(mindController.mindData.shareData);
+            node.OnProcessUpdate();
+        }
+
+        protected override void OnProcessLateUpdate()
+        {
+            if (node.finished)
+                return;
+
+            node.OnProcessLateUpdate();
         }
 
         #endregion

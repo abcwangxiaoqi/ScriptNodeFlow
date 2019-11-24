@@ -71,27 +71,33 @@ namespace CodeMind
 
         [NonSerialized] public string runtimeNextId = null;
 
-        public override void OnCreate(SharedData sharedData)
+        protected override void OnAwake()
         {
-            base.OnCreate(sharedData);
 
             foreach (var item in conditions)
             {
-                item.awake(sharedData);
+                item.Init(m_SharedData);
+                item.OnAwake();
             }
         }
 
-        public override void OnObjectDestroy(SharedData sharedData)
+        protected override void OnStart()
         {
-            base.OnObjectDestroy(sharedData);
-
             foreach (var item in conditions)
             {
-                item.destroy(sharedData);
+                item.OnStart();
             }
         }
 
-        public override void OnPlay(CodeMindController mindController)
+        protected override void OnDestroy()
+        {
+            foreach (var item in conditions)
+            {
+                item.OnDestroy();
+            }
+        }
+
+        protected override void OnEnter(CodeMindController mindController)
         {
             try
             {
@@ -99,7 +105,7 @@ namespace CodeMind
                 bool condFlag = false;
                 for (int i = 0; i < conditions.Count; i++)
                 {
-                    if (conditions[i].excute(mindController.mindData.shareData))
+                    if (conditions[i].Justify())
                     {
                         condFlag = true;
                         runtimeNextId = conditions[i].nextWindowId;
@@ -121,6 +127,11 @@ namespace CodeMind
                 Debug.LogError(e.Message);
                 throw;
             }
+        }
+
+        protected override void OnExist()
+        {
+            
         }
 
         #endregion
@@ -163,19 +174,33 @@ namespace CodeMind
 
         /*-----runtime---------*/
 
-        public void awake(SharedData sdata)
+        protected SharedData m_SharedData { get; private set; }
+
+        internal void Init(SharedData data)
         {
-            routerCondition.OnCreate(sdata);
+            m_SharedData = data;
+
+            routerCondition.Init(m_SharedData);
         }
 
-        public void destroy(SharedData sdata)
+        public void OnAwake()
         {
-            routerCondition.OnObjectDestroy(sdata);
+            routerCondition.Awake();
         }
 
-        public bool excute(SharedData sdata)
+        public void OnStart()
         {
-            return routerCondition.Justify(sdata);
+            routerCondition.Start();
+        }
+
+        public void OnDestroy()
+        {
+            routerCondition.Destroy();
+        }
+
+        public bool Justify()
+        {
+            return routerCondition.Justify();
         }
     }
 }

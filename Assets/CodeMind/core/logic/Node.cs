@@ -10,35 +10,62 @@ namespace CodeMind
 
         internal string errorMessage { get; private set; }
 
-        internal void OnCreate(SharedData sharedData)
+        protected SharedData m_SharedData { get; private set; }
+
+        internal void Init(SharedData data)
         {
-            OnNodeCreate(sharedData);
+            m_SharedData = data;
         }
 
-        protected virtual void OnNodeCreate(SharedData sharedData)
+        internal void OnCreate()
+        {
+            OnNodeCreate();
+        }
+
+        protected virtual void OnNodeCreate()
         {
 
         }
 
-        internal void OnPlay(SharedData sharedData)
+        internal void Enter()
         {
             finished = false;
             errorMessage = string.Empty;
 
-            OnNodePlay(sharedData);
+            OnEnter();
         }
 
-        protected virtual void OnNodePlay(SharedData sharedData)
+        protected virtual void OnEnter()
+        {
+            
+        }
+
+        internal void Exist()
+        {
+            OnExist();
+        }
+
+        protected virtual void OnExist()
+        {
+            
+        }
+
+        internal void OnProcessUpdate()
+        {
+            OnNodeUpdate();
+        }
+
+        protected virtual void OnNodeUpdate()
         {
 
         }
 
-        internal void ProcessUpdate(SharedData sharedData)
+        internal void OnProcessLateUpdate()
         {
-            OnNodeUpdate(sharedData);
+            OnNodeLateUpdate();
         }
 
-        protected virtual void OnNodeUpdate(SharedData sharedData)
+        protected virtual void OnNodeLateUpdate()
         {
 
         }
@@ -55,12 +82,12 @@ namespace CodeMind
             errorMessage = error;
         }
 
-        internal virtual void OnObjectDestroy(SharedData sharedData)
+        internal virtual void OnObjectDestroy()
         {
-            OnNodeDestroy(sharedData);
+            OnNodeDestroy();
         }
 
-        protected virtual void OnNodeDestroy(SharedData sharedData)
+        protected virtual void OnNodeDestroy()
         {
 
         }

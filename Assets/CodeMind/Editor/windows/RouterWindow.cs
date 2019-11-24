@@ -263,7 +263,7 @@ namespace CodeMind
                 if (condition.connectFlag && curEvent.button == 1)
                 {
                     // mouse right key
-                    DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+                    MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectConditionAnotherPort);
                     condition.connectFlag = false;
                 }
             }
@@ -271,7 +271,7 @@ namespace CodeMind
             if (defaultConnectFlag && curEvent.button == 1)
             {
                 // mouse right key
-                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+                MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectDefaultAnotherPort);
                 defaultConnectFlag = false;
             }
 
@@ -304,7 +304,7 @@ namespace CodeMind
                     if (!Application.isPlaying)
                     {
                         setConditionNext(condition, null);
-                        DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+                        MainCanvas.m_DelegateManager.AddListener(BaseCanvas.HANDLECONNECTPORT, connectConditionAnotherPort);
                         condition.connectFlag = true;
                     }
                 }
@@ -316,7 +316,7 @@ namespace CodeMind
                 if (!Application.isPlaying)
                 {
                     SetDefault(null);
-                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+                    MainCanvas.m_DelegateManager.AddListener(BaseCanvas.HANDLECONNECTPORT, connectDefaultAnotherPort);
                     defaultConnectFlag = true;
                 }
             }
@@ -389,7 +389,7 @@ namespace CodeMind
 
         void connectConditionAnotherPort(object[] objs)
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectConditionAnotherPort);
+            MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectConditionAnotherPort);
 
             BaseWindow window = objs[0] as BaseWindow;
 
@@ -430,7 +430,7 @@ namespace CodeMind
 
         void connectDefaultAnotherPort(object[] objs)
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectDefaultAnotherPort);
+            MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectDefaultAnotherPort);
 
             BaseWindow window = objs[0] as BaseWindow;
 

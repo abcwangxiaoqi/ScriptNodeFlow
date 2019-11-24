@@ -12,7 +12,7 @@ namespace CodeMind
         public string gObjectName;
 
         GameObject instance;
-        protected override void OnNodePlay(SharedData sharedData)
+        protected override void OnEnter()
         {
             instance = Instantiate(prefab) as GameObject;
             instance.transform.position = position;
@@ -26,7 +26,7 @@ namespace CodeMind
             moveNext();
         }
 
-        protected override void OnNodeDestroy(SharedData sharedData)
+        protected override void OnNodeDestroy()
         {
             Destroy(instance);
         }

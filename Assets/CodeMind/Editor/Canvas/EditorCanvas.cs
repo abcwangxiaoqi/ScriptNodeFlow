@@ -217,7 +217,7 @@ namespace CodeMind
                         return w.isClickInPort(mousePosition);
                     });
 
-                    DelegateManager.Instance.Dispatch(DelegateCommand.HANDLECONNECTPORT, connectWin);
+                    m_DelegateManager.Dispatch(BaseCanvas.HANDLECONNECTPORT, connectWin);
 
                 }
                 else if (curEvent.type == EventType.MouseUp)

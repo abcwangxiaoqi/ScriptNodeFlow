@@ -38,27 +38,81 @@ namespace CodeMind
 
         #region runtime
 
+        protected SharedData m_SharedData { get; private set; }
+        public void InitData(SharedData sharedData)
+        {
+            m_SharedData = sharedData;
+        }
+
         [NonSerialized]
         public RuntimeState runtimeState = RuntimeState.Idle;
 
         public string runtimeError { get; protected set; }
 
-        public virtual void OnCreate(SharedData sharedData)
+        public void Awake()
         {
-            
+            OnAwake();
         }
 
-        public virtual void OnObjectDestroy(SharedData sharedData)
+        protected virtual void OnAwake(){}
+
+        public void Start()
         {
+            OnStart();
         }
 
-        public abstract void OnPlay(CodeMindController mindController);
+        protected virtual void OnStart() { }
 
-        public virtual void OnUpdate(CodeMindController mindController) { }
+        public void ProcessUpdate()
+        {
+            OnProcessUpdate();
+        }
 
-        public virtual void OnReset()
+        protected virtual void OnProcessUpdate() { }
+
+        public void ProcessLateUpdate()
+        {
+            OnProcessLateUpdate();
+        }
+
+        protected virtual void OnProcessLateUpdate() { }
+
+        public void Destroy()
+        {
+            OnDestroy();
+        }
+        protected virtual void OnDestroy() { }
+
+        public void Enter(CodeMindController mindController)
+        {
+            OnEnter(mindController);            
+        }
+
+
+        protected virtual void OnEnter(CodeMindController mindController)
+        {}
+
+        public void Exist()
+        {
+            OnExist();
+        }
+
+        protected virtual void OnExist()
+        {}
+
+
+        //public virtual void OnUpdate(CodeMindController mindController) { }
+
+
+        public void Reset()
         {
             runtimeState = RuntimeState.Idle;
+            OnReset();
+        }
+
+        protected virtual void OnReset()
+        {
+            
         }
 
         #endregion

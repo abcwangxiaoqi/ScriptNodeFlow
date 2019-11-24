@@ -11,12 +11,12 @@ namespace CodeMind
 
         float passTime = 0f;
 
-        protected override void OnNodePlay(SharedData sharedData)
+        protected override void OnEnter()
         {
             passTime = 0;
         }
 
-        protected override void OnNodeUpdate(SharedData sharedData)
+        protected override void OnNodeUpdate()
         {
             passTime += Time.deltaTime;
             if(passTime>= time)

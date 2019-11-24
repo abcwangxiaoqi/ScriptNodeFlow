@@ -29,7 +29,7 @@ namespace CodeMind
         CodeMindController controller;
         GameObject gameObject;
 
-        public override void OnPlay(CodeMindController mindController)
+        protected override void OnEnter(CodeMindController mindController)
         {
             runtimeState = RuntimeState.Running;
 
@@ -40,10 +40,8 @@ namespace CodeMind
             }
         }
 
-        public override void OnUpdate(CodeMindController mindController)
+        protected override void OnProcessUpdate()
         {
-            base.OnUpdate(mindController);
-
             if(controller.hasError)
             {
                 runtimeState = RuntimeState.Error;
@@ -55,10 +53,8 @@ namespace CodeMind
              runtimeState = RuntimeState.Finished;
         }
 
-        public override void OnReset()
+        protected override void OnReset()
         {
-            base.OnReset();
-
             controller.Reset();
         }
 

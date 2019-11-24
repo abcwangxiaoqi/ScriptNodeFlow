@@ -4,23 +4,6 @@ using System.Collections.Generic;
 
 public sealed class DelegateManager
 {
-    private static DelegateManager instance;
-
-    public static DelegateManager Instance
-    {
-        get
-        {
-            if(null == instance)
-            {
-                instance = new DelegateManager();
-            }
-            return instance;
-        }
-    }
-
-
-    //================================================================
-
     /// <summary>
     /// 带返回参数
     /// </summary>

@@ -4,24 +4,46 @@ namespace CodeMind
 {
     public abstract class RouterCondition : ScriptableObject
     {
-        internal void OnCreate(SharedData shareData)
+        protected T GetSharedDate<T>()
+            where T:SharedData
         {
-            OnConditionCreate(shareData);
-        }
-
-        protected virtual void OnConditionCreate(SharedData shareData)
-        {
-
+            return m_SharedData as T;
         }
         
-        public abstract bool Justify(SharedData shareData);
-
-        internal void OnObjectDestroy(SharedData shareData)
+        protected SharedData m_SharedData { get; private set; }
+        internal void Init(SharedData data)
         {
-            OnConditionDestroy(shareData);
+            m_SharedData = data;
         }
 
-        protected virtual void OnConditionDestroy(SharedData shareData)
+        internal void Awake()
+        {
+            OnAwake();
+        }
+
+        protected virtual void OnAwake()
+        {
+            
+        }
+
+        internal void Start()
+        {
+            OnStart();
+        }
+
+        protected virtual void OnStart()
+        {
+            
+        }
+
+        public abstract bool Justify();
+
+        internal void Destroy()
+        {
+            OnDestroy();
+        }
+
+        protected virtual void OnDestroy()
         {
 
         }

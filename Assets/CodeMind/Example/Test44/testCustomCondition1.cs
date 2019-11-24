@@ -5,8 +5,10 @@ using CodeMind;
 
 public class testCustomCondition1 : RouterCondition {
 
-    public override bool Justify(SharedData shareData)
+    public example2_SharedData.RunMode targetMode;
+
+    public override bool Justify()
     {
-        return true;
+        return GetSharedDate<example2_SharedData>().runMode == targetMode;
     }
 }

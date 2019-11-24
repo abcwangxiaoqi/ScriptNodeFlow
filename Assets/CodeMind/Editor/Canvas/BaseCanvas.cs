@@ -6,6 +6,15 @@ namespace CodeMind
 {
     public abstract class BaseCanvas : EditorWindow
     {
+
+        #region command
+
+        public const string TOOLBARFOCUS = "toolbar_focus";
+
+        public const string HANDLECONNECTPORT = "handle_connectport";
+
+        #endregion
+
         protected static Vector2 defaultPos = new Vector2(100, 100);
         protected static Vector2 defualtSize = new Vector2(1000, 800);
 
@@ -21,6 +30,16 @@ namespace CodeMind
         protected BaseWindow connectWin = null;
 
         protected bool initilizeFlag = false;
+
+        internal DelegateManager m_DelegateManager
+        {
+            get
+            {
+                return m_delegateManager;
+            }
+        }
+
+        DelegateManager m_delegateManager = new DelegateManager();
 
         public virtual void initilize(CodeMindData mindData)
         {

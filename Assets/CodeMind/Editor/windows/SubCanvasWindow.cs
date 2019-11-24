@@ -73,7 +73,7 @@ namespace CodeMind
             if (connectFlag && curEvent.button == 1)
             {
                 // mouse right key
-                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
                 connectFlag = false;
             }
         }
@@ -89,7 +89,7 @@ namespace CodeMind
                 if(!Application.isPlaying)
                 {
                     SetNext(null);
-                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                    MainCanvas.m_DelegateManager.AddListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
                     connectFlag = true;
                 }
             }
@@ -121,7 +121,7 @@ namespace CodeMind
 
         void connectAnotherPort(object[] objs)
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+            MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
 
             BaseWindow window = objs[0] as BaseWindow;
 
@@ -141,6 +141,12 @@ namespace CodeMind
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
 
             codeMindWindowData.canvasData = (CodeMindData)EditorGUILayout.ObjectField(codeMindWindowData.canvasData, typeof(CodeMindData), false);
+
+            if (codeMindWindowData.canvasData == MainCanvas.codeMindData)
+            {
+                //tip reycle refrence 
+                codeMindWindowData.canvasData = null;
+            }
 
             EditorGUI.EndDisabledGroup();
 

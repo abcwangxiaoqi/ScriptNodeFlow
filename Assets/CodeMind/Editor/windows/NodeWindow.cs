@@ -81,7 +81,8 @@ namespace CodeMind
             {
                 // mouse right key
                 connectFlag = false;
-                DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+
+                MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
             }
         }
 
@@ -98,7 +99,7 @@ namespace CodeMind
                 if(!Application.isPlaying)
                 {
                     SetNext(null);
-                    DelegateManager.Instance.AddListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+                    MainCanvas.m_DelegateManager.AddListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
                     connectFlag = true;
                 }
             }
@@ -131,7 +132,7 @@ namespace CodeMind
 
         void connectAnotherPort(object[] objs)
         {
-            DelegateManager.Instance.RemoveListener(DelegateCommand.HANDLECONNECTPORT, connectAnotherPort);
+            MainCanvas.m_DelegateManager.RemoveListener(BaseCanvas.HANDLECONNECTPORT, connectAnotherPort);
 
             BaseWindow window = objs[0] as BaseWindow;
 

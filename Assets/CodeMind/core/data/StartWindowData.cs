@@ -22,7 +22,7 @@ namespace CodeMind
 
         #region runtime
 
-        public override void OnPlay(CodeMindController mindController)
+        protected override void OnEnter(CodeMindController mindController)
         {
             runtimeState = RuntimeState.Finished;
         }
