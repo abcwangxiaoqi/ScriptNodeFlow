@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public enum RuntimeState
     {
@@ -83,13 +83,13 @@ namespace CodeMind
         }
         protected virtual void OnDestroy() { }
 
-        public void Enter(CodeMindController mindController)
+        public void Enter(EditorModeCodeMindController mindController)
         {
             OnEnter(mindController);            
         }
 
 
-        protected virtual void OnEnter(CodeMindController mindController)
+        protected virtual void OnEnter(EditorModeCodeMindController mindController)
         {}
 
         public void Exist()

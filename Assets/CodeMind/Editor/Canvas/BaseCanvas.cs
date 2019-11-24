@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public abstract class BaseCanvas : EditorWindow
     {

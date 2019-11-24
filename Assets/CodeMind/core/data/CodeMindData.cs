@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public enum PlayMode
     {
@@ -46,12 +46,12 @@ namespace CodeMind
         /// Instantiate this instance.
         /// </summary>
         /// <returns>The instantiate.</returns>
-        public GameObject Instantiate(out CodeMindController controller, Transform root = null)
+        public GameObject Instantiate(out EditorModeCodeMindController controller, Transform root = null)
         {
-            GameObject gameObject = new GameObject(this.name, typeof(CodeMindController));
+            GameObject gameObject = new GameObject(this.name, typeof(EditorModeCodeMindController));
             gameObject.transform.SetParent(root);
             DontDestroyOnLoad(gameObject);
-            controller = gameObject.GetComponent<CodeMindController>();
+            controller = gameObject.GetComponent<EditorModeCodeMindController>();
             controller.Init(this);
             return gameObject;
         }

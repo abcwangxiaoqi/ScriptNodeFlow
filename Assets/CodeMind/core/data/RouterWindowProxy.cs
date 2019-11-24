@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public interface IWindowsAsset
     {
@@ -97,7 +97,7 @@ namespace CodeMind
             }
         }
 
-        protected override void OnEnter(CodeMindController mindController)
+        protected override void OnEnter(EditorModeCodeMindController mindController)
         {
             try
             {

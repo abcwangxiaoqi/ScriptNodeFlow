@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Reflection;
 using System;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public class CustomNodeStruct:CustomStruct<NodeUsageAttribute>
     {

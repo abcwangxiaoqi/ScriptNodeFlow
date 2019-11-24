@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [CustomEditor(typeof(CodeMindData))]
     public class CodeMindDataEditor : Editor

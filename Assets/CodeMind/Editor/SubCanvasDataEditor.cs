@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [CustomEditor(typeof(SubCanvasData))]
     public class SubCanvasDataEditor : Editor

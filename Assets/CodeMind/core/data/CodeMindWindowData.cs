@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [Serializable]
     public class CodeMindWindowData : WindowDataBase
@@ -26,16 +26,16 @@ namespace CodeMind
 
         #region runtime
 
-        CodeMindController controller;
+        EditorModeCodeMindController controller;
         GameObject gameObject;
 
-        protected override void OnEnter(CodeMindController mindController)
+        protected override void OnEnter(EditorModeCodeMindController mindController)
         {
             runtimeState = RuntimeState.Running;
 
             if(controller == null)
             {
-                gameObject = canvasData.Instantiate(out controller,mindController.transform);
+                //gameObject = canvasData.Instantiate(out controller,mindController.transform);
                 controller.onFinish += subFinish;
             }
         }

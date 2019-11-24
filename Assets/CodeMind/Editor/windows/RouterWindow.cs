@@ -7,7 +7,7 @@ using System;
 using Object = UnityEngine.Object;
 using UnityEditor.AnimatedValues;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public class RouterWindowCondition
     {

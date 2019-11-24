@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public abstract class Node : ScriptableObject
     {

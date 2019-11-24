@@ -9,7 +9,7 @@ using UnityEngine;
 namespace CodeMind
 {
     [DisallowMultipleComponent]
-    public class CodeMindController : MonoBehaviour
+    public class EditorModeCodeMindController
     {
         public event Action onFinish;
 

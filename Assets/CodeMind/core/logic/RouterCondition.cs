@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public abstract class RouterCondition : ScriptableObject
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [Serializable]//这个类不能 是 抽象类 否则 在编译后序列化会有问题
     public class NodeWindowProxy : WindowDataBase,IWindowsAsset
@@ -60,7 +60,7 @@ namespace CodeMind
         }
 
 
-        protected override void OnEnter(CodeMindController mindController)
+        protected override void OnEnter(EditorModeCodeMindController mindController)
         {
             try
             {

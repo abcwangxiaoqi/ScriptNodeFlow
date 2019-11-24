@@ -8,7 +8,7 @@ public class testMain:MonoBehaviour
     public CodeMindData mindData;
 
 
-    CodeMindController controller;
+    EditorModeCodeMindController controller;
     GameObject controllerGamobject;
     private void Awake()
     {

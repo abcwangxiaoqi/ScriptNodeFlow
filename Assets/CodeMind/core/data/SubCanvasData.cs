@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [Serializable]
     public class SubCanvasData : ScriptableObject

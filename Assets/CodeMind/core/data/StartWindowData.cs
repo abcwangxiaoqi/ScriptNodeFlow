@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     [Serializable]
     public class StartWindowData : WindowDataBase
@@ -22,7 +22,7 @@ namespace CodeMind
 
         #region runtime
 
-        protected override void OnEnter(CodeMindController mindController)
+        protected override void OnEnter(EditorModeCodeMindController mindController)
         {
             runtimeState = RuntimeState.Finished;
         }

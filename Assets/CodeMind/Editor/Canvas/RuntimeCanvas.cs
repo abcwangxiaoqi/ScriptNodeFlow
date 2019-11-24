@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public class RuntimeCanvas : BaseCanvas
     {

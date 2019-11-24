@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public class EditorCanvas : BaseCanvas
     {

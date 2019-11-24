@@ -5,7 +5,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public class InitializeOnLoad
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEngine;
 
-namespace CodeMind
+namespace EditorCodeMind
 {
     public enum State
     {
